@@ -26,6 +26,7 @@ class JetTransformer(Module):
                 dim_feedforward=hidden_dim,
                 batch_first=True,
                 norm_first=True,
+                dropout=dropout,
             ) for l in range(num_layers)
         ])
 
