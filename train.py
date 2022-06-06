@@ -134,11 +134,11 @@ if __name__ == '__main__':
             scheduler.step()
 
             loss_list.append(loss.cpu().detach().numpy())
-            perplexity_list.append(perplexity.cpu().detach().numpy())
+            perplexity_list.append(perplexity.mean().cpu().detach().numpy())
 
             if (global_step + 1) % args.logging_steps == 0:
                 logger.add_scalar('Train/Loss', np.mean(loss_list), global_step)
-                logger.add_scalar('Train/LogPerplexity', np.mean(perplexity_list), global_step)
+                logger.add_scalar('Train/Perplexity', np.mean(perplexity_list), global_step)
                 loss_list = []
 
             #if (global_step + 1) % args.checkpoint_steps == 0:
