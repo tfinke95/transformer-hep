@@ -122,7 +122,8 @@ if __name__ == '__main__':
             with torch.cuda.amp.autocast():
                 logits = model(x, padding_mask)
                 loss = model.loss(logits, true_bin)
-                perplexity = model.probability(logits, padding_mask, true_bin, perplexity=True, logarithmic=False)
+                with torch.no_grad():
+                    perplexity = model.probability(logits, padding_mask, true_bin, perplexity=True, logarithmic=False)
 
             scaler.scale(loss).backward()
             scaler.unscale_(opt)
