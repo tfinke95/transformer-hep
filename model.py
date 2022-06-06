@@ -70,3 +70,28 @@ class JetTransformer(Module):
 
         loss = self.criterion(logits, true_bin)
         return loss
+
+    def probability(self, logits, padding_mask, true_bin, perplexity=False, logarithmic=False):
+        batch_size, padded_seq_len, num_bin = logits.shape
+        seq_len = padding_mask.long().sum(dim=1)
+
+        # ignore final logits
+        logits = logits[:, :-1].reshape(-1, self.total_bins)
+        probs = torch.softmax(logits, dim=1)
+
+        # shift target bins to right
+        true_bin = true_bin[:, 1:].flatten()
+
+        # select probs of true bins
+        sel_idx = torch.arange(probs.shape[0], dtype=torch.long, device=probs.device)
+        probs = probs[sel_idx, true_bin].view(batch_size, padded_seq_len-1)
+        probs[~padding_mask[:, :-1]] = 1.0
+
+        if perplexity:
+            probs = probs ** (1 / seq_len.float().view(-1, 1))
+
+        if logarithmic:
+            probs = -torch.log(probs).sum(dim=1)
+        else:
+            probs = probs.prod(dim=1)
+        return probs

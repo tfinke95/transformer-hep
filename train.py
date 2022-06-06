@@ -111,6 +111,7 @@ if __name__ == '__main__':
     for epoch in range(args.num_epochs):
         model.train()
         loss_list = []
+        perplexity_list = []
 
         for x, padding_mask, true_bin in tqdm(train_loader, total=len(train_loader), desc=f'Training Epoch {epoch + 1}'):
             opt.zero_grad()
@@ -121,6 +122,7 @@ if __name__ == '__main__':
             with torch.cuda.amp.autocast():
                 logits = model(x, padding_mask)
                 loss = model.loss(logits, true_bin)
+                perplexity = model.probability(logits, padding_mask, true_bin, perplexity=True, logarithmic=False)
 
             scaler.scale(loss).backward()
             scaler.unscale_(opt)
@@ -131,9 +133,11 @@ if __name__ == '__main__':
             scheduler.step()
 
             loss_list.append(loss.cpu().detach().numpy())
+            perplexity_list.append(perplexity.cpu().detach().numpy())
 
             if (global_step + 1) % args.logging_steps == 0:
                 logger.add_scalar('Train/Loss', np.mean(loss_list), global_step)
+                logger.add_scalar('Train/LogPerplexity', np.mean(perplexity_list), global_step)
                 loss_list = []
 
             #if (global_step + 1) % args.checkpoint_steps == 0:
