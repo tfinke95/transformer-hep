@@ -1,13 +1,14 @@
 import numpy as np
 import torch
-from torch.nn import Module, ModuleList, Embedding, Linear, TransformerEncoderLayer, CrossEntropyLoss
+from torch.nn import Module, ModuleList, Embedding, Linear, TransformerEncoderLayer, CrossEntropyLoss, LayerNorm, Dropout
 
 
 class JetTransformer(Module):
 
-    def __init__(self, hidden_dim=256, num_layers=10, num_heads=4, num_features=3, num_bins=(41, 41, 41)):
+    def __init__(self, hidden_dim=256, num_layers=10, num_heads=4, num_features=3, num_bins=(41, 41, 41), dropout=0.1):
         super(JetTransformer, self).__init__()
         self.num_features = num_features
+        self.dropout = dropout
 
         # learn embedding for each bin of each feature dim
         self.feature_embeddings = ModuleList([
@@ -30,7 +31,9 @@ class JetTransformer(Module):
 
         # output projection and loss criterion
         self.total_bins = int(np.prod(num_bins))
-        self.final = Linear(hidden_dim, self.total_bins)
+        self.out_norm = LayerNorm(hidden_dim)
+        self.dropout = Dropout(dropout)
+        self.out_proj = Linear(hidden_dim, self.total_bins)
         self.criterion = CrossEntropyLoss()
 
     def forward(self, x, padding_mask):
@@ -50,9 +53,11 @@ class JetTransformer(Module):
         # apply transformer layer
         for layer in self.layers:
             emb = layer(src=emb, src_mask=causal_mask, src_key_padding_mask=padding_mask)
+        emb = self.out_norm(emb)
+        emb = self.dropout(emb)
 
         # project final embedding to logits (not normalized with softmax)
-        logits = self.final(emb)
+        logits = self.out_proj(emb)
         return logits
 
     def loss(self, logits, true_bin):
