@@ -3,12 +3,40 @@ import torch
 from torch.nn import Module, ModuleList, Embedding, Linear, TransformerEncoderLayer, CrossEntropyLoss, LayerNorm, Dropout
 
 
+class EmbeddingProductHead(Module):
+
+    def __init__(self, hidden_dim=256, num_features=3, num_bins=(41, 41, 41)):
+        super(EmbeddingProductHead, self).__init__()
+        assert num_features == 3
+        self.num_features = num_features
+        self.num_bins = num_bins
+        self.hidden_dim = hidden_dim
+        self.combined_bins = int(np.sum(num_bins))
+        self.linear = Linear(hidden_dim, self.combined_bins * hidden_dim)
+        self.act = torch.nn.Softplus()
+        self.logit_scale = torch.nn.Parameter(torch.tensor(1.0))
+
+    def forward(self, emb):
+        batch_size, seq_len, _ = emb.shape
+        bin_emb = self.act(self.linear(emb))
+        bin_emb = bin_emb.view(batch_size, seq_len, self.combined_bins, self.hidden_dim)
+        bin_emb_x, bin_emb_y, bin_emb_z = torch.split(bin_emb, self.num_bins, dim=2)
+
+        bin_emb_xy = bin_emb_x.unsqueeze(2) * bin_emb_y.unsqueeze(3)
+        bin_emb_xy = bin_emb_xy.view(batch_size, seq_len, -1, self.hidden_dim)
+
+        logits = bin_emb_xy @ bin_emb_z.transpose(2, 3)
+        logits = self.logit_scale.exp() * logits.view(batch_size, seq_len, -1)
+        return logits
+
+
 class JetTransformer(Module):
 
-    def __init__(self, hidden_dim=256, num_layers=10, num_heads=4, num_features=3, num_bins=(41, 41, 41), dropout=0.1):
+    def __init__(self, hidden_dim=256, num_layers=10, num_heads=4, num_features=3, num_bins=(41, 41, 41), dropout=0.1, output='linear'):
         super(JetTransformer, self).__init__()
         self.num_features = num_features
         self.dropout = dropout
+        self.total_bins = int(np.prod(num_bins))
 
         # learn embedding for each bin of each feature dim
         self.feature_embeddings = ModuleList([
@@ -30,11 +58,14 @@ class JetTransformer(Module):
             ) for l in range(num_layers)
         ])
 
-        # output projection and loss criterion
-        self.total_bins = int(np.prod(num_bins))
         self.out_norm = LayerNorm(hidden_dim)
         self.dropout = Dropout(dropout)
-        self.out_proj = Linear(hidden_dim, self.total_bins)
+
+        # output projection and loss criterion
+        if output == 'linear':
+            self.out_proj = Linear(hidden_dim, self.total_bins)
+        else:
+            self.out_proj = EmbeddingProductHead(hidden_dim, num_features, num_bins)
         self.criterion = CrossEntropyLoss()
 
     def forward(self, x, padding_mask):

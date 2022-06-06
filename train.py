@@ -70,6 +70,7 @@ if __name__ == '__main__':
     parser.add_argument("--num_layers", type=int, default=8, help="Number of transformer layers")
     parser.add_argument("--num_heads", type=int, default=4, help="Number of attention heads")
     parser.add_argument("--dropout", type=float, default=0.1, help="dropout rate")
+    parser.add_argument("--output", type=str, default='linear', choices=['linear', 'embprod'], help="Output function")
     args = parser.parse_args()
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
@@ -98,7 +99,8 @@ if __name__ == '__main__':
         num_heads=args.num_heads,
         num_features=num_features,
         num_bins=num_bins,
-        dropout=args.dropout
+        dropout=args.dropout,
+        output=args.output
     )
     model.to(device)
 
