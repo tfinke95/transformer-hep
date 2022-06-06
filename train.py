@@ -69,6 +69,7 @@ if __name__ == '__main__':
     parser.add_argument("--hidden_dim", type=int, default=256, help="Hidden dim of the model")
     parser.add_argument("--num_layers", type=int, default=8, help="Number of transformer layers")
     parser.add_argument("--num_heads", type=int, default=4, help="Number of attention heads")
+    parser.add_argument("--dropout", type=float, default=0.1, help="dropout rate")
     args = parser.parse_args()
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
@@ -96,7 +97,8 @@ if __name__ == '__main__':
         num_layers=args.num_layers,
         num_heads=args.num_heads,
         num_features=num_features,
-        num_bins=num_bins
+        num_bins=num_bins,
+        dropout=args.dropout
     )
     model.to(device)
 
