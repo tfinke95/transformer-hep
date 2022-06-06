@@ -79,7 +79,7 @@ if __name__ == '__main__':
     num_bins = (41, 41, 41)
 
     # load and preprocess data
-    df = pd.read_hdf('Datasets/train_top.h5', 'discretized')
+    df = pd.read_hdf(args.data_path, 'discretized')
     x, padding_mask, bins = preprocess_dataframe(df, num_features=num_features, num_bins=num_bins, to_tensor=True)
 
     train_dataset = TensorDataset(x, padding_mask, bins)

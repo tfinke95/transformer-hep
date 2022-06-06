@@ -56,7 +56,7 @@ class JetTransformer(Module):
         return logits
 
     def loss(self, logits, true_bin):
-        # ignore final logits and compute weights
+        # ignore final logits
         logits = logits[:, :-1].reshape(-1, self.total_bins)
 
         # shift target bins to right
