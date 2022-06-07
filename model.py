@@ -122,7 +122,7 @@ class JetTransformer(Module):
             probs = probs ** (1 / seq_len.float().view(-1, 1))
 
         if logarithmic:
-            probs = -torch.log(probs).sum(dim=1)
+            probs = torch.log(probs).sum(dim=1)
         else:
             probs = probs.prod(dim=1)
         return probs

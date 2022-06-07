@@ -111,11 +111,10 @@ if __name__ == '__main__':
 
     logger = SummaryWriter(args.model_dir)
     global_step = 0
-
+    loss_list = []
+    perplexity_list = []
     for epoch in range(args.num_epochs):
         model.train()
-        loss_list = []
-        perplexity_list = []
 
         for x, padding_mask, true_bin in tqdm(train_loader, total=len(train_loader), desc=f'Training Epoch {epoch + 1}'):
             opt.zero_grad()
@@ -130,9 +129,6 @@ if __name__ == '__main__':
                     perplexity = model.probability(logits, padding_mask, true_bin, perplexity=True, logarithmic=False)
 
             scaler.scale(loss).backward()
-            scaler.unscale_(opt)
-            torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0, error_if_nonfinite=False)
-
             scaler.step(opt)
             scaler.update()
             scheduler.step()
@@ -144,6 +140,7 @@ if __name__ == '__main__':
                 logger.add_scalar('Train/Loss', np.mean(loss_list), global_step)
                 logger.add_scalar('Train/Perplexity', np.mean(perplexity_list), global_step)
                 loss_list = []
+                perplexity_list = []
 
             #if (global_step + 1) % args.checkpoint_steps == 0:
             #    save_model(f'checkpoint_{global_step}')
