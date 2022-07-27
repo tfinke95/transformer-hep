@@ -11,7 +11,7 @@ import os
 import pandas as pd
 from glob import glob
 
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, roc_curve
 
 torch.multiprocessing.set_sharing_strategy('file_system')
 
@@ -40,7 +40,9 @@ if __name__ == '__main__':
     # load model
     models = {}
     for c in classes:
-        model_dir = os.path.join(args.model_dir, c)
+        # model_dir = os.path.join(args.model_dir, c)
+        model_dir = args.model_dir + c
+        print(model_dir)
         model = load_model(model_dir, args.model_name)
         model.eval()
         model.to(device)
@@ -51,7 +53,7 @@ if __name__ == '__main__':
     for i, data_class in enumerate(classes):
         data_path = os.path.join(args.data_path, f'{args.data_split}_{data_class}.h5')
         df = pd.read_hdf(data_path, 'discretized')
-        x, padding_mask, bins = preprocess_dataframe(df, num_features=num_features, num_bins=num_bins, to_tensor=True)
+        x, padding_mask, bins = preprocess_dataframe(df, num_features=num_features, num_bins=num_bins, num_const=40, num_events=1000, to_tensor=True)
 
         test_dataset = TensorDataset(x, padding_mask, bins)
         test_loader = DataLoader(
@@ -80,8 +82,21 @@ if __name__ == '__main__':
             y_list.append(batch_y)
 
     perplexity = np.vstack(perplexity_list)
+    score_direct = -perplexity[:,1]
+    score_reverse = -perplexity[:,0]
     y = np.concatenate(y_list, axis=0)
+    auc_direct = roc_auc_score(y_true=np.abs(y-1), y_score=score_direct)
+    auc_reverse = roc_auc_score(y_true=y, y_score=score_reverse)
+    print(auc_direct)
+    print(auc_reverse)
+    exit()
+
+
+
+
     score = perplexity[:, 1] / (2 * perplexity.sum(axis=1))
     acc = np.float32(perplexity.argmax(axis=1) == y).mean()
     auc = roc_auc_score(y_true=y, y_score=score)
+    fpr, tpr, _ = roc_curve(y_true=y, y_score=score)
+    # np.savez('tmp.npz', fpr=fpr, tpr=tpr)
     print(f'Accuracy : {acc}, AUC: {auc}')

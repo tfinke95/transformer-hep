@@ -3,8 +3,9 @@ import numpy as np
 import torch
 
 
-def preprocess_dataframe(df, num_features, num_bins, to_tensor=True):
-    x = df.to_numpy(dtype=np.int64)
+def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
+                         to_tensor=True):
+    x = df.to_numpy(dtype=np.int64)[:num_events, :num_const*num_features]
     x = x.reshape(x.shape[0], -1, num_features)
     padding_mask = x[:, :, 0] != -1
 
