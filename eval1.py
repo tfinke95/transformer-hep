@@ -23,7 +23,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument("--model_dir", type=str, default='models/test', help="Model directory")
     parser.add_argument("--model_name", type=str, default='last', help="Checkpoint name")
-    parser.add_argument("--data_path", type=str, default='Datasets/', help="Path to training data file")
+    parser.add_argument("--data_path", type=str, default='/hpcwork/bn227573/top_benchmark/', help="Path to training data file")
     parser.add_argument("--data_split", type=str, default='test', help="Split to evaluate")
     parser.add_argument("--num_workers", type=int, default=1, help="Number of workers")
     parser.add_argument("--num_const", type=int, default=100, help="Number of constituents")
@@ -34,7 +34,7 @@ if __name__ == '__main__':
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
     num_features = 3
-    num_bins = (41, 41, 41)
+    num_bins = (41, 31, 31)
 
     print(f'Loading model from {args.model_dir+args.bkg}')
     model = load_model(args.model_dir+args.bkg, 'last')
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     nparts = np.empty((0,))
     for c in ['top', 'qcd']:
         print(c)
-        data_path = os.path.join(args.data_path, f'test_{c}.h5')
+        data_path = os.path.join(args.data_path, f'test_{c}_30_bins.h5')
         df = pd.read_hdf(data_path, 'discretized')
         x, padding_mask, bins = preprocess_dataframe(df,
             num_features=num_features,
@@ -78,8 +78,8 @@ if __name__ == '__main__':
                     perplexity = model.probability(logits,
                         padding_mask,
                         true_bin,
-                        perplexity=True,
-                        logarithmic=False
+                        perplexity=False,
+                        logarithmic=True
                         )
             scores = np.append(scores,
                 perplexity.cpu().detach().numpy(),
@@ -113,20 +113,22 @@ if __name__ == '__main__':
 
     plt.hist(nparts[labels==0],
         histtype='step',
-        bins=50,
+        bins=100,
+        range=[1, 100],
         density=True,
         label='Background',
         )
     plt.hist(nparts[labels==1],
         histtype='step',
-        bins=50,
+        bins=100,
+        range=[1, 100],
         density=True,
         label='Signal',
         )
     plt.legend()
     plt.savefig('tmp2.png')
 
-    np.savez(os.path.join(args.model_dir+args.bkg, 'predictions_perp.npz'),
+    np.savez(os.path.join(args.model_dir+args.bkg, 'predictions_log.npz'),
         labels=labels,
         scores=scores,
         nparts=nparts,
