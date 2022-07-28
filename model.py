@@ -32,7 +32,14 @@ class EmbeddingProductHead(Module):
 
 class JetTransformer(Module):
 
-    def __init__(self, hidden_dim=256, num_layers=10, num_heads=4, num_features=3, num_bins=(41, 41, 41), dropout=0.1, output='linear'):
+    def __init__(self,
+                hidden_dim=256,
+                num_layers=10,
+                num_heads=4,
+                num_features=3,
+                num_bins=(41, 41, 41),
+                dropout=0.1,
+                output='linear'):
         super(JetTransformer, self).__init__()
         self.num_features = num_features
         self.dropout = dropout

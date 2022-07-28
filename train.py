@@ -31,7 +31,10 @@ def get_exp_scheduler(final_reduction=1e-2):
 
 def get_cos_scheduler():
     scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
-        opt, T_0=len(train_loader), T_mult=2
+        opt,
+        # T_0=len(train_loader)//5,
+        T_0=len(train_loader) * args.num_epochs + 1,
+        eta_min=1e-6
     )
     return scheduler
 
@@ -78,6 +81,7 @@ if __name__ == '__main__':
     parser.add_argument("--num_bins", type=int, nargs=3, default=[41, 31, 31], help="Number of bins per feature")
     parser.add_argument("--contin", action='store_true', help="Whether to continue training")
     parser.add_argument("--global_step", type=int, default=0, help="Starting point of step counter")
+    parser.add_argument("--reverse", action='store_true', help="Whether to reverse pt order")
 
     parser.add_argument("--num_epochs", type=int, default=3, help="Number of epochs")
     parser.add_argument("--batch_size", type=int, default=100, help="Batch size")
@@ -98,7 +102,10 @@ if __name__ == '__main__':
     print(f"Running on device: {device}")
 
     num_features = 3
-    num_bins = (41, 41, 41)
+    num_bins = tuple(args.num_bins)
+
+    print(f"Using bins: {num_bins}")
+    print(f"{'Not' if not args.reverse else ''} reversing pt order")
 
     # load and preprocess data
     df = pd.read_hdf(args.data_path, 'discretized')
@@ -106,7 +113,8 @@ if __name__ == '__main__':
                                 num_bins=num_bins,
                                 to_tensor=True,
                                 num_const=args.num_const,
-                                num_events=args.num_events)
+                                num_events=args.num_events,
+                                reverse=args.reverse)
 
     train_dataset = TensorDataset(x, padding_mask, bins)
     train_loader = DataLoader(
@@ -122,7 +130,8 @@ if __name__ == '__main__':
                                 num_bins=num_bins,
                                 to_tensor=True,
                                 num_const=args.num_const,
-                                num_events=10000)
+                                num_events=500,
+                                reverse=args.reverse)
 
     val_dataset = TensorDataset(x, padding_mask, bins)
     val_loader = DataLoader(
@@ -134,21 +143,29 @@ if __name__ == '__main__':
     print(f"Val set shape: {x.shape}")
 
     # construct model
-    model = JetTransformer(
-        hidden_dim=args.hidden_dim,
-        num_layers=args.num_layers,
-        num_heads=args.num_heads,
-        num_features=num_features,
-        num_bins=num_bins,
-        dropout=args.dropout,
-        output=args.output
-    )
+    if args.contin:
+        model = load_model('last')
+        print("Loaded model")
+    else:
+        model = JetTransformer(
+            hidden_dim=args.hidden_dim,
+            num_layers=args.num_layers,
+            num_heads=args.num_heads,
+            num_features=num_features,
+            num_bins=num_bins,
+            dropout=args.dropout,
+            output=args.output,
+        )
     model.to(device)
 
     # construct optimizer and auto-caster
     opt = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
-    scheduler = get_exp_scheduler()
+    scheduler = get_cos_scheduler()
     scaler = torch.cuda.amp.GradScaler()
+
+    if args.contin:
+        load_opt_states()
+        print("Loaded optimizer")
 
     logger = SummaryWriter(args.model_dir)
     global_step = args.global_step
@@ -156,7 +173,6 @@ if __name__ == '__main__':
     perplexity_list = []
     for epoch in range(args.num_epochs):
         model.train()
-        print(f'LR:{scheduler.get_last_lr()}')
 
         for x, padding_mask, true_bin in tqdm(train_loader, total=len(train_loader), desc=f'Training Epoch {epoch + 1}'):
             opt.zero_grad()
@@ -181,6 +197,7 @@ if __name__ == '__main__':
             if (global_step + 1) % args.logging_steps == 0:
                 logger.add_scalar('Train/Loss', np.mean(loss_list), global_step)
                 logger.add_scalar('Train/Perplexity', np.mean(perplexity_list), global_step)
+                logger.add_scalar('Train/LR', scheduler.get_last_lr()[0], global_step)
                 loss_list = []
                 perplexity_list = []
 
@@ -207,7 +224,5 @@ if __name__ == '__main__':
             logger.add_scalar('Val/Loss', np.mean(val_loss), global_step)
             logger.add_scalar('Val/Perplexity', np.mean(val_perplexity), global_step)
 
-        print(f'LR:{scheduler.get_last_lr()}')
-
         save_model('last')
-        #save_opt_states(model.model_dir)
+        save_opt_states()
