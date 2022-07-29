@@ -130,7 +130,7 @@ if __name__ == '__main__':
                                 num_bins=num_bins,
                                 to_tensor=True,
                                 num_const=args.num_const,
-                                num_events=500,
+                                num_events=10000,
                                 reverse=args.reverse)
 
     val_dataset = TensorDataset(x, padding_mask, bins)

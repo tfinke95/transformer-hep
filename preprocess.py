@@ -9,6 +9,7 @@ def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
     x = x.reshape(x.shape[0], -1, num_features)
 
     if reverse:
+        print('Reverting pt order')
         x[x==-1] = np.max(num_bins) + 10
         idx_sort = np.argsort(x[:, :, 0], axis=-1)
         for i in range(len(x)):

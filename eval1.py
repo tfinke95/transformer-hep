@@ -29,9 +29,16 @@ if __name__ == '__main__':
     parser.add_argument("--num_const", type=int, default=100, help="Number of constituents")
     parser.add_argument("--batch_size", type=int, default=200, help="Batch size")
     parser.add_argument("--bkg", type=str, default='qcd', choices=['qcd', 'top'])
+    parser.add_argument("--reverse", action="store_true", help="Reverse the pt ordering")
+    parser.add_argument("--kind", type=str, default='perp', choices=['perp', 'log'], help='Kind of anomaly score')
     args = parser.parse_args()
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+    if args.kind == 'perp':
+        perp, log = True, False
+    elif args.kind == 'log':
+        perp, log = False, True
 
     num_features = 3
     num_bins = (41, 31, 31)
@@ -54,6 +61,7 @@ if __name__ == '__main__':
             num_const=args.num_const,
             num_events=200000,
             to_tensor=True,
+            reverse=args.reverse
             )
 
         test_dataset = TensorDataset(x, padding_mask, bins)
@@ -78,8 +86,8 @@ if __name__ == '__main__':
                     perplexity = model.probability(logits,
                         padding_mask,
                         true_bin,
-                        perplexity=False,
-                        logarithmic=True
+                        perplexity=perp,
+                        logarithmic=log
                         )
             scores = np.append(scores,
                 perplexity.cpu().detach().numpy(),
