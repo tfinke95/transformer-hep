@@ -109,6 +109,15 @@ class JetTransformer(Module):
         loss = self.criterion(logits, true_bin)
         return loss
 
+    def loss_pC(self, logits, true_bin):
+        logits = logits[:, :-1].reshape(-1, self.total_bins)
+
+        # shift target bins to right
+        true_bin = true_bin[:, 1:].flatten()
+
+        loss = torch.nn.CrossEntropyLoss(reduction='none')(logits, true_bin)
+        return loss
+
     def probability(self, logits, padding_mask, true_bin, perplexity=False, logarithmic=False):
         batch_size, padded_seq_len, num_bin = logits.shape
         seq_len = padding_mask.long().sum(dim=1)

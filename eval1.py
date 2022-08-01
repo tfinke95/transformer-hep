@@ -27,6 +27,7 @@ if __name__ == '__main__':
     parser.add_argument("--data_split", type=str, default='test', help="Split to evaluate")
     parser.add_argument("--num_workers", type=int, default=1, help="Number of workers")
     parser.add_argument("--num_const", type=int, default=100, help="Number of constituents")
+    parser.add_argument("--num_events", type=int, default=200000, help="Number of events")
     parser.add_argument("--batch_size", type=int, default=200, help="Batch size")
     parser.add_argument("--bkg", type=str, default='qcd', choices=['qcd', 'top'])
     parser.add_argument("--reverse", action="store_true", help="Reverse the pt ordering")
@@ -34,6 +35,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f'Running on device {device}')
 
     if args.kind == 'perp':
         perp, log = True, False
@@ -50,16 +52,18 @@ if __name__ == '__main__':
 
     scores = np.empty((0,))
     labels = np.empty((0,))
-    nparts = np.empty((0,))
-    for c in ['top', 'qcd']:
+    nparts = np.empty((0,), dtype=int)
+    losses = np.empty((0, 99))
+    for c in ['qcd', 'top',]:
         print(c)
+        tmp_losses = np.empty((0, 99))
         data_path = os.path.join(args.data_path, f'test_{c}_30_bins.h5')
         df = pd.read_hdf(data_path, 'discretized')
         x, padding_mask, bins = preprocess_dataframe(df,
             num_features=num_features,
             num_bins=num_bins,
             num_const=args.num_const,
-            num_events=200000,
+            num_events=args.num_events,
             to_tensor=True,
             reverse=args.reverse
             )
@@ -83,63 +87,38 @@ if __name__ == '__main__':
             with torch.no_grad():
                 with torch.cuda.amp.autocast():
                     logits = model(x, padding_mask)
+                    loss = model.loss_pC(logits, true_bin)
+                    tmp_losses = np.append(tmp_losses,
+                        loss.reshape(-1, 99).cpu().detach().numpy(),
+                        axis=0)
                     perplexity = model.probability(logits,
                         padding_mask,
                         true_bin,
                         perplexity=perp,
                         logarithmic=log
                         )
-            scores = np.append(scores,
-                perplexity.cpu().detach().numpy(),
-                axis=0,
-                )
+                    scores = np.append(scores,
+                        perplexity.cpu().detach().numpy(),
+                        axis=0,
+                        )
             labels = np.append(labels,
                 int(c!=args.bkg) * np.ones(len(x)),
                 axis=0,
                 )
-        print(labels[-1])
 
+        print(labels[-1])
+        tmp_losses[bins[:, 1:] == -100] = np.nan
+        losses = np.append(losses, tmp_losses, axis=0)
+        print(losses.shape)
 
     print(labels.shape)
     print(scores.shape)
 
-    plt.hist(scores[labels==0],
-        histtype='step',
-        bins=50,
-        density=True,
-        label='Background',
-        )
-    plt.hist(scores[labels==1],
-        histtype='step',
-        bins=50,
-        density=True,
-        label='Signal',
-        )
-    plt.legend()
-    plt.savefig('tmp1.png')
-    plt.close('all')
-
-    plt.hist(nparts[labels==0],
-        histtype='step',
-        bins=100,
-        range=[1, 100],
-        density=True,
-        label='Background',
-        )
-    plt.hist(nparts[labels==1],
-        histtype='step',
-        bins=100,
-        range=[1, 100],
-        density=True,
-        label='Signal',
-        )
-    plt.legend()
-    plt.savefig('tmp2.png')
-
-    np.savez(os.path.join(args.model_dir+args.bkg, 'predictions_log.npz'),
+    np.savez(os.path.join(args.model_dir+args.bkg, f'predictions_{args.kind}.npz'),
         labels=labels,
         scores=scores,
         nparts=nparts,
+        losses=losses,
         )
     auc = roc_auc_score(y_true=labels, y_score=scores)
     print(auc)
