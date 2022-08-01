@@ -121,6 +121,42 @@ def plot_rocs():
     fig.savefig(f'roc_nC100_nBins30_perp.png')
 
 
+def plot_loss_pC(dir):
+    fig, ax = plt.subplots(constrained_layout=True)
+    kind = 'perp'
+    data = np.load(os.path.join('models', dir+'_top', f'predictions_{kind}.npz'))
+    losses = data['losses']
+    labels = data['labels']
+    nparts = data['nparts'].astype(int)
+    if 'reverse' in dir:
+        print('reverting scores')
+        for i in range(len(losses)):
+            losses[i, :nparts[i]-1] = losses[i, :nparts[i]-1][::-1]
+
+    print(np.nanmean(losses[labels==0]))
+    tmp=1
+    ax.plot(np.arange(99)+1, np.nanmean(losses[labels==tmp], 0), c='red', label='Mean QCD')
+    ax.plot(np.arange(99)+1, np.nanquantile(losses[labels==tmp], 0.25, 0), alpha=0.5, c='blue')
+    ax.plot(np.arange(99)+1, np.nanquantile(losses[labels==tmp], 0.75, 0), alpha=0.5, c='blue')
+    ax.plot(np.arange(99)+1, np.nanmedian(losses[labels==tmp],0), c='blue', label='Median')
+
+
+    tmp=0
+    ax.plot(np.arange(99)+1, np.nanmean(losses[labels==tmp], 0), c='red', linestyle='--', label='Mean Top')
+    ax.plot(np.arange(99)+1, np.nanquantile(losses[labels==tmp], 0.25, 0), alpha=0.5, c='blue', linestyle='--')
+    ax.plot(np.arange(99)+1, np.nanquantile(losses[labels==tmp], 0.75, 0), alpha=0.5, c='blue', linestyle='--')
+    ax.plot(np.arange(99)+1, np.nanmedian(losses[labels==tmp],0), c='blue', linestyle='--',)
+
+    ax.set_xlim(0, 100)
+    ax.set_ylim(2.5, 9)
+    ax.set_xlabel('Constituent position')
+    ax.set_ylabel('Loss (crossentropy)')
+    ax.legend(loc='upper right')
+    fig.savefig('figures/loss_pC_top_reverse_pTsorted.png')
+    plt.show()
+
+
 if __name__ == '__main__':
     # plot_scores(dir=f'N600k_E100_nC100_nBin30_LRcos')
-    plot_rocs()
+    # plot_rocs()
+    plot_loss_pC('N600k_E100_nC100_nBin30_LRcos_reverse')
