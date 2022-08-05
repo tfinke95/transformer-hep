@@ -43,7 +43,8 @@ class JetTransformer(Module):
         super(JetTransformer, self).__init__()
         self.num_features = num_features
         self.dropout = dropout
-        self.total_bins = int(np.prod(num_bins))
+        self.total_bins = int(np.prod(num_bins)) + 2
+        print(f'Bins: {self.total_bins}')
 
         # learn embedding for each bin of each feature dim
         self.feature_embeddings = ModuleList([
