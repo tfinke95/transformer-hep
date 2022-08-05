@@ -156,7 +156,39 @@ def plot_loss_pC(dir):
     plt.show()
 
 
+def plot_probs(dir):
+    fig, ax = plt.subplots(constrained_layout=True)
+    kind = 'perp'
+    data = np.load(os.path.join('models', dir+'_qcd', f'predictions_{kind}.npz'))
+    print(list(data.keys()))
+    probs = data['probs']
+    
+    labels = data['labels']
+    nparts = data['nparts'].astype(int)
+    if 'reverse' in dir:
+        print('reverting scores')
+        for i in range(len(probs)):
+            probs[i, :nparts[i]-1] = probs[i, :nparts[i]-1][::-1]
+
+    tmp=1
+    mean_probs = np.mean(probs, axis=0)
+    for lab, prob in zip(['min', 'max', 'mean', 'median'], mean_probs.T):
+        if lab in ['min', 'max']:
+            ax.plot(np.arange(100)+1, prob, label=lab)
+        if lab == 'mean':
+            ax.plot(np.arange(100)+1, prob, label='Random', linestyle='--', c='grey')
+    ax.legend()
+    ax.set_yscale('log')
+    ax.grid(which='both')
+    ax.set_xlim(0, 100)
+    ax.set_xticks(np.arange(0, 101, 5), minor=True)
+    ax.set_xlabel('Constituent position')
+    ax.set_ylabel('Probability score')
+    fig.savefig('figures/prob_QCD.png')
+
+
 if __name__ == '__main__':
     # plot_scores(dir=f'N600k_E100_nC100_nBin30_LRcos')
     # plot_rocs()
-    plot_loss_pC('N600k_E100_nC100_nBin30_LRcos_reverse')
+    # plot_loss_pC('N600k_E100_nC100_nBin30_LRcos_reverse')
+    plot_probs('N600k_E100_nC100_nBin30_LRcos')

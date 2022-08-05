@@ -54,6 +54,7 @@ if __name__ == '__main__':
     labels = np.empty((0,))
     nparts = np.empty((0,), dtype=int)
     losses = np.empty((0, 99))
+    stats = np.empty((0, 100, 4))
     for c in ['qcd', 'top',]:
         print(c)
         tmp_losses = np.empty((0, 99))
@@ -87,6 +88,14 @@ if __name__ == '__main__':
             with torch.no_grad():
                 with torch.cuda.amp.autocast():
                     logits = model(x, padding_mask)
+                    probs = torch.nn.Softmax(dim=-1)(logits)
+                    prob_min = probs.min(-1).values.cpu().detach().numpy()
+                    prob_max = probs.max(-1).values.cpu().detach().numpy()
+                    prob_mean = probs.mean(-1).cpu().detach().numpy()
+                    prob_median = torch.median(probs, -1).values.cpu().detach().numpy()
+                    stat = np.stack((prob_min, prob_max, prob_mean, prob_median), axis=-1)
+                    stats = np.append(stats, stat, axis=0)
+
                     loss = model.loss_pC(logits, true_bin)
                     tmp_losses = np.append(tmp_losses,
                         loss.reshape(-1, 99).cpu().detach().numpy(),
@@ -109,16 +118,19 @@ if __name__ == '__main__':
         print(labels[-1])
         tmp_losses[bins[:, 1:] == -100] = np.nan
         losses = np.append(losses, tmp_losses, axis=0)
-        print(losses.shape)
-
+        
+    print(losses.shape)
     print(labels.shape)
     print(scores.shape)
+    print(stats.shape)
 
+    np.save('tmp', stats)
     np.savez(os.path.join(args.model_dir+args.bkg, f'predictions_{args.kind}.npz'),
         labels=labels,
         scores=scores,
         nparts=nparts,
         losses=losses,
+        probs=stats,
         )
     auc = roc_auc_score(y_true=labels, y_score=scores)
     print(auc)
