@@ -9,7 +9,7 @@ def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
     x = x.reshape(x.shape[0], -1, num_features)
 
     if reverse:
-        print('Reverting pt order')
+        print('Reversing pt order')
         x[x==-1] = np.max(num_bins) + 10
         idx_sort = np.argsort(x[:, :, 0], axis=-1)
         for i in range(len(x)):
@@ -22,6 +22,7 @@ def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
     bins = (x * num_prior_bins.reshape(1, 1, num_features)).sum(axis=2)
 
     if start_end:
+        print('Adding start and end tokens')
         bins[~padding_mask] = 39401
         bins = np.append(bins, np.ones((len(bins), 1), dtype=int) * 39401, axis=1,)
         bins = np.concatenate((np.ones((len(bins), 1), dtype=int) * 39402, bins), axis=1)

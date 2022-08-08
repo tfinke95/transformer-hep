@@ -50,14 +50,14 @@ if __name__ == '__main__':
     model.eval()
     model.to(device)
 
-    scores = np.empty((0,))
-    labels = np.empty((0,))
-    nparts = np.empty((0,), dtype=int)
-    losses = np.empty((0, 99))
-    stats = np.empty((0, 100, 4))
+    scores = []
+    labels = []
+    nparts = []
+    losses = []
+    stats = []
     for c in ['qcd', 'top',]:
         print(c)
-        tmp_losses = np.empty((0, 99))
+        tmp_losses = []
         data_path = os.path.join(args.data_path, f'test_{c}_30_bins.h5')
         df = pd.read_hdf(data_path, 'discretized')
         x, padding_mask, bins = preprocess_dataframe(df,
@@ -91,46 +91,42 @@ if __name__ == '__main__':
                     probs = torch.nn.Softmax(dim=-1)(logits)
                     prob_min = probs.min(-1).values.cpu().detach().numpy()
                     prob_max = probs.max(-1).values.cpu().detach().numpy()
-                    prob_mean = probs.mean(-1).cpu().detach().numpy()
-                    prob_median = torch.median(probs, -1).values.cpu().detach().numpy()
-                    stat = np.stack((prob_min, prob_max, prob_mean, prob_median), axis=-1)
-                    stats = np.append(stats, stat, axis=0)
 
                     loss = model.loss_pC(logits, true_bin)
-                    tmp_losses = np.append(tmp_losses,
-                        loss.reshape(-1, 99).cpu().detach().numpy(),
-                        axis=0)
                     perplexity = model.probability(logits,
                         padding_mask,
                         true_bin,
                         perplexity=perp,
                         logarithmic=log
                         )
-                    scores = np.append(scores,
-                        perplexity.cpu().detach().numpy(),
-                        axis=0,
-                        )
-            labels = np.append(labels,
-                int(c!=args.bkg) * np.ones(len(x)),
-                axis=0,
-                )
 
-        print(labels[-1])
+                    stats.append([prob_min, prob_max])
+                    tmp_losses.append(loss.reshape(-1, 101).cpu().detach().numpy())
+                    scores.append(perplexity.cpu().detach().numpy())
+
+            labels.append(int(c!=args.bkg) * np.ones(len(x)))
+
+        tmp_losses = np.array(tmp_losses).reshape(-1, 101)
         tmp_losses[bins[:, 1:] == -100] = np.nan
-        losses = np.append(losses, tmp_losses, axis=0)
-        
-    print(losses.shape)
-    print(labels.shape)
-    print(scores.shape)
-    print(stats.shape)
+        losses.append(tmp_losses,)
 
-    np.save('tmp', stats)
+    labels = np.array(labels).flatten()
+    scores = np.array(scores).flatten()
+    losses = np.array(losses).reshape(-1, 101)
+    probs = np.transpose(stats, (0, 2, 3, 1)).reshape(-1, 102, 2)
+    print(f'Loss {np.shape(losses)}')
+    print(f'Label {np.shape(labels)}')
+    print(f'Scores {np.shape(scores)}')
+    print(f'Stats {np.shape(probs)}')
+
+    print(f'Nparts {nparts.shape}')
+
     np.savez(os.path.join(args.model_dir+args.bkg, f'predictions_{args.kind}.npz'),
         labels=labels,
         scores=scores,
         nparts=nparts,
         losses=losses,
-        probs=stats,
+        probs=probs,
         )
     auc = roc_auc_score(y_true=labels, y_score=scores)
     print(auc)
