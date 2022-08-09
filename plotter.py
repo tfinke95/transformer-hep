@@ -88,71 +88,80 @@ def plot_scores(dir):
     fig1.savefig(f'nParts_score_{kind}.png',)
 
 
-def plot_rocs():
+def plot_rocs(dir, sic=False):
     fig, ax = plt.subplots(constrained_layout=True)
     score_kinds = ['perp']
     for score_kind in score_kinds:
-        data = np.load(f'models/N600k_E100_nC100_nBin30_LRcos_qcd/predictions_{score_kind}.npz')
+        data = np.load(f'models/{dir}_qcd/predictions_{score_kind}.npz')
         scores = data['scores']
         labels = data['labels']
         fpr, tpr, _ = roc_curve(y_true=labels, y_score=-scores)
+        num = tpr if sic else 1.
+        den = np.sqrt(fpr) if sic else fpr
 
-        ax.plot(tpr, 1. / fpr,
+        ax.plot(tpr, num / den,
             label=f'QCD {roc_auc_score(labels, -scores):.3f}')
 
-        data = np.load(f'models/N600k_E100_nC100_nBin30_LRcos_top/predictions_{score_kind}.npz')
+        data = np.load(f'models/{dir}_top/predictions_{score_kind}.npz')
         scores = data['scores']
         labels = data['labels']
         fpr, tpr, _ = roc_curve(y_true=labels, y_score=-scores)
+        num = tpr if sic else 1.
+        den = np.sqrt(fpr) if sic else fpr
 
-        ax.plot(tpr, 1. / fpr,
+        ax.plot(tpr, num / den,
             label=f'Top {roc_auc_score(labels, -scores):.3f}')
 
-    ax.plot(np.linspace(0, 1, 1000), 1. / np.linspace(0, 1, 1000),
+    num = np.linspace(0, 1, 1000) if sic else 1.
+    den = np.sqrt(np.linspace(0, 1, 1000)) if sic else np.linspace(0, 1, 1000)
+    ax.plot(np.linspace(0, 1, 1000), num / den,
         linestyle='--', color='grey')
 
     ax.grid(which='both')
     ax.legend()
     ax.set_yscale('log')
     ax.set_ylim(0.9, 1e3)
-    ax.set_title(f'100 constituents, 30 bins, log probability')
+    ax.set_title(f'100 constituents, 30 bins')
     ax.set_xlabel(r'$\epsilon_S$')
     ax.set_ylabel(r'1 / $\epsilon_B$')
-    fig.savefig(f'roc_nC100_nBins30_perp.png')
+    fig.savefig(f'{"sic" if sic else "roc"}s_startend.png')
 
 
 def plot_loss_pC(dir):
     fig, ax = plt.subplots(constrained_layout=True)
     kind = 'perp'
-    data = np.load(os.path.join('models', dir+'_top', f'predictions_{kind}.npz'))
+    data = np.load(os.path.join('models', dir+'_qcd', f'predictions_{kind}.npz'))
     losses = data['losses']
+    nPos = losses.shape[-1]
     labels = data['labels']
     nparts = data['nparts'].astype(int)
-    if 'reverse' in dir:
+    if ('reverse' in dir) or ('rev' in dir):
         print('reverting scores')
         for i in range(len(losses)):
             losses[i, :nparts[i]-1] = losses[i, :nparts[i]-1][::-1]
 
-    print(np.nanmean(losses[labels==0]))
-    tmp=1
-    ax.plot(np.arange(99)+1, np.nanmean(losses[labels==tmp], 0), c='red', label='Mean QCD')
-    ax.plot(np.arange(99)+1, np.nanquantile(losses[labels==tmp], 0.25, 0), alpha=0.5, c='blue')
-    ax.plot(np.arange(99)+1, np.nanquantile(losses[labels==tmp], 0.75, 0), alpha=0.5, c='blue')
-    ax.plot(np.arange(99)+1, np.nanmedian(losses[labels==tmp],0), c='blue', label='Median')
-
+    print(np.sum(np.isnan(losses)))
+    print(np.sum(losses==0))
 
     tmp=0
-    ax.plot(np.arange(99)+1, np.nanmean(losses[labels==tmp], 0), c='red', linestyle='--', label='Mean Top')
-    ax.plot(np.arange(99)+1, np.nanquantile(losses[labels==tmp], 0.25, 0), alpha=0.5, c='blue', linestyle='--')
-    ax.plot(np.arange(99)+1, np.nanquantile(losses[labels==tmp], 0.75, 0), alpha=0.5, c='blue', linestyle='--')
-    ax.plot(np.arange(99)+1, np.nanmedian(losses[labels==tmp],0), c='blue', linestyle='--',)
+    ax.plot(np.arange(nPos)+1, np.nanmean(losses[labels==tmp], 0), c='red', label='Mean QCD')
+    ax.plot(np.arange(nPos)+1, np.nanquantile(losses[labels==tmp], 0.25, 0), alpha=0.5, c='blue')
+    ax.plot(np.arange(nPos)+1, np.nanquantile(losses[labels==tmp], 0.75, 0), alpha=0.5, c='blue')
+    ax.plot(np.arange(nPos)+1, np.nanmedian(losses[labels==tmp],0), c='blue', label='Median')
+
+
+    tmp=1
+    ax.plot(np.arange(nPos)+1, np.nanmean(losses[labels==tmp], 0), c='red', linestyle='--', label='Mean Top')
+    ax.plot(np.arange(nPos)+1, np.nanquantile(losses[labels==tmp], 0.25, 0), alpha=0.5, c='blue', linestyle='--')
+    ax.plot(np.arange(nPos)+1, np.nanquantile(losses[labels==tmp], 0.75, 0), alpha=0.5, c='blue', linestyle='--')
+    ax.plot(np.arange(nPos)+1, np.nanmedian(losses[labels==tmp],0), c='blue', linestyle='--',)
 
     ax.set_xlim(0, 100)
-    ax.set_ylim(2.5, 9)
+    # ax.set_ylim(2.5, 9)
     ax.set_xlabel('Constituent position')
     ax.set_ylabel('Loss (crossentropy)')
     ax.legend(loc='upper right')
-    fig.savefig('figures/loss_pC_top_reverse_pTsorted.png')
+    fig.savefig('loss_pC_qcd_reverse_pTsorted.png')
     plt.show()
 
 
@@ -162,10 +171,10 @@ def plot_probs(dir):
     data = np.load(os.path.join('models', dir+'_qcd', f'predictions_{kind}.npz'))
     print(list(data.keys()))
     probs = data['probs']
-    
+
     labels = data['labels']
     nparts = data['nparts'].astype(int)
-    if 'reverse' in dir:
+    if ('reverse' in dir) or ('rev' in dir):
         print('reverting scores')
         for i in range(len(probs)):
             probs[i, :nparts[i]-1] = probs[i, :nparts[i]-1][::-1]
@@ -174,9 +183,9 @@ def plot_probs(dir):
     mean_probs = np.mean(probs, axis=0)
     for lab, prob in zip(['min', 'max', 'mean', 'median'], mean_probs.T):
         if lab in ['min', 'max']:
-            ax.plot(np.arange(100)+1, prob, label=lab)
+            ax.plot(np.arange(102)+1, prob, label=lab)
         if lab == 'mean':
-            ax.plot(np.arange(100)+1, prob, label='Random', linestyle='--', c='grey')
+            ax.plot(np.arange(102)+1, prob, label='Random', linestyle='--', c='grey')
     ax.legend()
     ax.set_yscale('log')
     ax.grid(which='both')
@@ -184,11 +193,60 @@ def plot_probs(dir):
     ax.set_xticks(np.arange(0, 101, 5), minor=True)
     ax.set_xlabel('Constituent position')
     ax.set_ylabel('Probability score')
-    fig.savefig('figures/prob_QCD.png')
+    fig.savefig('prob_qcd_SE.png')
+
+
+def plot_max_index(dir):
+    fig, ax = plt.subplots(constrained_layout=True)
+    kind = 'perp'
+    data = np.load(os.path.join('models', dir+'_top', f'predictions_{kind}.npz'))
+    print(list(data.keys()))
+    probs = data['probs_idx']
+    tmp = data['probs']
+
+    plt.hist(probs[:, :, 1].flatten(), histtype='step', bins=100)
+    # plt.hist(probs[:, i, 0], histtype='step', bins=100)
+
+    plt.yscale('log')
+    # colors = plt.cm.jet(np.linspace(0, 1, 9))
+    # x = 0
+    # for i in np.random.choice(len(probs), 9):
+    #     plt.plot(probs[i, :, 0], color=colors[x],)
+    #     plt.plot(probs[i, :, 1], color=colors[x], linestyle='--')
+    #     x += 1
+    plt.savefig('tmp.png')
+    exit()
+
+    labels = data['labels']
+    nparts = data['nparts'].astype(int)
+    if ('reverse' in dir) or ('rev' in dir):
+        print('reverting scores')
+        for i in range(len(probs)):
+            probs[i, :nparts[i]-1] = probs[i, :nparts[i]-1][::-1]
+
+    tmp=1
+    mean_probs = np.mean(probs, axis=0)
+    for lab, prob in zip(['min', 'max', 'mean', 'median'], mean_probs.T):
+        if lab in ['min', 'max']:
+            ax.plot(np.arange(102)+1, prob, label=lab)
+        if lab == 'mean':
+            ax.plot(np.arange(102)+1, prob, label='Random', linestyle='--', c='grey')
+    ax.legend()
+    ax.grid(which='both')
+    ax.set_xlim(0, 100)
+    ax.set_xticks(np.arange(0, 101, 5), minor=True)
+    ax.set_xlabel('Constituent position')
+    ax.set_ylabel('Probability score')
+    fig.savefig('idx.png')
+
 
 
 if __name__ == '__main__':
-    # plot_scores(dir=f'N600k_E100_nC100_nBin30_LRcos')
-    # plot_rocs()
-    # plot_loss_pC('N600k_E100_nC100_nBin30_LRcos_reverse')
-    plot_probs('N600k_E100_nC100_nBin30_LRcos')
+    dirname = 'N600k_E100_nC100_nBin30_startend_rev'
+    # dirname = 'N600k_E100_nC100_nBin30_LRcos_reverse'
+    # plot_scores(dirname)
+    # plot_rocs(dirname, sic=False)
+    # plot_rocs(dirname, sic=True)
+    # plot_loss_pC(dirname)
+    # plot_probs(dirname)
+    plot_max_index(dirname)
