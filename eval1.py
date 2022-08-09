@@ -55,6 +55,7 @@ if __name__ == '__main__':
     nparts = []
     losses = []
     stats = []
+    stats_idx = []
     for c in ['qcd', 'top',]:
         print(c)
         tmp_losses = []
@@ -89,8 +90,13 @@ if __name__ == '__main__':
                 with torch.cuda.amp.autocast():
                     logits = model(x, padding_mask)
                     probs = torch.nn.Softmax(dim=-1)(logits)
-                    prob_min = probs.min(-1).values.cpu().detach().numpy()
-                    prob_max = probs.max(-1).values.cpu().detach().numpy()
+                    tmp = probs.min(-1)
+                    prob_min = tmp.values.cpu().detach().numpy()
+                    prob_min_idx = tmp.indices.cpu().detach().numpy()
+
+                    tmp = probs.max(-1)
+                    prob_max = tmp.values.cpu().detach().numpy()
+                    prob_max_idx = tmp.indices.cpu().detach().numpy()
 
                     loss = model.loss_pC(logits, true_bin)
                     perplexity = model.probability(logits,
@@ -101,6 +107,7 @@ if __name__ == '__main__':
                         )
 
                     stats.append([prob_min, prob_max])
+                    stats_idx.append([prob_min_idx, prob_max_idx])
                     tmp_losses.append(loss.reshape(-1, 101).cpu().detach().numpy())
                     scores.append(perplexity.cpu().detach().numpy())
 
@@ -114,6 +121,7 @@ if __name__ == '__main__':
     scores = np.array(scores).flatten()
     losses = np.array(losses).reshape(-1, 101)
     probs = np.transpose(stats, (0, 2, 3, 1)).reshape(-1, 102, 2)
+    probs_idx = np.transpose(stats_idx, (0, 2, 3, 1)).reshape(-1, 102, 2)
     print(f'Loss {np.shape(losses)}')
     print(f'Label {np.shape(labels)}')
     print(f'Scores {np.shape(scores)}')
@@ -127,6 +135,7 @@ if __name__ == '__main__':
         nparts=nparts,
         losses=losses,
         probs=probs,
+        probs_idx=probs_idx,
         )
     auc = roc_auc_score(y_true=labels, y_score=scores)
     print(auc)
