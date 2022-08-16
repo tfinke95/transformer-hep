@@ -4,7 +4,8 @@ import torch
 
 
 def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
-                         to_tensor=True, reverse=False, start_end=True):
+                         to_tensor=True, reverse=False,
+                         start_end=False, limit_nconst=False):
     x = df.to_numpy(dtype=np.int64)[:num_events, :num_const*num_features]
     x = x.reshape(x.shape[0], -1, num_features)
 
@@ -17,6 +18,11 @@ def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
         x[x==np.max(num_bins)+10] = -1
 
     padding_mask = x[:, :, 0] != -1
+
+    if limit_nconst:
+        keepings = padding_mask.sum(-1) >= num_const
+        x = x[keepings]
+        padding_mask = padding_mask[keepings]
 
     num_prior_bins = np.cumprod((1,) + num_bins[:-1])
     bins = (x * num_prior_bins.reshape(1, 1, num_features)).sum(axis=2)
@@ -31,10 +37,10 @@ def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
                             x,
                             -np.ones((len(x), 1, num_features), dtype=int)),
                             axis=1)
+        padding_mask = x[:, :, 0] != -1
     else:
         bins[~padding_mask] = -100
 
-    padding_mask = x[:, :, 0] != -1
 
     if to_tensor:
         x = torch.tensor(x)

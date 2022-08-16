@@ -31,6 +31,7 @@ if __name__ == '__main__':
     parser.add_argument("--batch_size", type=int, default=200, help="Batch size")
     parser.add_argument("--bkg", type=str, default='qcd', choices=['qcd', 'top'])
     parser.add_argument("--reverse", action="store_true", help="Reverse the pt ordering")
+    parser.add_argument("--limit_const", action="store_true", help="Only use jets with at least num_const constituents")
     parser.add_argument("--kind", type=str, default='perp', choices=['perp', 'log'], help='Kind of anomaly score')
     args = parser.parse_args()
 
@@ -54,8 +55,10 @@ if __name__ == '__main__':
     labels = []
     nparts = []
     losses = []
-    stats = []
-    stats_idx = []
+    probs_min = []
+    probs_min_idx = []
+    probs_max = []
+    probs_max_idx = []
     for c in ['qcd', 'top',]:
         print(c)
         tmp_losses = []
@@ -67,8 +70,10 @@ if __name__ == '__main__':
             num_const=args.num_const,
             num_events=args.num_events,
             to_tensor=True,
-            reverse=args.reverse
+            reverse=args.reverse,
+            limit_nconst=args.limit_const
             )
+        labels.append(int(c!=args.bkg) * np.ones(len(x)))
 
         test_dataset = TensorDataset(x, padding_mask, bins)
         test_loader = DataLoader(
@@ -105,23 +110,34 @@ if __name__ == '__main__':
                         perplexity=perp,
                         logarithmic=log
                         )
-
-                    stats.append([prob_min, prob_max])
-                    stats_idx.append([prob_min_idx, prob_max_idx])
-                    tmp_losses.append(loss.reshape(-1, 101).cpu().detach().numpy())
+                    probs_min.append(prob_min)
+                    probs_max.append(prob_max)
+                    probs_min_idx.append(prob_min_idx)
+                    probs_max_idx.append(prob_max_idx)
+                    tmp_losses.append(loss.reshape(len(x), -1).cpu().detach().numpy())
                     scores.append(perplexity.cpu().detach().numpy())
 
-            labels.append(int(c!=args.bkg) * np.ones(len(x)))
 
-        tmp_losses = np.array(tmp_losses).reshape(-1, 101)
+        tmp_losses = np.concatenate(tmp_losses, axis=0)  # np.array(tmp_losses).reshape(len(labels[-1]), -1)
         tmp_losses[bins[:, 1:] == -100] = np.nan
         losses.append(tmp_losses,)
 
-    labels = np.array(labels).flatten()
-    scores = np.array(scores).flatten()
-    losses = np.array(losses).reshape(-1, 101)
-    probs = np.transpose(stats, (0, 2, 3, 1)).reshape(-1, 102, 2)
-    probs_idx = np.transpose(stats_idx, (0, 2, 3, 1)).reshape(-1, 102, 2)
+    labels = np.concatenate(labels, axis=0)
+    scores = np.concatenate(scores, axis=0)
+    losses = np.concatenate(losses, axis=0)
+    probs_min = np.concatenate(probs_min, axis=0)
+    probs_min_idx = np.concatenate(probs_min_idx, axis=0)
+    probs_max = np.concatenate(probs_max, axis=0)
+    probs_max_idx = np.concatenate(probs_max_idx, axis=0)
+
+    print(probs_min.shape)
+    print(probs_min_idx.shape)
+
+    probs = np.stack((probs_min, probs_max), axis=-1)
+    probs_idx = np.stack((probs_min_idx, probs_max), axis=-1)
+    print(probs.shape)
+    print(probs_idx.shape)
+
     print(f'Loss {np.shape(losses)}')
     print(f'Label {np.shape(labels)}')
     print(f'Scores {np.shape(scores)}')
@@ -129,7 +145,7 @@ if __name__ == '__main__':
 
     print(f'Nparts {nparts.shape}')
 
-    np.savez(os.path.join(args.model_dir+args.bkg, f'predictions_{args.kind}.npz'),
+    np.savez(os.path.join(args.model_dir+args.bkg, f'predictions_{args.kind}_fixed.npz'),
         labels=labels,
         scores=scores,
         nparts=nparts,
@@ -137,5 +153,5 @@ if __name__ == '__main__':
         probs=probs,
         probs_idx=probs_idx,
         )
-    auc = roc_auc_score(y_true=labels, y_score=scores)
+    auc = roc_auc_score(y_true=labels, y_score=-scores)
     print(auc)
