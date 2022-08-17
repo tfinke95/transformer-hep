@@ -8,6 +8,14 @@ def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
                          start_end=False, limit_nconst=False):
     x = df.to_numpy(dtype=np.int64)[:num_events, :num_const*num_features]
     x = x.reshape(x.shape[0], -1, num_features)
+    padding_mask = x[:, :, 0] != -1
+
+    if limit_nconst:
+        keepings = padding_mask.sum(-1) >= num_const
+        x = x[keepings]
+        padding_mask = padding_mask[keepings]
+        x = x[:90000]
+        padding_mask = padding_mask[:90000]
 
     if reverse:
         print('Reversing pt order')
@@ -17,12 +25,6 @@ def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
             x[i] = x[i, idx_sort[i]]
         x[x==np.max(num_bins)+10] = -1
 
-    padding_mask = x[:, :, 0] != -1
-
-    if limit_nconst:
-        keepings = padding_mask.sum(-1) >= num_const
-        x = x[keepings]
-        padding_mask = padding_mask[keepings]
 
     num_prior_bins = np.cumprod((1,) + num_bins[:-1])
     bins = (x * num_prior_bins.reshape(1, 1, num_features)).sum(axis=2)

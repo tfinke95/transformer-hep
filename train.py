@@ -77,6 +77,7 @@ if __name__ == '__main__':
     parser.add_argument("--num_workers", type=int, default=4, help="Number of workers")
 
     parser.add_argument("--num_const", type=int, default=100, help="Number of constituents")
+    parser.add_argument("--limit_const", action="store_true", help="Only use jets with at least num_const constituents")
     parser.add_argument("--num_events", type=int, default=10000, help="Number of events for training")
     parser.add_argument("--num_bins", type=int, nargs=3, default=[41, 31, 31], help="Number of bins per feature")
     parser.add_argument("--contin", action='store_true', help="Whether to continue training")
@@ -114,7 +115,8 @@ if __name__ == '__main__':
                                 to_tensor=True,
                                 num_const=args.num_const,
                                 num_events=args.num_events,
-                                reverse=args.reverse)
+                                reverse=args.reverse,
+                                limit_nconst=args.limit_const)
 
     train_dataset = TensorDataset(x, padding_mask, bins)
     train_loader = DataLoader(
@@ -131,7 +133,8 @@ if __name__ == '__main__':
                                 to_tensor=True,
                                 num_const=args.num_const,
                                 num_events=10000,
-                                reverse=args.reverse)
+                                reverse=args.reverse,
+                                limit_nconst=args.limit_const)
 
     val_dataset = TensorDataset(x, padding_mask, bins)
     val_loader = DataLoader(
