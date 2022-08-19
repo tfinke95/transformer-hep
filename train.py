@@ -66,7 +66,7 @@ def load_model(name):
     return model
 
 
-if __name__ == '__main__':
+def parse_input():
     parser = ArgumentParser()
     parser.add_argument("--model_dir", type=str, default='models/test', help="Model directory")
     parser.add_argument("--data_path", type=str, default='/hpcwork/bn227573/top_benchmark/train_qcd_30_bins.h5', help="Path to training data file")
@@ -96,8 +96,47 @@ if __name__ == '__main__':
     parser.add_argument("--dropout", type=float, default=0.1, help="dropout rate")
     parser.add_argument("--output", type=str, default='linear', choices=['linear', 'embprod'], help="Output function")
     args = parser.parse_args()
-    torch.manual_seed(args.seed)
-    np.random.seed(args.seed)
+    return args
+
+
+def save_arguments(args):
+    if not os.path.isdir(args.model_dir): os.makedirs(args.model_dir)
+    with open(os.path.join(args.model_dir, 'arguments.txt'), 'w') as f:
+        arg_dict= vars(args)
+        for k,v in arg_dict.items():
+            f.write(f'{k:20s} {v}\n')
+
+
+def set_seeds(seed):
+    torch.manual_seed(seed)
+    np.random.seed(seed)
+
+
+def load_data(path, n_events):
+    df = pd.read_hdf(path, 'discretized', stop=n_events)
+    x, padding_mask, bins = preprocess_dataframe(df, num_features=num_features,
+                                num_bins=num_bins,
+                                to_tensor=True,
+                                num_const=args.num_const,
+                                reverse=args.reverse,
+                                limit_nconst=args.limit_const)
+
+    train_dataset = TensorDataset(x, padding_mask, bins)
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=args.batch_size,
+        num_workers=args.num_workers,
+        shuffle=True,
+    )
+    print(x.shape)
+    return train_loader
+
+
+if __name__ == '__main__':
+    args = parse_input()
+    save_arguments(args)
+
+    set_seeds(args.seed)
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print(f"Running on device: {device}")
@@ -109,41 +148,12 @@ if __name__ == '__main__':
     print(f"{'Not' if not args.reverse else ''} reversing pt order")
 
     # load and preprocess data
-    df = pd.read_hdf(args.data_path, 'discretized')
-    x, padding_mask, bins = preprocess_dataframe(df, num_features=num_features,
-                                num_bins=num_bins,
-                                to_tensor=True,
-                                num_const=args.num_const,
-                                num_events=args.num_events,
-                                reverse=args.reverse,
-                                limit_nconst=args.limit_const)
+    print(f"Loading training set")
+    train_loader = load_data(args.data_path, args.num_events)
 
-    train_dataset = TensorDataset(x, padding_mask, bins)
-    train_loader = DataLoader(
-        train_dataset,
-        batch_size=args.batch_size,
-        num_workers=args.num_workers,
-        shuffle=True,
-    )
-    print(f"Test set shape: {x.shape}")
-
-    df = pd.read_hdf(args.data_path.replace('train', 'test'), 'discretized')
-    x, padding_mask, bins = preprocess_dataframe(df, num_features=num_features,
-                                num_bins=num_bins,
-                                to_tensor=True,
-                                num_const=args.num_const,
-                                num_events=10000,
-                                reverse=args.reverse,
-                                limit_nconst=args.limit_const)
-
-    val_dataset = TensorDataset(x, padding_mask, bins)
-    val_loader = DataLoader(
-        val_dataset,
-        batch_size=args.batch_size,
-        num_workers=args.num_workers,
-        shuffle=False,
-    )
-    print(f"Val set shape: {x.shape}")
+    print("Loading validation set")
+    val_loader = load_data(args.data_path.replace('train', 'test'),
+                            10000)
 
     # construct model
     if args.contin:

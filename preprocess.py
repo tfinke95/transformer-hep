@@ -3,10 +3,10 @@ import numpy as np
 import torch
 
 
-def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
+def preprocess_dataframe(df, num_features, num_bins, num_const,
                          to_tensor=True, reverse=False,
                          start_end=False, limit_nconst=False):
-    x = df.to_numpy(dtype=np.int64)[:num_events, :num_const*num_features]
+    x = df.to_numpy(dtype=np.int64)[:, :num_const*num_features]
     x = x.reshape(x.shape[0], -1, num_features)
     padding_mask = x[:, :, 0] != -1
 
@@ -14,8 +14,6 @@ def preprocess_dataframe(df, num_features, num_bins, num_const, num_events,
         keepings = padding_mask.sum(-1) >= num_const
         x = x[keepings]
         padding_mask = padding_mask[keepings]
-        x = x[:90000]
-        padding_mask = padding_mask[:90000]
 
     if reverse:
         print('Reversing pt order')
