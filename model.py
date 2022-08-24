@@ -31,7 +31,6 @@ class EmbeddingProductHead(Module):
 
 
 class JetTransformer(Module):
-
     def __init__(self,
                 hidden_dim=256,
                 num_layers=10,
@@ -39,11 +38,13 @@ class JetTransformer(Module):
                 num_features=3,
                 num_bins=(41, 41, 41),
                 dropout=0.1,
-                output='linear'):
+                output='linear',
+                classifier=False):
         super(JetTransformer, self).__init__()
         self.num_features = num_features
         self.dropout = dropout
-        self.total_bins = int(np.prod(num_bins)) + 2
+        self.total_bins = int(np.prod(num_bins))
+        self.classifier = classifier
         print(f'Bins: {self.total_bins}')
 
         # learn embedding for each bin of each feature dim
@@ -70,11 +71,16 @@ class JetTransformer(Module):
         self.dropout = Dropout(dropout)
 
         # output projection and loss criterion
-        if output == 'linear':
-            self.out_proj = Linear(hidden_dim, self.total_bins)
+        if classifier:
+            self.flat = torch.nn.Flatten()
+            self.out = Linear(hidden_dim*20, 1)
+            self.criterion = torch.nn.functional.binary_cross_entropy_with_logits
         else:
-            self.out_proj = EmbeddingProductHead(hidden_dim, num_features, num_bins)
-        self.criterion = CrossEntropyLoss()
+            if output == 'linear':
+                self.out_proj = Linear(hidden_dim, self.total_bins)
+            else:
+                self.out_proj = EmbeddingProductHead(hidden_dim, num_features, num_bins)
+            self.criterion = CrossEntropyLoss()
 
     def forward(self, x, padding_mask):
 
@@ -97,15 +103,21 @@ class JetTransformer(Module):
         emb = self.dropout(emb)
 
         # project final embedding to logits (not normalized with softmax)
-        logits = self.out_proj(emb)
-        return logits
+        if self.classifier:
+            emb = self.flat(emb)
+            out = self.out(emb)
+            return out
+        else:
+            logits = self.out_proj(emb)
+            return logits
 
     def loss(self, logits, true_bin):
-        # ignore final logits
-        logits = logits[:, :-1].reshape(-1, self.total_bins)
+        if not self.classifier:
+            # ignore final logits
+            logits = logits[:, :-1].reshape(-1, self.total_bins)
 
-        # shift target bins to right
-        true_bin = true_bin[:, 1:].flatten()
+            # shift target bins to right
+            true_bin = true_bin[:, 1:].flatten()
 
         loss = self.criterion(logits, true_bin)
         return loss
