@@ -63,12 +63,11 @@ if __name__ == '__main__':
         print(c)
         tmp_losses = []
         data_path = os.path.join(args.data_path, f'test_{c}_30_bins.h5')
-        df = pd.read_hdf(data_path, 'discretized')
+        df = pd.read_hdf(data_path, 'discretized', stop=args.num_events)
         x, padding_mask, bins = preprocess_dataframe(df,
             num_features=num_features,
             num_bins=num_bins,
             num_const=args.num_const,
-            num_events=args.num_events,
             to_tensor=True,
             reverse=args.reverse,
             limit_nconst=args.limit_const
@@ -86,7 +85,7 @@ if __name__ == '__main__':
                 total=len(test_loader),
                 desc=f'Evaluating {data_path}'
                 ):
-            nparts = np.append(nparts, padding_mask.sum(-1))
+            nparts.append(padding_mask.sum(-1))
             x = x.to(device)
             padding_mask = padding_mask.to(device)
             true_bin = true_bin.to(device)
@@ -118,7 +117,7 @@ if __name__ == '__main__':
                     scores.append(perplexity.cpu().detach().numpy())
 
 
-        tmp_losses = np.concatenate(tmp_losses, axis=0)  # np.array(tmp_losses).reshape(len(labels[-1]), -1)
+        tmp_losses = np.concatenate(tmp_losses, axis=0)
         tmp_losses[bins[:, 1:] == -100] = np.nan
         losses.append(tmp_losses,)
 
@@ -143,9 +142,9 @@ if __name__ == '__main__':
     print(f'Scores {np.shape(scores)}')
     print(f'Stats {np.shape(probs)}')
 
-    print(f'Nparts {nparts.shape}')
+    print(f'Nparts {np.shape(nparts)}')
 
-    np.savez(os.path.join(args.model_dir+args.bkg, f'predictions_{args.kind}_fixed.npz'),
+    np.savez(os.path.join(args.model_dir+args.bkg, f"predictions_{args.kind}{'_fixed' if args.limit_const else ''}.npz"),
         labels=labels,
         scores=scores,
         nparts=nparts,
