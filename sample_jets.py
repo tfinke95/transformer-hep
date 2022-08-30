@@ -3,13 +3,14 @@ import numpy as np
 from tqdm import tqdm
 import time
 import pandas as pd
+from argparse import ArgumentParser
 
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 def idx_to_bins(x):
     pT = x % 41
-    eta = (x - pT) / 41 % (1271 / 41)
-    phi = (x - pT - 41 * eta) / 1271
+    eta = (x - pT) // 41 % (1271 // 41)
+    phi = (x - pT - 41 * eta) // 1271
     return pT, eta, phi
 
 
@@ -17,21 +18,32 @@ def set_seeds(seed):
     torch.manual_seed(seed)
     np.random.seed(seed)
 
-set_seeds(0)
+parser = ArgumentParser()
+parser.add_argument("--model_dir", type=str, default='models/test')
+parser.add_argument("--data_path", type=str, default='/home/thorben/Data/jet_datasets/top_benchmark/v0/test_top_30_bins.h5')
+parser.add_argument("--num_samples", type=int, default=1000)
+parser.add_argument("--seed", type=int, default=0)
+
+
+args = parser.parse_args()
+
+set_seeds(args.seed)
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # Load model for sampling
-model = torch.load('models/20_fixed/20_fixed_top/model_last.pt')
-model.to('cuda')
+model = torch.load(args.model_dir)
+model.to(device)
 
 # Load initial particles for starting point
-df = pd.read_hdf('/home/thorben/Data/jet_datasets/top_benchmark/v0/test_top_30_bins.h5', 'discretized', stop=100000)
+df = pd.read_hdf(args.data_path, 'discretized', stop=100000)
 x = df.to_numpy(dtype=np.int64)[:, :3]
 x = x.reshape(x.shape[0], -1, 3)
 x = torch.tensor(x, dtype=torch.long,)
 
 
 start = time.time()
-njets = 1000
+njets = args.num_samples
 jets = -torch.empty((njets, 20, 3), dtype=torch.long)
 softmax = torch.nn.Softmax(dim=-1)
 
@@ -55,7 +67,9 @@ with torch.no_grad():
             # Sample the bin by checking the cumsum to be larger than random value
             preds_cum = torch.cumsum(preds[0, particle], dim=-1)
             idx = torch.searchsorted(preds_cum, rand,)
-            for ind, tmp_bin in enumerate(idx_to_bins(idx)):
+            bins = idx_to_bins(idx)
+
+            for ind, tmp_bin in enumerate(bins):
                 current_jet[0, particle+1, ind] = tmp_bin
 
             # Update padding
@@ -64,5 +78,5 @@ with torch.no_grad():
 
         jets[jet_idx] = current_jet[0]
 
-np.save('sampled_top.npy', jets)
+np.save('sampled_qcd.npy', jets)
 print(int(time.time() - start))
