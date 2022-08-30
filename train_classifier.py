@@ -182,6 +182,7 @@ if __name__ == '__main__':
     global_step = args.global_step
     loss_list = []
     perplexity_list = []
+    min_val_loss = np.inf
     for epoch in range(args.num_epochs):
         model.train()
 
@@ -223,6 +224,10 @@ if __name__ == '__main__':
                 loss = model.loss(logits, label.view(-1, 1))
                 val_loss.append(loss.cpu().detach().numpy())
 
+            val_loss = np.mean(val_loss)
+            if val_loss < min_val_loss:
+                min_val_loss = val_loss
+                save_model('best')
             logger.add_scalar('Val/Loss', np.mean(val_loss), global_step)
 
         save_model('last')
