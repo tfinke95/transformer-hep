@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import torch
+from tqdm import tqdm
 
 
 def preprocess_dataframe(df, num_features, num_bins, num_const,
@@ -47,3 +48,76 @@ def preprocess_dataframe(df, num_features, num_bins, num_const,
         padding_mask = torch.tensor(padding_mask)
         bins = torch.tensor(bins)
     return x, padding_mask, bins
+
+
+def imagePreprocessing(jets, filename=None):
+    def center():
+        mean_eta = np.average(constituents[:, 1], weights=constituents[:, 0])
+        mean_phi = np.average(constituents[:, 2], weights=constituents[:, 0])
+
+        constituents[:, 2] -= mean_phi
+        constituents[:, 1] -= mean_eta
+
+
+    def rotate():
+        # Calculate the major axis
+        eta_coords = (constituents[:, 1]- 15) * constituents[:, 0]
+        phi_coords = (constituents[:, 2]- 15) * constituents[:, 0]
+        coords = np.vstack([eta_coords, phi_coords])
+        cov = np.cov(coords)
+        evals, evecs = np.linalg.eig(cov)
+        sorted_indices = np.argsort(evals)[::-1]
+        major_axis = evecs[:, sorted_indices[0]]
+
+        # Rotate major axis to have 0 phi
+        theta = np.arctan(major_axis[0] / major_axis[1])
+        c, s = np.cos(theta), np.sin(theta)
+        rotation = np.array([[c, s], [-s, c]])
+        constituents[:, 1:3] = np.matmul(constituents[:,1:3], rotation)
+
+
+    def flip():
+        quad1 = 0
+        quad2 = 0
+        quad3 = 0
+        quad4 = 0
+
+        for i in range(len(constituents)):
+            if constituents[i, 1] > 0:
+                if constituents[i, 2] > 0:
+                    quad1 += constituents[i, 0]
+                else:
+                    quad2 += constituents[i, 0]
+            else:
+                if constituents[i, 2] > 0:
+                    quad3 += constituents[i, 0]
+                else:
+                    quad4 += constituents[i, 0]
+
+        quad = np.argmax([quad1, quad2, quad3, quad4])
+
+        if quad == 1:
+            constituents[:, 2] *= -1
+        elif quad == 2:
+            constituents[:, 1] *= -1
+        elif quad == 3:
+            constituents[:, 1] *= -1
+            constituents[:, 2] *= -1
+
+
+    print('Started advancedPreProcess')
+    # Loop over all jets
+    for i in tqdm(range(np.shape(jets)[0])):
+        constituents = jets[i]
+
+        center()
+        rotate()
+        flip()
+
+        # Normalise pT of the jet to 1
+        constituents[:, 0] /= np.sum(constituents[:, 0])
+        jets[i] = constituents
+
+    print(f'Exiting advancedPreProcess, shape: {np.shape(jets)}')
+
+    return jets

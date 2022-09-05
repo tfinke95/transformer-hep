@@ -103,7 +103,7 @@ class JetTransformer(Module):
         emb = self.dropout(emb)
 
         # project final embedding to logits (not normalized with softmax)
-        if self.classifier:
+        if False:  #self.classifier:
             emb = self.flat(emb)
             out = self.out(emb)
             return out
@@ -112,7 +112,7 @@ class JetTransformer(Module):
             return logits
 
     def loss(self, logits, true_bin):
-        if not self.classifier:
+        if True:  #not self.classifier:
             # ignore final logits
             logits = logits[:, :-1].reshape(-1, self.total_bins)
 
@@ -155,3 +155,40 @@ class JetTransformer(Module):
         else:
             probs = probs.prod(dim=1)
         return probs
+
+
+class CNNclass(Module):
+    def __init__(self,):
+        super().__init__()
+        self.model = torch.nn.Sequential(
+            #Input = 1 x 30 x 30, Output = 32 x 30 x 30
+            torch.nn.Conv2d(in_channels = 1, out_channels = 32, kernel_size = 3, padding = 1), 
+            torch.nn.PReLU(),
+            #Input = 32 x 30 x 30, Output = 32 x 15 x 15
+            torch.nn.MaxPool2d(kernel_size=2),
+  
+            #Input = 32 x 15 x 15, Output = 64 x 15 x 15
+            torch.nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size = 3, padding = 1),
+            torch.nn.PReLU(),
+            #Input = 64 x 15 x 15, Output = 64 x 7 x 7
+            torch.nn.MaxPool2d(kernel_size=2),
+              
+            #Input = 64 x 7 x 7, Output = 64 x 7 x 7
+            torch.nn.Conv2d(in_channels = 64, out_channels = 64, kernel_size = 3, padding = 1),
+            torch.nn.PReLU(),
+            #Input = 64 x 7 x 7, Output = 64 x 3 x 3
+            torch.nn.MaxPool2d(kernel_size=2),
+  
+            torch.nn.Flatten(),
+            torch.nn.Linear(64*3*3, 512),
+            torch.nn.PReLU(),
+            torch.nn.Linear(512, 1)
+        )
+
+
+    def forward(self, x):
+        return self.model(x)
+
+    def loss(self, x, y):
+        return torch.nn.functional.binary_cross_entropy_with_logits(x, y)
+
