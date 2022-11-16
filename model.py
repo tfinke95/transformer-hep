@@ -156,29 +156,71 @@ class JetTransformer(Module):
             probs = probs.prod(dim=1)
         return probs
 
+    def sample(self, starts):
+        jets = -torch.empty((len(starts), 20, 3), dtype=torch.long, device='cuda')
+        true_bins = torch.zeros((len(starts), 20), dtype=torch.long, device='cuda')
+        self.eval()
+        with torch.no_grad():
+            for jet_idx in range(len(starts)):
+                # Set first particle to one of the true jets
+                current_jet = - torch.ones((1, 20, 3), dtype=torch.long, device='cuda')
+                current_jet[:, 0] = starts[jet_idx]
+
+                # Set padding to ignore all particles not generated yet
+                padding_mask = current_jet[:, :, 0] != -1
+                padding_mask.to('cuda')
+
+                for particle in range(19):
+                    # Get probability predictions
+                    preds = self.forward(current_jet, padding_mask)
+                    preds = torch.nn.functional.softmax(preds[:, :-1], dim=-1)
+                    rand = torch.rand((1,), device='cuda')
+
+                    # Sample the bin by checking the cumsum to be larger than random value
+                    preds_cum = torch.cumsum(preds[0, particle], dim=-1)
+                    idx = torch.searchsorted(preds_cum, rand,)
+                    true_bins[jet_idx, particle+1] = idx
+                    bins = self.idx_to_bins(idx)
+
+                    for ind, tmp_bin in enumerate(bins):
+                        current_jet[0, particle+1, ind] = tmp_bin
+
+                    # Update padding
+                    padding_mask = current_jet[:, :, 0] != -1
+
+
+                jets[jet_idx] = current_jet[0]
+        return jets, true_bins
+
+    def idx_to_bins(self, x):
+        pT = x % 41
+        eta = torch.div((x - pT), 41, rounding_mode='trunc') % torch.div(1271, 41, rounding_mode='trunc')
+        phi = torch.div((x - pT - 41 * eta), 1271, rounding_mode='trunc')
+        return pT, eta, phi
+
 
 class CNNclass(Module):
     def __init__(self,):
         super().__init__()
         self.model = torch.nn.Sequential(
             #Input = 1 x 30 x 30, Output = 32 x 30 x 30
-            torch.nn.Conv2d(in_channels = 1, out_channels = 32, kernel_size = 3, padding = 1), 
+            torch.nn.Conv2d(in_channels = 1, out_channels = 32, kernel_size = 3, padding = 1),
             torch.nn.PReLU(),
             #Input = 32 x 30 x 30, Output = 32 x 15 x 15
             torch.nn.MaxPool2d(kernel_size=2),
-  
+
             #Input = 32 x 15 x 15, Output = 64 x 15 x 15
             torch.nn.Conv2d(in_channels = 32, out_channels = 64, kernel_size = 3, padding = 1),
             torch.nn.PReLU(),
             #Input = 64 x 15 x 15, Output = 64 x 7 x 7
             torch.nn.MaxPool2d(kernel_size=2),
-              
+
             #Input = 64 x 7 x 7, Output = 64 x 7 x 7
             torch.nn.Conv2d(in_channels = 64, out_channels = 64, kernel_size = 3, padding = 1),
             torch.nn.PReLU(),
             #Input = 64 x 7 x 7, Output = 64 x 3 x 3
             torch.nn.MaxPool2d(kernel_size=2),
-  
+
             torch.nn.Flatten(),
             torch.nn.Linear(64*3*3, 512),
             torch.nn.PReLU(),
