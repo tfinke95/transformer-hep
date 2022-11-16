@@ -1,6 +1,15 @@
+# Folder
 models*
+figures*
+samples/*
+sample_tests*
+
 __pycache__*
 jobscript*
-figures*
 *.npy
+*.npz
 *.ipynb
+*.pt
+*.png
+*.pdf
+
