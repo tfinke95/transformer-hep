@@ -90,7 +90,7 @@ def plot_scores(dir):
 
 def plot_rocs(dir, sic=False):
     fig, ax = plt.subplots(constrained_layout=True)
-    score_kinds = ['perp']
+    score_kinds = ['perp_fixed']
     for score_kind in score_kinds:
         data = np.load(f'models/{dir}_qcd/predictions_{score_kind}.npz')
         scores = data['scores']
@@ -119,12 +119,13 @@ def plot_rocs(dir, sic=False):
 
     ax.grid(which='both')
     ax.legend()
-    ax.set_yscale('log')
-    ax.set_ylim(0.9, 1e3)
-    ax.set_title(f'100 constituents, 30 bins')
+    if not sic:
+        ax.set_yscale('log')
+        ax.set_ylim(0.9, 1e3)
+    ax.set_title(f'20 constituents (all)')
     ax.set_xlabel(r'$\epsilon_S$')
     ax.set_ylabel(r'1 / $\epsilon_B$')
-    fig.savefig(f'{"sic" if sic else "roc"}s_startend.png')
+    fig.savefig(f'{"sic" if sic else "roc"}s_fixed_nConst_train.png')
 
 
 def plot_loss_pC(dir):
@@ -202,9 +203,10 @@ def plot_max_index(dir):
     data = np.load(os.path.join('models', dir+'_top', f'predictions_{kind}.npz'))
     print(list(data.keys()))
     probs = data['probs_idx']
+    print(probs.shape)
     tmp = data['probs']
 
-    plt.hist(probs[:, :, 1].flatten(), histtype='step', bins=100)
+    plt.hist(probs[:, :, 1].flatten(), histtype='step', bins=30000)
     # plt.hist(probs[:, i, 0], histtype='step', bins=100)
 
     plt.yscale('log')
@@ -242,11 +244,11 @@ def plot_max_index(dir):
 
 
 if __name__ == '__main__':
-    dirname = 'N600k_E100_nC100_nBin30_startend_rev'
+    dirname = '1part/20fixed'
     # dirname = 'N600k_E100_nC100_nBin30_LRcos_reverse'
     # plot_scores(dirname)
-    # plot_rocs(dirname, sic=False)
-    # plot_rocs(dirname, sic=True)
+    plot_rocs(dirname, sic=False)
+    plot_rocs(dirname, sic=True)
     # plot_loss_pC(dirname)
     # plot_probs(dirname)
-    plot_max_index(dirname)
+    # plot_max_index(dirname)
