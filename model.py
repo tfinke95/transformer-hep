@@ -124,7 +124,7 @@ class JetTransformer(Module):
             return out
         else:
             logits = self.out_proj(emb)
-            return logits
+            return 13 * torch.tanh(0.1 * logits)
 
     def loss(self, logits, true_bin):
         if not self.classifier:
@@ -173,69 +173,47 @@ class JetTransformer(Module):
             probs = probs.prod(dim=1)
         return probs
 
-    def sample(self, starts):
-        # TODO Speed this up
-        jets = -torch.ones((len(starts), 20, 3), dtype=torch.long, device="cuda")
-        true_bins = torch.zeros((len(starts), 20), dtype=torch.long, device="cuda")
+    def sample(self, starts, device):
+        def select_idx():
+            # Select bin at random according to probabilities
+            rand = torch.rand((len(jets), 1), device=device)
+            preds_cum = torch.cumsum(preds, -1)
+            idx = torch.searchsorted(preds_cum, rand).squeeze()
+            return idx
 
+        jets = -torch.ones((len(starts), 20, 3), dtype=torch.long, device=device)
+        true_bins = torch.zeros((len(starts), 20), dtype=torch.long, device=device)
+
+        # Set start bins and constituents
+        num_prior_bins = torch.cumprod(torch.tensor([1, 41, 31]), -1).to(device)
+        bins = (starts * num_prior_bins.reshape(1, 1, 3)).sum(axis=2)
+        true_bins[:, 0] = bins
         jets[:, 0] = starts
         padding_mask = jets[:, :, 0] != -1
+
         self.eval()
         with torch.no_grad():
             for particle in range(19):
+                # Get probabilities for the next particles
                 preds = self.forward(jets, padding_mask)[:, particle]
                 preds = torch.nn.functional.softmax(preds[:, :-1], dim=-1)
-                rand = torch.rand((len(jets), 1), device="cuda")
-                preds_cum = torch.cumsum(preds, -1)
-                preds_cum[:, -1] = 1.0
 
-                idx = torch.searchsorted(preds_cum, rand).squeeze()
+                # Remove low probs
+                # preds = torch.where(preds < 1e-7, 0, preds)
+                preds = preds / torch.sum(preds, -1, keepdim=True)
+
+                idx = select_idx()
+                while torch.any(idx > 41 * 31 * 31):
+                    idx = select_idx()
+                    print("large idx")
+
+                # Get tuple from found bin and set next particle properties
                 true_bins[:, particle + 1] = idx
                 bins = self.idx_to_bins(idx)
-
                 for ind, tmp_bin in enumerate(bins):
                     jets[:, particle + 1, ind] = tmp_bin
 
                 padding_mask[:, particle + 1] = True
-
-            """
-            jets = -torch.ones((len(starts), 20, 3), dtype=torch.long, device="cuda")
-            true_bins = torch.zeros((len(starts), 20), dtype=torch.long, device="cuda")
-            self.eval()
-            with torch.no_grad():
-
-                for jet_idx in range(len(starts)):
-                    # Set first particle to one of the true jets
-                    current_jet = -torch.ones((1, 20, 3), dtype=torch.long, device="cuda")
-                    current_jet[:, 0] = starts[jet_idx]
-
-                    # Set padding to ignore all particles not generated yet
-                    padding_mask = current_jet[:, :, 0] != -1
-                    padding_mask.to("cuda")
-
-                    for particle in range(19):
-                        # Get probability predictions
-                        preds = self.forward(current_jet, padding_mask)
-                        preds = torch.nn.functional.softmax(preds[:, :-1], dim=-1)
-                        rand = torch.rand((1,), device="cuda")
-
-                        # Sample the bin by checking the cumsum to be larger than random value
-                        preds_cum = torch.cumsum(preds[0, particle], dim=-1)
-                        idx = torch.searchsorted(
-                            preds_cum,
-                            rand,
-                        )
-                        true_bins[jet_idx, particle + 1] = idx
-                        bins = self.idx_to_bins(idx)
-
-                        for ind, tmp_bin in enumerate(bins):
-                            current_jet[0, particle + 1, ind] = tmp_bin
-
-                        # Update padding
-                        padding_mask = current_jet[:, :, 0] != -1
-
-                    jets[jet_idx] = current_jet[0]
-            """
         return jets, true_bins
 
     def idx_to_bins(self, x):

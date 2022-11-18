@@ -34,7 +34,7 @@ def get_cos_scheduler():
         opt,
         # T_0=len(train_loader)//5,
         T_0=len(train_loader) * args.num_epochs + 1,
-        eta_min=1e-6,
+        eta_min=1e-7,
     )
     return scheduler
 
@@ -84,6 +84,12 @@ def parse_input():
         default="/hpcwork/bn227573/top_benchmark/train_qcd_30_bins.h5",
         help="Path to training data file",
     )
+    parser.add_argument(
+        "--sample_file",
+        type=str,
+        default=None,
+        help="Path to file for sampling. If none given, sample from model",
+    )
 
     parser.add_argument(
         "--seed", type=int, default=0, help="the random seed for torch and numpy"
@@ -116,9 +122,6 @@ def parse_input():
         nargs=3,
         default=[41, 31, 31],
         help="Number of bins per feature",
-    )
-    parser.add_argument(
-        "--contin", action="store_true", help="Whether to continue training"
     )
     parser.add_argument(
         "--global_step", type=int, default=0, help="Starting point of step counter"
@@ -220,8 +223,9 @@ if __name__ == "__main__":
     print(f"Loading training set")
     train_loader = load_data(args.data_path, args.num_events)
 
-    # TODO: Include flag to change samples and top as negatives
-    # train_loader2 = load_data(args.data_path.replace("qcd", "top"), args.num_events)
+    if not args.sample_file is None:
+        print(f"Using samples from {args.sample_file}")
+        train_loader2 = load_data(args.sample_file, args.num_events)
 
     print("Loading validation set")
     val_loader = load_data(args.data_path.replace("train", "test"), 10000)
@@ -244,8 +248,8 @@ if __name__ == "__main__":
     perplexity_list = []
     for epoch in range(args.num_epochs):
         model.train()
-        # TODO see todo above
-        # train_loader2_it = iter(train_loader2)
+        if not args.sample_file is None:
+            train_loader2_it = iter(train_loader2)
 
         for x, padding_mask, true_bin in tqdm(
             train_loader, total=len(train_loader), desc=f"Training Epoch {epoch + 1}"
@@ -266,13 +270,14 @@ if __name__ == "__main__":
                         perplexity=True,
                         logarithmic=False,
                     )
-                    model.eval()
-                    negatives, neg_bins = model.sample(x[:, 0])
-                    neg_padding = torch.ones_like(padding_mask) == 1
-                model.train()
 
-                # TODO see above
-                # negatives, neg_padding, neg_bins = next(train_loader2_it)
+                if not args.sample_file is None:
+                    negatives, neg_padding, neg_bins = next(train_loader2_it)
+                else:
+                    model.eval()
+                    negatives, neg_bins = model.sample(x[:, 0], device)
+                    neg_padding = torch.ones_like(padding_mask) == 1
+                    model.train()
 
                 negatives = negatives.to(device)
                 neg_padding = neg_padding.to(device)
@@ -281,7 +286,7 @@ if __name__ == "__main__":
                 loss2 = model.loss(logits, neg_bins)
                 loss = loss1 - loss2
 
-            # assert not torch.any(torch.isnan(loss)), "Loss became none"
+            assert not torch.any(torch.isnan(loss)), "Loss became none"
 
             scaler.scale(loss).backward()
             scaler.step(opt)
