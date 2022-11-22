@@ -196,14 +196,14 @@ class JetTransformer(Module):
             for particle in range(19):
                 # Get probabilities for the next particles
                 preds = self.forward(jets, padding_mask)[:, particle]
-                preds = torch.nn.functional.softmax(preds[:, :-1], dim=-1)
+                preds = torch.nn.functional.softmax(preds[:, :-2], dim=-1)
 
                 # Remove low probs
                 # preds = torch.where(preds < 1e-7, 0, preds)
                 preds = preds / torch.sum(preds, -1, keepdim=True)
 
                 idx = select_idx()
-                while torch.any(idx > 41 * 31 * 31):
+                while torch.any(idx >= 41 * 31 * 31):
                     idx = select_idx()
                     print("large idx")
 
