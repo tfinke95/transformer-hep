@@ -2,8 +2,11 @@
 models*
 figures*
 samples/*
+samples_cluster/*
 sample_tests*
+*egg-inf*
 
+__init__.py
 __pycache__*
 jobscript*
 *.npy
