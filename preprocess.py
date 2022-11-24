@@ -4,10 +4,17 @@ import torch
 from tqdm import tqdm
 
 
-def preprocess_dataframe(df, num_features, num_bins, num_const,
-                         to_tensor=True, reverse=False,
-                         start_end=False, limit_nconst=False):
-    x = df.to_numpy(dtype=np.int64)[:, :num_const*num_features]
+def preprocess_dataframe(
+    df,
+    num_features,
+    num_bins,
+    num_const,
+    to_tensor=True,
+    reverse=False,
+    start=False,
+    limit_nconst=False,
+):
+    x = df.to_numpy(dtype=np.int64)[:, : num_const * num_features]
     x = x.reshape(x.shape[0], -1, num_features)
     padding_mask = x[:, :, 0] != -1
 
@@ -17,31 +24,31 @@ def preprocess_dataframe(df, num_features, num_bins, num_const,
         padding_mask = padding_mask[keepings]
 
     if reverse:
-        print('Reversing pt order')
-        x[x==-1] = np.max(num_bins) + 10
+        print("Reversing pt order")
+        x[x == -1] = np.max(num_bins) + 10
         idx_sort = np.argsort(x[:, :, 0], axis=-1)
         for i in range(len(x)):
             x[i] = x[i, idx_sort[i]]
-        x[x==np.max(num_bins)+10] = -1
-
+        x[x == np.max(num_bins) + 10] = -1
 
     num_prior_bins = np.cumprod((1,) + num_bins[:-1])
     bins = (x * num_prior_bins.reshape(1, 1, num_features)).sum(axis=2)
 
-    if start_end:
-        print('Adding start and end tokens')
-        bins[~padding_mask] = 39401
-        bins = np.append(bins, np.ones((len(bins), 1), dtype=int) * 39401, axis=1,)
-        bins = np.concatenate((np.ones((len(bins), 1), dtype=int) * 39402, bins), axis=1)
+    if start:
+        print("Adding start particles")
+        bins = np.concatenate((np.ones((len(bins), 1), dtype=int) * -100, bins), axis=1)
 
-        x = np.concatenate((np.zeros((len(x), 1, num_features), dtype=int),
-                            x,
-                            -np.ones((len(x), 1, num_features), dtype=int)),
-                            axis=1)
+        x = np.concatenate(
+            (
+                np.zeros((len(x), 1, num_features), dtype=int),
+                x,
+            ),
+            axis=1,
+        )
         padding_mask = x[:, :, 0] != -1
+        bins[~padding_mask] = -100
     else:
         bins[~padding_mask] = -100
-
 
     if to_tensor:
         x = torch.tensor(x)
@@ -58,11 +65,10 @@ def imagePreprocessing(jets, filename=None):
         constituents[:, 2] -= mean_phi
         constituents[:, 1] -= mean_eta
 
-
     def rotate():
         # Calculate the major axis
-        eta_coords = (constituents[:, 1]- 15) * constituents[:, 0]
-        phi_coords = (constituents[:, 2]- 15) * constituents[:, 0]
+        eta_coords = (constituents[:, 1] - 15) * constituents[:, 0]
+        phi_coords = (constituents[:, 2] - 15) * constituents[:, 0]
         coords = np.vstack([eta_coords, phi_coords])
         cov = np.cov(coords)
         evals, evecs = np.linalg.eig(cov)
@@ -73,8 +79,7 @@ def imagePreprocessing(jets, filename=None):
         theta = np.arctan(major_axis[0] / major_axis[1])
         c, s = np.cos(theta), np.sin(theta)
         rotation = np.array([[c, s], [-s, c]])
-        constituents[:, 1:3] = np.matmul(constituents[:,1:3], rotation)
-
+        constituents[:, 1:3] = np.matmul(constituents[:, 1:3], rotation)
 
     def flip():
         quad1 = 0
@@ -104,8 +109,7 @@ def imagePreprocessing(jets, filename=None):
             constituents[:, 1] *= -1
             constituents[:, 2] *= -1
 
-
-    print('Started advancedPreProcess')
+    print("Started advancedPreProcess")
     # Loop over all jets
     for i in tqdm(range(np.shape(jets)[0])):
         constituents = jets[i]
@@ -118,6 +122,6 @@ def imagePreprocessing(jets, filename=None):
         constituents[:, 0] /= np.sum(constituents[:, 0])
         jets[i] = constituents
 
-    print(f'Exiting advancedPreProcess, shape: {np.shape(jets)}')
+    print(f"Exiting advancedPreProcess, shape: {np.shape(jets)}")
 
     return jets
