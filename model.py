@@ -45,16 +45,18 @@ class JetTransformer(Module):
         num_layers=10,
         num_heads=4,
         num_features=3,
-        num_bins=(41, 41, 41),
+        num_bins=(41, 31, 31),
         dropout=0.1,
         output="linear",
         classifier=False,
+        tanh=False,
     ):
         super(JetTransformer, self).__init__()
         self.num_features = num_features
         self.dropout = dropout
         self.total_bins = int(np.prod(num_bins))
         self.classifier = classifier
+        self.tanh = tanh
         print(f"Bins: {self.total_bins}")
 
         # learn embedding for each bin of each feature dim
@@ -96,7 +98,6 @@ class JetTransformer(Module):
             self.criterion = CrossEntropyLoss()
 
     def forward(self, x, padding_mask):
-
         # construct causal mask to restrict attention to preceding elements
         seq_len = x.shape[1]
         seq_idx = torch.arange(seq_len, dtype=torch.long, device=x.device)
@@ -114,6 +115,7 @@ class JetTransformer(Module):
             emb = layer(
                 src=emb, src_mask=causal_mask, src_key_padding_mask=padding_mask
             )
+
         emb = self.out_norm(emb)
         emb = self.dropout(emb)
 
@@ -124,7 +126,10 @@ class JetTransformer(Module):
             return out
         else:
             logits = self.out_proj(emb)
-            return 13 * torch.tanh(0.1 * logits)
+            if self.tanh:
+                return 13 * torch.tanh(0.1 * logits)
+            else:
+                return logits
 
     def loss(self, logits, true_bin):
         if not self.classifier:
