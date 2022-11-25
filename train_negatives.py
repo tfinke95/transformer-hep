@@ -67,6 +67,7 @@ if __name__ == "__main__":
     )
 
     model = load_model(args.model_path)
+    print(f"Starting with model {args.model_path}")
     model.to(device)
 
     # construct optimizer and auto-caster
