@@ -178,7 +178,7 @@ class JetTransformer(Module):
             probs = probs.prod(dim=1)
         return probs
 
-    def sample(self, starts, device):
+    def sample(self, starts, device, len_seq):
         def select_idx():
             # Select bin at random according to probabilities
             rand = torch.rand((len(jets), 1), device=device)
@@ -186,8 +186,8 @@ class JetTransformer(Module):
             idx = torch.searchsorted(preds_cum, rand).squeeze()
             return idx
 
-        jets = -torch.ones((len(starts), 20, 3), dtype=torch.long, device=device)
-        true_bins = torch.zeros((len(starts), 20), dtype=torch.long, device=device)
+        jets = -torch.ones((len(starts), len_seq, 3), dtype=torch.long, device=device)
+        true_bins = torch.zeros((len(starts), len_seq), dtype=torch.long, device=device)
 
         # Set start bins and constituents
         num_prior_bins = torch.cumprod(torch.tensor([1, 41, 31]), -1).to(device)
