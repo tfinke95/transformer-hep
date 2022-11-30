@@ -112,9 +112,7 @@ if __name__ == "__main__":
                     negatives, neg_padding, neg_bins = next(train_loader2_it)
                 else:
                     model.eval()
-                    negatives, neg_bins = model.sample(
-                        x[:, 0], device, 21 if args.start_token else 20
-                    )
+                    negatives, neg_bins = model.sample(x[:, 0], device, x.size(1))
                     neg_padding = torch.ones_like(padding_mask) == 1
                     model.train()
 

@@ -198,10 +198,10 @@ class JetTransformer(Module):
 
         self.eval()
         with torch.no_grad():
-            for particle in range(19):
+            for particle in range(len_seq - 1):
                 # Get probabilities for the next particles
                 preds = self.forward(jets, padding_mask)[:, particle]
-                preds = torch.nn.functional.softmax(preds[:, :-2], dim=-1)
+                preds = torch.nn.functional.softmax(preds[:, :], dim=-1)
 
                 # Remove low probs
                 # preds = torch.where(preds < 1e-7, 0, preds)
