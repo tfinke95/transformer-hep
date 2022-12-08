@@ -20,23 +20,20 @@ def moving_average(a, n=3):
 
 # %%
 kind = "qcd"
-tag = "QCD_data-negSamples"
-data1 = np.load(f"notebooks/samples_qcd_noTanh.npz")["samples"][:10000]
-data2 = np.load(f"samples/samples_qcd.npz")["samples"][:10000]
-# data2 = np.load(f"sampled_test_qcd.npy")[:10000]
-# data2 = np.load(f"samples/sampled_top.npy")
+tag = "QCD_data_bugfix"
+data1 = np.load(f"notebooks/samples_neg_tanh_qcd_bugfix.npz")["samples"][:50000, 1:]
 
 # df = pd.read_hdf(f'/hpcwork/bn227573/top_benchmark/test_qcd_30_bins.h5', 'discretized', start=100000, stop=200000)
 # data1 = df.to_numpy(dtype=np.int64)[:, :60]
 # data1 = data1.reshape(data1.shape[0], -1, 3)
 
-# df = pd.read_hdf(
-#     f"/mnt/wsl/PHYSICALDRIVE1p1/thorben/Data/jet_datasets/top_benchmark/v0/test_qcd_30_bins.h5",
-#     "discretized",
-#     stop=10000,
-# )
-# data1 = df.to_numpy(dtype=np.int64)[:, :60]
-# data1 = data1.reshape(data1.shape[0], -1, 3)
+df = pd.read_hdf(
+    f"/mnt/wsl/PHYSICALDRIVE1p1/thorben/Data/jet_datasets/top_benchmark/v0/test_qcd_30_bins.h5",
+    "discretized",
+    stop=50000,
+)
+data2 = df.to_numpy(dtype=np.int64)[:, :60]
+data2 = data2.reshape(data2.shape[0], -1, 3)
 
 data = np.append(data1, data2, axis=0)
 labels = np.append(np.zeros(len(data1)), np.ones(len(data2)))
@@ -116,11 +113,13 @@ for epoch in tqdm(range(20)):
         val_losses.append([global_step, np.mean(tmp)])
         if np.mean(tmp) < min_loss:
             min_loss = np.mean(tmp)
-            torch.save(classi, f"classifier_samples_{kind}_{tag}_best.pt")
+            torch.save(classi, f"samples_tests/classifier_samples_{kind}_{tag}_best.pt")
 
 losses = np.array(losses)
 val_losses = np.array(val_losses)
-np.savez(f"training_{kind}_{tag}.npz", losses=losses, val_losses=val_losses)
+np.savez(
+    f"samples_tests/training_{kind}_{tag}.npz", losses=losses, val_losses=val_losses
+)
 
 # %%
 fig, ax = plt.subplots(constrained_layout=True)
@@ -130,7 +129,7 @@ ax.plot(
 )
 ax.plot(val_losses[:, 0], val_losses[:, 1], label="Val")
 ax.legend()
-fig.savefig(f"loss_{kind}_{tag}.png")
+fig.savefig(f"samples_tests/loss_{kind}_{tag}.png")
 
 # %%
 labels = []
@@ -144,10 +143,10 @@ for x, y in val_dataloader:
         preds.append(pred.cpu().detach().numpy())
         labels.append(y.cpu().detach().numpy())
 
-torch.save(classi, f"classifier_samples_{kind}_{tag}.pt")
+torch.save(classi, f"samples_tests/classifier_samples_{kind}_{tag}.pt")
 preds = np.concatenate(preds, axis=0)
 labels = np.concatenate(labels, axis=0)
-np.savez(f"preds_{kind}_{tag}_last.npz", labels=labels, preds=preds)
+np.savez(f"samples_tests/preds_{kind}_{tag}_last.npz", labels=labels, preds=preds)
 
 # %%
 fpr, tpr, _ = roc_curve(y_true=labels, y_score=preds)
@@ -157,7 +156,7 @@ fig, ax = plt.subplots(constrained_layout=True)
 ax.plot(tpr, 1.0 / fpr, label=f"AUC: {auc:.3f}")
 ax.plot(np.linspace(0, 1, 1000), 1.0 / np.linspace(0, 1, 1000), color="grey")
 
-classi = torch.load(f"classifier_samples_{kind}_{tag}_best.pt")
+classi = torch.load(f"samples_tests/classifier_samples_{kind}_{tag}_best.pt")
 labels = []
 preds = []
 classi.eval()
@@ -171,7 +170,7 @@ for x, y in val_dataloader:
 
 preds = np.concatenate(preds, axis=0)
 labels = np.concatenate(labels, axis=0)
-np.savez(f"preds_{kind}_{tag}_best.npz", labels=labels, preds=preds)
+np.savez(f"samples_tests/preds_{kind}_{tag}_best.npz", labels=labels, preds=preds)
 preds.shape, labels.shape, len(val_dataloader)
 
 fpr, tpr, _ = roc_curve(y_true=labels, y_score=preds)
@@ -184,7 +183,7 @@ ax.set_yscale("log")
 ax.grid(which="both")
 ax.set_ylim(0.9, 1e3)
 ax.legend()
-fig.savefig(f"roc_samples_{kind}_{tag}.png")
+fig.savefig(f"samples_tests/roc_samples_{kind}_{tag}.png")
 plt.show()
 
 # %%
@@ -196,6 +195,11 @@ ax.hist(
 )
 
 # %%
-fig, ax = plt.subplots()
+# preds = np.load("samples_tests/preds_qcd_negTanhQCD_data_best.npz")
+# labels = preds["labels"]
+# preds = preds["preds"]
+fig, ax = plt.subplots(constrained_layout=True)
 ax.hist([preds[labels == 0], preds[labels == 1]], bins=100, histtype="step")
+ax.set_yscale("log")
+fig.savefig(f"samples_tests/scores_{kind}_{tag}.png")
 # %%

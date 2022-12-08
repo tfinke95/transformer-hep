@@ -178,7 +178,7 @@ class JetTransformer(Module):
             probs = probs.prod(dim=1)
         return probs
 
-    def sample(self, starts, device, len_seq):
+    def sample(self, starts, device, len_seq, trunc=None):
         def select_idx():
             # Select bin at random according to probabilities
             rand = torch.rand((len(jets), 1), device=device)
@@ -204,10 +204,12 @@ class JetTransformer(Module):
                 preds = torch.nn.functional.softmax(preds[:, :], dim=-1)
 
                 # Remove low probs
-                # preds = torch.where(preds < 1e-7, 0, preds)
+                if not trunc is None:
+                    preds = torch.where(preds < trunc, 0, preds)
                 preds = preds / torch.sum(preds, -1, keepdim=True)
 
                 idx = select_idx()
+                # TODO Remove large index part from sampling
                 while torch.any(idx >= 41 * 31 * 31):
                     idx = select_idx()
                     print("large idx")
