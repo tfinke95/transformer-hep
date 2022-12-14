@@ -48,7 +48,9 @@ def get_data(
     tags: list[str],
     reverse=False,
     start=False,
+    newF=False,
 ):
+    key = "discretized2" if newF else "discretized"
     assert len(files) == len(
         tags
     ), f"Need same number of tags and files (given {len(tags)} {len(files)}"
@@ -57,7 +59,7 @@ def get_data(
     for ind, file in enumerate(files):
         df = pd.read_hdf(
             file,
-            key="discretized",
+            key=key,
             stop=N,
         )
         jets, mask, bins = preprocess_dataframe(

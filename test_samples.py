@@ -18,11 +18,15 @@ def moving_average(a, n=3):
     return ret[n - 1 :] / n
 
 
+N = 100000
+
 # %%
 kind = "qcd"
-tag = "QCD_data_bugfix"
-data1 = np.load(f"notebooks/samples_neg_tanh_qcd_bugfix.npz")["samples"][:50000, 1:]
+tag = "neg_qcd"
+data1 = np.load(f"notebooks/samples.npz")["s_tanh_qcd"][:N, 1:]
 
+
+# %%
 # df = pd.read_hdf(f'/hpcwork/bn227573/top_benchmark/test_qcd_30_bins.h5', 'discretized', start=100000, stop=200000)
 # data1 = df.to_numpy(dtype=np.int64)[:, :60]
 # data1 = data1.reshape(data1.shape[0], -1, 3)
@@ -30,7 +34,7 @@ data1 = np.load(f"notebooks/samples_neg_tanh_qcd_bugfix.npz")["samples"][:50000,
 df = pd.read_hdf(
     f"/mnt/wsl/PHYSICALDRIVE1p1/thorben/Data/jet_datasets/top_benchmark/v0/test_qcd_30_bins.h5",
     "discretized",
-    stop=50000,
+    stop=N,
 )
 data2 = df.to_numpy(dtype=np.int64)[:, :60]
 data2 = data2.reshape(data2.shape[0], -1, 3)
@@ -86,7 +90,7 @@ losses = []
 val_losses = []
 min_loss = np.inf
 global_step = 0
-for epoch in tqdm(range(20)):
+for epoch in tqdm(range(50)):
     classi.train()
     for x, y in dataloader:
         global_step += 1
