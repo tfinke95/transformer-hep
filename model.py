@@ -50,11 +50,14 @@ class JetTransformer(Module):
         output="linear",
         classifier=False,
         tanh=False,
+        end_token=False,
     ):
         super(JetTransformer, self).__init__()
         self.num_features = num_features
         self.dropout = dropout
         self.total_bins = int(np.prod(num_bins))
+        if end_token:
+            self.total_bins += 1
         self.classifier = classifier
         self.tanh = tanh
         print(f"Bins: {self.total_bins}")

@@ -35,6 +35,7 @@ if __name__ == "__main__":
         num_const=args.num_const,
         reverse=args.reverse,
         start_token=args.start_token,
+        end_token=args.end_token,
         limit_const=args.limit_const,
         batch_size=args.batch_size,
         num_workers=args.num_workers,
@@ -49,6 +50,7 @@ if __name__ == "__main__":
         num_const=args.num_const,
         reverse=args.reverse,
         start_token=args.start_token,
+        end_token=args.end_token,
         limit_const=args.limit_const,
         batch_size=args.batch_size,
         num_workers=args.num_workers,
@@ -68,6 +70,7 @@ if __name__ == "__main__":
             dropout=args.dropout,
             output=args.output,
             tanh=args.tanh,
+            end_token=args.end_token,
         )
     model.to(device)
 

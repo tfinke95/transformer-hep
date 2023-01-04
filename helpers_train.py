@@ -126,6 +126,11 @@ def parse_input():
         help="Whether to use a start particle (learn first particle as well)",
     )
     parser.add_argument(
+        "--end_token",
+        action="store_true",
+        help="Whether to use a end particle (learn jet length as well)",
+    )
+    parser.add_argument(
         "--contin", action="store_true", help="Whether to continue training"
     )
     parser.add_argument(
@@ -198,6 +203,7 @@ def load_data(
     num_const=20,
     reverse=False,
     start_token=False,
+    end_token=False,
     limit_const=True,
     batch_size=100,
     num_workers=4,
@@ -211,6 +217,7 @@ def load_data(
         to_tensor=True,
         reverse=reverse,
         start=start_token,
+        end=end_token,
         limit_nconst=limit_const,
     )
 
