@@ -12,6 +12,7 @@ def preprocess_dataframe(
     to_tensor=True,
     reverse=False,
     start=False,
+    end=False,
     limit_nconst=False,
 ):
     x = df.to_numpy(dtype=np.int64)[:, : num_const * num_features]
@@ -36,7 +37,10 @@ def preprocess_dataframe(
 
     if start:
         print("Adding start particles")
-        bins = np.concatenate((np.ones((len(bins), 1), dtype=int) * -100, bins), axis=1)
+        bins = np.concatenate(
+            (np.ones((len(bins), 1), dtype=int) * -100, bins),
+            axis=1,
+        )
 
         x = np.concatenate(
             (
@@ -49,6 +53,15 @@ def preprocess_dataframe(
         bins[~padding_mask] = -100
     else:
         bins[~padding_mask] = -100
+
+    if end:
+        print("Adding stop token")
+        seq_lengths = padding_mask.sum(-1)
+        x = np.append(x, -np.ones((x.shape[0], 1, x.shape[2]), dtype=int), axis=1)
+        x[np.arange(x.shape[0]), seq_lengths] = 0
+        bins = np.append(bins, -100 * np.ones((bins.shape[0], 1)).astype(int), axis=1)
+        bins[np.arange(bins.shape[0]), seq_lengths] = np.prod(num_bins)
+        padding_mask = x[:, :, 0] != -1
 
     if to_tensor:
         x = torch.tensor(x)
@@ -125,3 +138,25 @@ def imagePreprocessing(jets, filename=None):
     print(f"Exiting advancedPreProcess, shape: {np.shape(jets)}")
 
     return jets
+
+
+if __name__ == "__main__":
+    df = pd.read_hdf(
+        "/mnt/wsl/PHYSICALDRIVE1p1/thorben/Data/jet_datasets/top_benchmark/v0/train_qcd_30_bins.h5",
+        key="discretized",
+        stop=10000,
+    )
+    x, pad, bin = preprocess_dataframe(
+        df=df,
+        num_features=3,
+        num_bins=(41, 31, 31),
+        num_const=30,
+        to_tensor=False,
+        reverse=False,
+        start=True,
+        end=True,
+        limit_nconst=False,
+    )
+    print(x.shape, pad.shape, bin.shape)
+    print(x[0])
+    print(bin[0])
