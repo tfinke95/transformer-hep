@@ -59,14 +59,17 @@ def preprocess_dataframe(
         seq_lengths = padding_mask.sum(-1)
         x = np.append(x, -np.ones((x.shape[0], 1, x.shape[2]), dtype=int), axis=1)
         x[np.arange(x.shape[0]), seq_lengths] = 0
+        x = x[:, :-1]
         bins = np.append(bins, -100 * np.ones((bins.shape[0], 1)).astype(int), axis=1)
         bins[np.arange(bins.shape[0]), seq_lengths] = np.prod(num_bins)
+        bins = bins[:, :-1]
         padding_mask = x[:, :, 0] != -1
 
     if to_tensor:
         x = torch.tensor(x)
         padding_mask = torch.tensor(padding_mask)
         bins = torch.tensor(bins)
+    print(f"Shapes: {x.shape=} {padding_mask.shape=} {bins.shape=}")
     return x, padding_mask, bins
 
 
@@ -142,7 +145,7 @@ def imagePreprocessing(jets, filename=None):
 
 if __name__ == "__main__":
     df = pd.read_hdf(
-        "/mnt/wsl/PHYSICALDRIVE1p1/thorben/Data/jet_datasets/top_benchmark/v0/train_qcd_30_bins.h5",
+        "/hpcwork/bn227573/top_benchmark/train_qcd_30_bins.h5",
         key="discretized",
         stop=10000,
     )
@@ -158,5 +161,5 @@ if __name__ == "__main__":
         limit_nconst=False,
     )
     print(x.shape, pad.shape, bin.shape)
-    print(x[0])
-    print(bin[0])
+    # print(x[0])
+    print(bin[:10])
