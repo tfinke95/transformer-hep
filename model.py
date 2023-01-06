@@ -186,7 +186,8 @@ class JetTransformer(Module):
             # Select bin at random according to probabilities
             rand = torch.rand((len(jets), 1), device=device)
             preds_cum = torch.cumsum(preds, -1)
-            idx = torch.searchsorted(preds_cum, rand).squeeze()
+            preds_cum[:, -1] += 0.01  # If rand = 1, sort it to the last bin
+            idx = torch.searchsorted(preds_cum, rand).squeeze(1)
             return idx
 
         jets = -torch.ones((len(starts), len_seq, 3), dtype=torch.long, device=device)
@@ -200,8 +201,11 @@ class JetTransformer(Module):
         padding_mask = jets[:, :, 0] != -1
 
         self.eval()
+        finished = torch.ones(len(starts)) != 1
         with torch.no_grad():
             for particle in range(len_seq - 1):
+                if all(finished):
+                    break
                 # Get probabilities for the next particles
                 preds = self.forward(jets, padding_mask)[:, particle]
                 preds = torch.nn.functional.softmax(preds[:, :], dim=-1)
@@ -212,18 +216,15 @@ class JetTransformer(Module):
                 preds = preds / torch.sum(preds, -1, keepdim=True)
 
                 idx = select_idx()
-                # TODO Remove large index part from sampling
-                while torch.any(idx >= 41 * 31 * 31):
-                    idx = select_idx()
-                    print("large idx")
+                finished[idx == 39401] = True
 
                 # Get tuple from found bin and set next particle properties
-                true_bins[:, particle + 1] = idx
-                bins = self.idx_to_bins(idx)
+                true_bins[~finished, particle + 1] = idx[~finished]
+                bins = self.idx_to_bins(idx[~finished])
                 for ind, tmp_bin in enumerate(bins):
-                    jets[:, particle + 1, ind] = tmp_bin
+                    jets[~finished, particle + 1, ind] = tmp_bin
 
-                padding_mask[:, particle + 1] = True
+                padding_mask[~finished, particle + 1] = True
         return jets, true_bins
 
     def idx_to_bins(self, x):

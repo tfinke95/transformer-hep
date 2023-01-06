@@ -6,7 +6,12 @@ from preprocess import imagePreprocessing, preprocess_dataframe
 import pandas as pd
 
 
-def get_samples(model, data_loader, device, trunc=None):
+def get_samples(
+    model,
+    data_loader,
+    device,
+    trunc=None,
+):
     if type(model) is str:
         model = torch.load(model)
     model.to(device)
@@ -16,7 +21,10 @@ def get_samples(model, data_loader, device, trunc=None):
     bins = []
     for x, _, _ in tqdm(iterable=data_loader, desc="Batch", total=len(data_loader)):
         _samples, _sample_bins = model.sample(
-            x[:, 0].to(device), device, x.size(1), trunc=trunc
+            x[:, 0].to(device),
+            device,
+            len_seq=x.size(1),
+            trunc=trunc,
         )
         samples.append(_samples.cpu())
         bins.append(_sample_bins.cpu())
@@ -48,7 +56,10 @@ def get_data(
     tags: list[str],
     reverse=False,
     start=False,
+    end=False,
     newF=False,
+    num_const=20,
+    limit_nconst=True,
 ):
     key = "discretized2" if newF else "discretized"
     assert len(files) == len(
@@ -66,10 +77,11 @@ def get_data(
             df,
             num_features=3,
             num_bins=(41, 31, 31),
-            num_const=20,
-            limit_nconst=True,
+            num_const=num_const,
+            limit_nconst=limit_nconst,
             reverse=reverse,
             start=start,
+            end=end,
         )
         loader = DataLoader(
             TensorDataset(jets, mask, bins), batch_size=100, shuffle=False
