@@ -7,6 +7,20 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, roc_auc_score
 from preprocess import imagePreprocessing
+from argparse import ArgumentParser
+import os
+
+parser = ArgumentParser()
+parser.add_argument("--bg", "-b", type=str)
+parser.add_argument("--sig", "-s", type=str)
+parser.add_argument("--save_dir", type=str, default="samples_test/test")
+parser.add_argument("--num_jets", "-N", type=int, default=100000)
+parser.add_argument("--num_const", "-c", type=int, default=50)
+parser.add_argument("--num_epochs", "-E", type=int, default=30)
+args = parser.parse_args()
+
+if not os.path.isdir(args.save_dir):
+    os.makedirs(args.save_dir)
 
 torch.manual_seed(0)
 np.random.seed(0)
@@ -18,34 +32,36 @@ def moving_average(a, n=3):
     return ret[n - 1 :] / n
 
 
-N = 100000
-
 # %%
-kind = "qcd"
-tag = "neg_qcd"
-data1 = np.load(f"notebooks/samples.npz")["s_tanh_qcd"][:N, 1:]
+def load_data(file):
+    if file.endswith("npz"):
+        dat = np.load(file)["jets"][: args.num_jets, : args.num_const]
+    elif file.endswith("h5"):
+        dat = pd.read_hdf(file, key="discretized", stop=args.num_jets)
+        dat = dat.to_numpy(dtype=np.int64)[:, : args.num_const * 3]
+        dat = dat.reshape(dat.shape[0], -1, 3)
+    else:
+        assert False, "Filetype for bg not supported"
+    dat = np.delete(dat, np.where(dat[:, 0, 0] == 0)[0], axis=0)
+    return dat
 
 
+bg = load_data(args.bg)
+print(f"Got bg from {args.bg}")
+sig = load_data(args.sig)
+print(f"Got sig from {args.sig}")
+
+print(bg.shape, sig.shape)
 # %%
-# df = pd.read_hdf(f'/hpcwork/bn227573/top_benchmark/test_qcd_30_bins.h5', 'discretized', start=100000, stop=200000)
-# data1 = df.to_numpy(dtype=np.int64)[:, :60]
-# data1 = data1.reshape(data1.shape[0], -1, 3)
 
-df = pd.read_hdf(
-    f"/mnt/wsl/PHYSICALDRIVE1p1/thorben/Data/jet_datasets/top_benchmark/v0/test_qcd_30_bins.h5",
-    "discretized",
-    stop=N,
-)
-data2 = df.to_numpy(dtype=np.int64)[:, :60]
-data2 = data2.reshape(data2.shape[0], -1, 3)
-
-data = np.append(data1, data2, axis=0)
-labels = np.append(np.zeros(len(data1)), np.ones(len(data2)))
+data = np.append(bg, sig, axis=0)
+data[data == -1] = 0
+labels = np.append(np.zeros(len(bg)), np.ones(len(sig)))
 
 # %%
 jets = imagePreprocessing(data.astype(float))
 images = np.zeros((len(jets), 30, 30))
-for i in range(len(jets)):
+for i in tqdm(range(len(jets))):
     images[i], _, _ = np.histogram2d(
         jets[i, :, 1],
         jets[i, :, 2],
@@ -53,7 +69,15 @@ for i in range(len(jets)):
         weights=jets[i, :, 0],
     )
 images = images[:, np.newaxis, ...]
-images.shape
+
+fig, ax = plt.subplots(1, 2, constrained_layout=True)
+for i in range(2):
+    ax[i].imshow(images[labels == i].mean(0).squeeze(), cmap="Blues")
+    ax[i].set_xticks([])
+    ax[i].set_yticks([])
+    ax[i].set_title(["Bg", "Sig"][i])
+fig.savefig(os.path.join(args.save_dir, "mean_images.png"))
+
 
 # %%
 
@@ -64,11 +88,11 @@ idcs = np.random.permutation(len(images))
 images = images[idcs]
 labels = labels[idcs]
 
-train_images = torch.tensor(images[: int(0.9 * len(images))], dtype=torch.float32)
-train_labels = torch.tensor(labels[: int(0.9 * len(images))], dtype=torch.float32)
+train_images = torch.tensor(images[: int(0.75 * len(images))], dtype=torch.float32)
+train_labels = torch.tensor(labels[: int(0.75 * len(images))], dtype=torch.float32)
 
-val_images = torch.tensor(images[int(0.9 * len(images)) :], dtype=torch.float32)
-val_labels = torch.tensor(labels[int(0.9 * len(images)) :], dtype=torch.float32)
+val_images = torch.tensor(images[int(0.75 * len(images)) :], dtype=torch.float32)
+val_labels = torch.tensor(labels[int(0.75 * len(images)) :], dtype=torch.float32)
 
 dataset = torch.utils.data.TensorDataset(train_images, train_labels[..., np.newaxis])
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=128, shuffle=True)
@@ -90,7 +114,7 @@ losses = []
 val_losses = []
 min_loss = np.inf
 global_step = 0
-for epoch in tqdm(range(50)):
+for epoch in tqdm(range(args.num_epochs)):
     classi.train()
     for x, y in dataloader:
         global_step += 1
@@ -117,13 +141,11 @@ for epoch in tqdm(range(50)):
         val_losses.append([global_step, np.mean(tmp)])
         if np.mean(tmp) < min_loss:
             min_loss = np.mean(tmp)
-            torch.save(classi, f"samples_tests/classifier_samples_{kind}_{tag}_best.pt")
+            torch.save(classi, os.path.join(args.save_dir, "classifier_best.pt"))
 
 losses = np.array(losses)
 val_losses = np.array(val_losses)
-np.savez(
-    f"samples_tests/training_{kind}_{tag}.npz", losses=losses, val_losses=val_losses
-)
+np.savez(os.path.join(args.save_dir, "training"), losses=losses, val_losses=val_losses)
 
 # %%
 fig, ax = plt.subplots(constrained_layout=True)
@@ -133,7 +155,7 @@ ax.plot(
 )
 ax.plot(val_losses[:, 0], val_losses[:, 1], label="Val")
 ax.legend()
-fig.savefig(f"samples_tests/loss_{kind}_{tag}.png")
+fig.savefig(os.path.join(args.save_dir, "training.png"))
 
 # %%
 labels = []
@@ -147,20 +169,20 @@ for x, y in val_dataloader:
         preds.append(pred.cpu().detach().numpy())
         labels.append(y.cpu().detach().numpy())
 
-torch.save(classi, f"samples_tests/classifier_samples_{kind}_{tag}.pt")
+torch.save(classi, os.path.join(args.save_dir, "classifier_last.pt"))
 preds = np.concatenate(preds, axis=0)
 labels = np.concatenate(labels, axis=0)
-np.savez(f"samples_tests/preds_{kind}_{tag}_last.npz", labels=labels, preds=preds)
+np.savez(os.path.join(args.save_dir, "predictions_last"), labels=labels, preds=preds)
 
 # %%
 fpr, tpr, _ = roc_curve(y_true=labels, y_score=preds)
 auc = roc_auc_score(y_true=labels, y_score=preds)
 
 fig, ax = plt.subplots(constrained_layout=True)
-ax.plot(tpr, 1.0 / fpr, label=f"AUC: {auc:.3f}")
+ax.plot(tpr, 1.0 / fpr, label=f"Last AUC: {auc:.3f}")
 ax.plot(np.linspace(0, 1, 1000), 1.0 / np.linspace(0, 1, 1000), color="grey")
 
-classi = torch.load(f"samples_tests/classifier_samples_{kind}_{tag}_best.pt")
+classi = torch.load(os.path.join(args.save_dir, "classifier_best.pt"))
 labels = []
 preds = []
 classi.eval()
@@ -174,36 +196,23 @@ for x, y in val_dataloader:
 
 preds = np.concatenate(preds, axis=0)
 labels = np.concatenate(labels, axis=0)
-np.savez(f"samples_tests/preds_{kind}_{tag}_best.npz", labels=labels, preds=preds)
-preds.shape, labels.shape, len(val_dataloader)
+np.savez(os.path.join(args.save_dir, "predictions_best"), labels=labels, preds=preds)
 
 fpr, tpr, _ = roc_curve(y_true=labels, y_score=preds)
 auc = roc_auc_score(y_true=labels, y_score=preds)
 
-ax.plot(tpr, 1.0 / fpr, label=f"AUC: {auc:.3f}")
+ax.plot(tpr, 1.0 / fpr, label=f"Best AUC: {auc:.3f}")
 ax.plot(np.linspace(0, 1, 1000), 1.0 / np.linspace(0, 1, 1000), color="grey")
 
 ax.set_yscale("log")
 ax.grid(which="both")
-ax.set_ylim(0.9, 1e3)
+ax.set_ylim(0.9, 1e5)
 ax.legend()
-fig.savefig(f"samples_tests/roc_samples_{kind}_{tag}.png")
-plt.show()
+fig.savefig(os.path.join(args.save_dir, "roc.png"))
 
 # %%
-fig, ax = plt.subplots()
-ax.hist(
-    [np.tanh(preds[labels == 0]) / 2 + 0.5, np.tanh(preds[labels == 1]) / 2 + 0.5],
-    bins=30,
-    histtype="step",
-)
 
-# %%
-# preds = np.load("samples_tests/preds_qcd_negTanhQCD_data_best.npz")
-# labels = preds["labels"]
-# preds = preds["preds"]
 fig, ax = plt.subplots(constrained_layout=True)
 ax.hist([preds[labels == 0], preds[labels == 1]], bins=100, histtype="step")
 ax.set_yscale("log")
-fig.savefig(f"samples_tests/scores_{kind}_{tag}.png")
-# %%
+fig.savefig(os.path.join(args.save_dir, "predictions.png"))
