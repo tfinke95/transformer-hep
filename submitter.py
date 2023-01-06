@@ -1,20 +1,40 @@
 import os, json
 import time
+import numpy as np
 
-for bkg in ["qcd", "top"]:
-    for tanh in [True, False]:
-        tag = "_tanh_" if tanh else ""
+NUM_LAYERS = [
+    8,
+    6,
+]
+HIDDEN_DIMS = [256, 128]
+HEADS = [4]
+DROPOUTS = [0.1]
+with open("scan_params.txt", "w") as f:
+    f.write(f"{'Layers':8s}{'Hidden':8s}{'Heads':8s}{'Dropout':8s}\n")
+
+for i in NUM_LAYERS:
+    for j in HIDDEN_DIMS:
+        print(i, j)
+        num_layer = i  # np.random.choice(NUM_LAYERS)
+        hidden_dim = j  # np.random.choice(HIDDEN_DIMS)
+        heads = 4  # np.random.choice(HEADS)
+        dropout = 0.1  # np.random.choice(DROPOUTS)
+
+        with open("scan_params.txt", "a") as f:
+            f.write(
+                f"{str(num_layer):^8s}{str(hidden_dim):^8s}{str(heads):^8s}{str(dropout):^8s}\n"
+            )
+
         with open("jobscript.sh", "w") as f:
             f.write(
                 f"""#!/usr/bin/env zsh
-#SBATCH --account=rwth0934
 
-#SBATCH --job-name 20negs{bkg}{tag}
+#SBATCH --job-name L{num_layer}_hi{hidden_dim}_he{heads}_d{dropout}
 
-#SBATCH --output /home/bn227573/out/negs_{bkg}{tag}_%J.log
-#SBATCH --error /home/bn227573/out/negs_{bkg}{tag}_%J_err.log
+#SBATCH --output /home/bn227573/out/scan_L{num_layer}_hi{hidden_dim}_he{heads}_d{dropout}_%J.log
+#SBATCH --error /home/bn227573/out/scan_L{num_layer}_hi{hidden_dim}_he{heads}_d{dropout}_%J_err.log
 
-#SBATCH --time 1350
+#SBATCH --time 300
 
 #SBATCH --cpus-per-task 4
 #SBATCH --mem-per-cpu 2G
@@ -29,22 +49,26 @@ cd /home/bn227573/
 conda activate torchEnv
 cd Projects/AnomalyDetection/physics_transformers
 
-python train_negatives.py \\
+python train.py \\
     --num_epochs 50 \\
-    --data_path /hpcwork/bn227573/top_benchmark/train_{bkg}_30_bins.h5 \\
-    --model_path models/20_fixed_new/20_fixed{tag}_{bkg}/model_last.pt \\
+    --data_path /hpcwork/bn227573/top_benchmark/train_qcd_30_bins.h5 \\
     --seed 0 \\
-    --log_dir models/negatives_new/20_fixed_neg{tag}_{bkg} \\
+    --log_dir /hpcwork/bn227573/Transformers/models/scan2/L{num_layer}_hi{hidden_dim}_he{heads}_d{dropout} \\
     --batch_size 100 \\
     --num_events 600000 \\
-    --num_const 20 \\
+    --num_const 50 \\
     --num_bins 41 31 31 \\
-    --limit_const \\
-    --logging_steps 100 \\
-    --checkpoint_steps 5501 \\
-    --lr 0.0001 \\
+    --logging_steps 50 \\
+    --checkpoint_steps 0 \\
+    --lr 0.001 \\
+    --num_layers {num_layer} \\
+    --hidden_dim {hidden_dim} \\
+    --num_heads {heads} \\
+    --dropout {dropout} \\
     --start_token \\
-    {"--tanh" if tanh else ""}
+    --end_token \\
+    --tanh
 """
             )
         os.system("sbatch jobscript.sh")
+        time.sleep(1)

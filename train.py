@@ -132,7 +132,7 @@ if __name__ == "__main__":
             if (args.checkpoint_steps != 0) and (
                 (global_step + 1) % args.checkpoint_steps == 0
             ):
-                save_model(model, args.log_dir, f"checkpoint_{global_step}")
+                save_model(model, args.log_dir, f"checkpoint_{global_step + 1}")
 
             global_step += 1
 
