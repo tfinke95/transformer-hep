@@ -2,39 +2,18 @@ import os, json
 import time
 import numpy as np
 
-NUM_LAYERS = [
-    8,
-    6,
-]
-HIDDEN_DIMS = [256, 128]
-HEADS = [4]
-DROPOUTS = [0.1]
-with open("scan_params.txt", "w") as f:
-    f.write(f"{'Layers':8s}{'Hidden':8s}{'Heads':8s}{'Dropout':8s}\n")
 
-for i in NUM_LAYERS:
-    for j in HIDDEN_DIMS:
-        print(i, j)
-        num_layer = i  # np.random.choice(NUM_LAYERS)
-        hidden_dim = j  # np.random.choice(HIDDEN_DIMS)
-        heads = 4  # np.random.choice(HEADS)
-        dropout = 0.1  # np.random.choice(DROPOUTS)
+def write_jobscript():
+    with open("jobscript.sh", "w") as f:
+        f.write(
+            f"""#!/usr/bin/env zsh
 
-        with open("scan_params.txt", "a") as f:
-            f.write(
-                f"{str(num_layer):^8s}{str(hidden_dim):^8s}{str(heads):^8s}{str(dropout):^8s}\n"
-            )
+#SBATCH --job-name sample_{tag}
 
-        with open("jobscript.sh", "w") as f:
-            f.write(
-                f"""#!/usr/bin/env zsh
+#SBATCH --output /home/bn227573/out/sample_{tag}_%J.log
+#SBATCH --error /home/bn227573/out/sample_{tag}_%J_err.log
 
-#SBATCH --job-name L{num_layer}_hi{hidden_dim}_he{heads}_d{dropout}
-
-#SBATCH --output /home/bn227573/out/scan_L{num_layer}_hi{hidden_dim}_he{heads}_d{dropout}_%J.log
-#SBATCH --error /home/bn227573/out/scan_L{num_layer}_hi{hidden_dim}_he{heads}_d{dropout}_%J_err.log
-
-#SBATCH --time 300
+#SBATCH --time 30
 
 #SBATCH --cpus-per-task 4
 #SBATCH --mem-per-cpu 2G
@@ -49,26 +28,39 @@ cd /home/bn227573/
 conda activate torchEnv
 cd Projects/AnomalyDetection/physics_transformers
 
-python train.py \\
-    --num_epochs 50 \\
-    --data_path /hpcwork/bn227573/top_benchmark/train_qcd_30_bins.h5 \\
-    --seed 0 \\
-    --log_dir /hpcwork/bn227573/Transformers/models/scan2/L{num_layer}_hi{hidden_dim}_he{heads}_d{dropout} \\
-    --batch_size 100 \\
-    --num_events 600000 \\
-    --num_const 50 \\
-    --num_bins 41 31 31 \\
-    --logging_steps 50 \\
-    --checkpoint_steps 0 \\
-    --lr 0.001 \\
-    --num_layers {num_layer} \\
-    --hidden_dim {hidden_dim} \\
-    --num_heads {heads} \\
-    --dropout {dropout} \\
-    --start_token \\
-    --end_token \\
-    --tanh
+python sample_jets.py \\
+    --model_dir {model_dir} \\
+    --model_name {model_name} \\
+    --savetag {savetag} \\
+    --num_samples {num_samples} \\
+    --batchsize {batchsize} \\
+    --num_const {num_const} \\
+    --seed {seed}
 """
-            )
-        os.system("sbatch jobscript.sh")
-        time.sleep(1)
+        )
+
+
+tmp = os.listdir("/hpcwork/bn227573/Transformers/models/scan2/")
+MODEL_DIRS = [
+    os.path.join("/hpcwork/bn227573/Transformers/models/scan2/", x) for x in tmp
+]
+MODEL_NAMES = ["model_last.pt"] * len(MODEL_DIRS)
+SAVETAGS = ["100"] * len(MODEL_DIRS)
+NUM_SAMPLES = [20000] * len(MODEL_DIRS)
+NUM_CONST = [100] * len(MODEL_DIRS)
+SEEDS = [0] * len(MODEL_DIRS)
+
+
+for i in range(len(MODEL_DIRS)):
+    model_dir = MODEL_DIRS[i]
+    model_name = MODEL_NAMES[i]
+    savetag = SAVETAGS[i]
+    num_samples = NUM_SAMPLES[i]
+    batchsize = 100
+    num_const = NUM_CONST[i]
+    seed = SEEDS[i]
+    tag = model_dir.split("/")[-1]
+    write_jobscript()
+
+    os.system("sbatch jobscript.sh")
+    time.sleep(1)

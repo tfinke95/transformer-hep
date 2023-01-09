@@ -1,90 +1,59 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.tensorboard import SummaryWriter
-from torch.optim.lr_scheduler import LambdaLR
 import numpy as np
+from argparse import ArgumentParser
 
 from model import JetTransformer
-from preprocess import preprocess_dataframe
 
-from argparse import ArgumentParser
 from tqdm import tqdm
-import os
 import pandas as pd
+import os
+
+from sklearn.metrics import roc_auc_score, roc_curve
+import matplotlib.pyplot as plt
+
+from helpers_train import (
+    get_cos_scheduler,
+    save_opt_states,
+    parse_input,
+    save_model,
+    save_arguments,
+    set_seeds,
+    load_model,
+)
 
 torch.multiprocessing.set_sharing_strategy("file_system")
-
-
-def get_cos_scheduler():
-    scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
-        opt,
-        # T_0=len(train_loader)//5,
-        T_0=len(train_loader) * args.num_epochs + 1,
-        eta_min=1e-6,
-    )
-    return scheduler
-
-
-def save_opt_states():
-    torch.save(
-        {
-            "opt_state_dict": opt.state_dict(),
-            "sched_state_dict": scheduler.state_dict(),
-            "scaler_state_dict": scaler.state_dict(),
-        },
-        os.path.join(args.model_dir, "opt_state_dict.pt"),
-    )
-
-
-def load_opt_states():
-    state_dicts = torch.load(os.path.join(args.model_dir, "opt_state_dict.pt"))
-    opt.load_state_dict(state_dicts["opt_state_dict"])
-    scheduler.load_state_dict(state_dicts["sched_state_dict"])
-    scaler.load_state_dict(state_dicts["scaler_state_dict"])
-
-
-def save_model(name):
-    torch.save(model, os.path.join(args.model_dir, f"model_{name}.pt"))
-
-
-def load_model(name):
-    model = torch.load(os.path.join(args.model_dir, f"model_{name}.pt"))
-    return model
 
 
 def parse_input():
     parser = ArgumentParser()
     parser.add_argument(
-        "--model_dir", type=str, default="models/test", help="Model directory"
+        "--log_dir", type=str, default="models/test", help="Model directory"
     )
     parser.add_argument(
-        "--data_path",
+        "--bg",
         type=str,
-        default="/hpcwork/bn227573/top_benchmark/",
-        help="Path to training data file",
+        default="/hpcwork/bn227573/top_benchmark/train_qcd_30_bins.h5",
+        help="Path to background data file",
     )
-
+    parser.add_argument(
+        "--sig",
+        type=str,
+        default="/hpcwork/bn227573/top_benchmark/train_top_30_bins.h5",
+        help="Path to signal data file",
+    )
     parser.add_argument(
         "--seed", type=int, default=0, help="the random seed for torch and numpy"
     )
     parser.add_argument(
         "--logging_steps", type=int, default=10, help="Training steps between logging"
     )
-    parser.add_argument(
-        "--checkpoint_steps",
-        type=int,
-        default=5000,
-        help="Training steps between saving checkpoints",
-    )
-    parser.add_argument("--num_workers", type=int, default=1, help="Number of workers")
+
+    parser.add_argument("--num_workers", type=int, default=4, help="Number of workers")
 
     parser.add_argument(
         "--num_const", type=int, default=100, help="Number of constituents"
-    )
-    parser.add_argument(
-        "--limit_const",
-        action="store_true",
-        help="Only use jets with at least num_const constituents",
     )
     parser.add_argument(
         "--num_events", type=int, default=10000, help="Number of events for training"
@@ -96,22 +65,10 @@ def parse_input():
         default=[41, 31, 31],
         help="Number of bins per feature",
     )
-    parser.add_argument(
-        "--contin", action="store_true", help="Whether to continue training"
-    )
-    parser.add_argument(
-        "--global_step", type=int, default=0, help="Starting point of step counter"
-    )
-    parser.add_argument(
-        "--reverse", action="store_true", help="Whether to reverse pt order"
-    )
 
     parser.add_argument("--num_epochs", type=int, default=3, help="Number of epochs")
     parser.add_argument("--batch_size", type=int, default=100, help="Batch size")
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
-    parser.add_argument(
-        "--lr_decay", type=float, default=0.01, help="learning rate decay (linear)"
-    )
     parser.add_argument(
         "--weight_decay", type=float, default=0.00001, help="weight decay"
     )
@@ -137,77 +94,99 @@ def parse_input():
     return args
 
 
-def save_arguments(args):
-    if not os.path.isdir(args.model_dir):
-        os.makedirs(args.model_dir)
-    with open(os.path.join(args.model_dir, "arguments.txt"), "w") as f:
-        arg_dict = vars(args)
-        for k, v in arg_dict.items():
-            f.write(f"{k:20s} {v}\n")
-
-
-def set_seeds(seed):
-    torch.manual_seed(seed)
-    np.random.seed(seed)
-
-
-def load_data(path, n_events):
-    if path.endswith(".npz"):
-        print(list(np.load("notebooks/dictionaries/samples.npz").keys()))
-        x = np.load("notebooks/dictionaries/samples.npz")["s_tanh_qcd"][:n_events, 1:]
-        x_mask = torch.ones((x.shape[:2])) == 1.0
-        labels = torch.zeros(len(x))
-        y = np.load("notebooks/dictionaries/samples.npz")["s_tanh_top"][:n_events, 1:]
-        y_mask = torch.ones((y.shape[:2])) == 1.0
-        labels = torch.concat((labels, torch.ones(len(y))))
-
-        data = torch.tensor(np.concatenate((x, y), axis=0))
-        mask = torch.concat((x_mask, y_mask), dim=0)
-        print(data.shape)
-
-        train_dataset = TensorDataset(data, mask, labels)
-        train_loader = DataLoader(
-            train_dataset,
-            batch_size=args.batch_size,
-            num_workers=args.num_workers,
-            shuffle=True,
-        )
+def load_data(file):
+    if file.endswith("npz"):
+        dat = np.load(file)["jets"][: args.num_events, : args.num_const]
+    elif file.endswith("h5"):
+        dat = pd.read_hdf(file, key="discretized", stop=args.num_events)
+        dat = dat.to_numpy(dtype=np.int64)[:, : args.num_const * 3]
+        dat = dat.reshape(dat.shape[0], -1, 3)
     else:
-        df = pd.read_hdf(path, "discretized", stop=n_events)
-        x, padding_mask, _ = preprocess_dataframe(
-            df,
-            num_features=num_features,
-            num_bins=num_bins,
-            to_tensor=True,
-            num_const=args.num_const,
-            reverse=args.reverse,
-            limit_nconst=args.limit_const,
-        )
-        labels = torch.zeros(len(x))
+        assert False, "Filetype for bg not supported"
+    dat = np.delete(dat, np.where(dat[:, 0, 0] == 0)[0], axis=0)
+    dat[dat == -1] = 0
+    return dat
 
-        df = pd.read_hdf(path.replace("qcd", "top"), "discretized", stop=n_events)
-        x1, padding_mask1, _ = preprocess_dataframe(
-            df,
-            num_features=num_features,
-            num_bins=num_bins,
-            to_tensor=True,
-            num_const=args.num_const,
-            reverse=args.reverse,
-            limit_nconst=args.limit_const,
-        )
-        labels = torch.concat((labels, torch.ones(len(x1))))
-        x = torch.concat((x, x1), dim=0)
-        padding_mask = torch.concat((padding_mask, padding_mask1), dim=0)
 
-        train_dataset = TensorDataset(x, padding_mask, labels)
-        train_loader = DataLoader(
-            train_dataset,
-            batch_size=args.batch_size,
-            num_workers=args.num_workers,
-            shuffle=True,
-        )
-        print(x.shape)
-    return train_loader
+def get_dataloader(
+    bgf,
+    sigf,
+):
+    bg = load_data(bgf)
+    sig = load_data(sigf)
+
+    print(f"Using bg {bg.shape} from {bgf} and sig {sig.shape} from {sigf}")
+
+    dat = np.concatenate((bg, sig), 0)
+    lab = np.append(np.zeros(len(bg)), np.ones(len(sig)))
+    padding_mask = dat[:, :, 0] != 0
+
+    idx = np.random.permutation(len(dat))
+    dat = torch.tensor(dat[idx])
+    lab = torch.tensor(lab[idx])
+    padding_mask = torch.tensor(padding_mask[idx])
+
+    train_set = TensorDataset(
+        dat[: int(0.9 * len(dat))],
+        padding_mask[: int(0.9 * len(dat))],
+        lab[: int(0.9 * len(dat))],
+    )
+    val_set = TensorDataset(
+        dat[int(0.9 * len(dat)) :],
+        padding_mask[int(0.9 * len(dat)) :],
+        lab[int(0.9 * len(dat)) :],
+    )
+    train_loader = DataLoader(
+        train_set,
+        batch_size=args.batch_size,
+        shuffle=True,
+    )
+    val_loader = DataLoader(
+        val_set,
+        batch_size=args.batch_size,
+    )
+    return train_loader, val_loader
+
+
+def plot_rocs(model, val_loader, tag):
+    labels = []
+    preds = []
+    model.eval()
+    with torch.no_grad():
+        for x, padding_mask, label in tqdm(
+            val_loader, total=len(val_loader), desc=f"Validation Epoch {epoch + 1}"
+        ):
+            x = x.to(device)
+            padding_mask = padding_mask.to(device)
+            label = label.to(device)
+
+            logits = model(
+                x,
+                padding_mask,
+            )
+            preds.append(logits.cpu().numpy())
+            labels.append(label.cpu().numpy())
+
+    preds = np.concatenate(preds, 0)
+    labels = np.concatenate(labels, 0)
+    fpr, tpr, _ = roc_curve(labels, preds)
+    auc = roc_auc_score(labels, preds)
+
+    fig, ax = plt.subplots(constrained_layout=True)
+    ax.plot(tpr, 1.0 / fpr, label=f"AUC {auc}")
+    ax.set_yscale("log")
+    ax.grid(which="both")
+    ax.set_ylim(0.9, 3e3)
+    ax.legend()
+    fig.savefig(os.path.join(args.log_dir, f"roc_{tag}.png"))
+
+    fig, ax = plt.subplots(constrained_layout=True)
+    ax.hist(preds[labels == 0], histtype="step", density=True, bins=30, label="Bg")
+    ax.hist(preds[labels == 1], histtype="step", density=True, bins=30, label="Sig")
+    ax.legend()
+    fig.savefig(os.path.join(args.log_dir, f"preds_{tag}.png"))
+
+    np.savez(os.path.join(args.log_dir, f"preds_{tag}.npz"), preds=preds, labels=labels)
 
 
 if __name__ == "__main__":
@@ -223,45 +202,35 @@ if __name__ == "__main__":
     num_bins = tuple(args.num_bins)
 
     print(f"Using bins: {num_bins}")
-    print(f"{'Not' if not args.reverse else ''} reversing pt order")
 
-    # load and preprocess data
-    print(f"Loading training set")
-    train_loader = load_data(args.data_path, args.num_events)
-
-    print("Loading validation set")
-    val_loader = load_data(args.data_path.replace("train", "test"), 10000)
+    train_loader, val_loader = get_dataloader(args.bg, args.sig)
 
     # construct model
-    if args.contin:
-        model = load_model("last")
-        print("Loaded model")
-    else:
-        model = JetTransformer(
-            hidden_dim=args.hidden_dim,
-            num_layers=args.num_layers,
-            num_heads=args.num_heads,
-            num_features=num_features,
-            num_bins=num_bins,
-            dropout=args.dropout,
-            output=args.output,
-            classifier=True,
-        )
+    model = JetTransformer(
+        hidden_dim=args.hidden_dim,
+        num_layers=args.num_layers,
+        num_heads=args.num_heads,
+        num_features=num_features,
+        num_bins=num_bins,
+        dropout=args.dropout,
+        output=args.output,
+        classifier=True,
+    )
     model.to(device)
 
     # construct optimizer and auto-caster
     opt = torch.optim.Adam(
         model.parameters(), lr=args.lr, weight_decay=args.weight_decay
     )
-    scheduler = get_cos_scheduler()
+    scheduler = get_cos_scheduler(
+        num_epochs=args.num_epochs,
+        num_batches=len(train_loader),
+        optimizer=opt,
+    )
     scaler = torch.cuda.amp.GradScaler()
 
-    if args.contin:
-        load_opt_states()
-        print("Loaded optimizer")
-
-    logger = SummaryWriter(args.model_dir)
-    global_step = args.global_step
+    logger = SummaryWriter(args.log_dir)
+    global_step = 0
     loss_list = []
     perplexity_list = []
     min_val_loss = np.inf
@@ -316,8 +285,14 @@ if __name__ == "__main__":
             val_loss = np.mean(val_loss)
             if val_loss < min_val_loss:
                 min_val_loss = val_loss
-                save_model("best")
+                save_model(model, args.log_dir, "best")
             logger.add_scalar("Val/Loss", np.mean(val_loss), global_step)
 
-        save_model("last")
-        save_opt_states()
+        save_model(model, args.log_dir, "last")
+        save_opt_states(
+            optimizer=opt, scheduler=scheduler, scaler=scaler, log_dir=args.log_dir
+        )
+
+    plot_rocs(model, val_loader, tag="last")
+    model = load_model(os.path.join(args.log_dir, "model_best.pt"))
+    plot_rocs(model, val_loader, tag="best")
