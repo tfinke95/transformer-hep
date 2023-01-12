@@ -38,6 +38,81 @@ class EmbeddingProductHead(Module):
         return logits
 
 
+class JetTransformerClassifier(Module):
+    def __init__(
+        self,
+        hidden_dim=256,
+        num_layers=10,
+        num_heads=4,
+        num_features=3,
+        num_bins=(41, 31, 31),
+        dropout=0.1,
+    ):
+        super(JetTransformerClassifier, self).__init__()
+        self.num_features = num_features
+        self.dropout = dropout
+
+        # learn embedding for each bin of each feature dim
+        self.feature_embeddings = ModuleList(
+            [
+                Embedding(embedding_dim=hidden_dim, num_embeddings=num_bins[l])
+                for l in range(num_features)
+            ]
+        )
+
+        # build transformer layers
+        self.layers = ModuleList(
+            [
+                TransformerEncoderLayer(
+                    d_model=hidden_dim,
+                    nhead=num_heads,
+                    dim_feedforward=hidden_dim,
+                    batch_first=True,
+                    norm_first=True,
+                    dropout=dropout,
+                )
+                for l in range(num_layers)
+            ]
+        )
+
+        self.out_norm = LayerNorm(hidden_dim)
+        self.dropout = Dropout(dropout)
+
+        # output projection and loss criterion
+        self.flat = torch.nn.Flatten()
+        self.out = Linear(hidden_dim * 100, 1)
+        self.criterion = torch.nn.functional.binary_cross_entropy_with_logits
+
+    def forward(self, x, padding_mask):
+        # construct causal mask to restrict attention to preceding elements
+        seq_len = x.shape[1]
+        seq_idx = torch.arange(seq_len, dtype=torch.long, device=x.device)
+        causal_mask = seq_idx.view(-1, 1) < seq_idx.view(1, -1)
+        padding_mask = ~padding_mask
+
+        # project x to initial embedding
+        x[x < 0] = 0
+        emb = self.feature_embeddings[0](x[:, :, 0])
+        for i in range(1, self.num_features):
+            emb += self.feature_embeddings[i](x[:, :, i])
+
+        # apply transformer layer
+        for layer in self.layers:
+            emb = layer(
+                src=emb, src_mask=causal_mask, src_key_padding_mask=padding_mask
+            )
+
+        emb = self.out_norm(emb)
+        emb = self.dropout(emb)
+        emb = self.flat(emb)
+        out = self.out(emb)
+        return out
+
+    def loss(self, logits, true_bin):
+        loss = self.criterion(logits, true_bin)
+        return loss
+
+
 class JetTransformer(Module):
     def __init__(
         self,
@@ -89,16 +164,11 @@ class JetTransformer(Module):
         self.dropout = Dropout(dropout)
 
         # output projection and loss criterion
-        if classifier:
-            self.flat = torch.nn.Flatten()
-            self.out = Linear(hidden_dim * 20, 1)
-            self.criterion = torch.nn.functional.binary_cross_entropy_with_logits
+        if output == "linear":
+            self.out_proj = Linear(hidden_dim, self.total_bins)
         else:
-            if output == "linear":
-                self.out_proj = Linear(hidden_dim, self.total_bins)
-            else:
-                self.out_proj = EmbeddingProductHead(hidden_dim, num_features, num_bins)
-            self.criterion = CrossEntropyLoss()
+            self.out_proj = EmbeddingProductHead(hidden_dim, num_features, num_bins)
+        self.criterion = CrossEntropyLoss()
 
     def forward(self, x, padding_mask):
         # construct causal mask to restrict attention to preceding elements
@@ -123,35 +193,20 @@ class JetTransformer(Module):
         emb = self.dropout(emb)
 
         # project final embedding to logits (not normalized with softmax)
-        if self.classifier:
-            emb = self.flat(emb)
-            out = self.out(emb)
-            return out
+        logits = self.out_proj(emb)
+        if self.tanh:
+            return 13 * torch.tanh(0.1 * logits)
         else:
-            logits = self.out_proj(emb)
-            if self.tanh:
-                return 13 * torch.tanh(0.1 * logits)
-            else:
-                return logits
+            return logits
 
     def loss(self, logits, true_bin):
-        if not self.classifier:
-            # ignore final logits
-            logits = logits[:, :-1].reshape(-1, self.total_bins)
-
-            # shift target bins to right
-            true_bin = true_bin[:, 1:].flatten()
-
-        loss = self.criterion(logits, true_bin)
-        return loss
-
-    def loss_pC(self, logits, true_bin):
+        # ignore final logits
         logits = logits[:, :-1].reshape(-1, self.total_bins)
 
         # shift target bins to right
         true_bin = true_bin[:, 1:].flatten()
 
-        loss = torch.nn.CrossEntropyLoss(reduction="none")(logits, true_bin)
+        loss = self.criterion(logits, true_bin)
         return loss
 
     def probability(
@@ -268,3 +323,7 @@ class CNNclass(Module):
 
     def loss(self, x, y):
         return torch.nn.functional.binary_cross_entropy_with_logits(x, y)
+
+
+class ParticleNet(Module):
+    pass

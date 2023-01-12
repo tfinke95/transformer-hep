@@ -4,7 +4,7 @@ from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 from argparse import ArgumentParser
 
-from model import JetTransformer
+from model import JetTransformerClassifier
 
 from tqdm import tqdm
 import pandas as pd
@@ -206,15 +206,12 @@ if __name__ == "__main__":
     train_loader, val_loader = get_dataloader(args.bg, args.sig)
 
     # construct model
-    model = JetTransformer(
+    model = JetTransformerClassifier(
         hidden_dim=args.hidden_dim,
         num_layers=args.num_layers,
         num_heads=args.num_heads,
         num_features=num_features,
-        num_bins=num_bins,
         dropout=args.dropout,
-        output=args.output,
-        classifier=True,
     )
     model.to(device)
 

@@ -3,7 +3,7 @@ models*
 figures*
 samples/*
 samples_cluster/*
-sample_tests*
+samples_tests*
 *egg-inf*
 
 __init__.py
@@ -16,3 +16,4 @@ jobscript*
 *.png
 *.pdf
 
+logs*
