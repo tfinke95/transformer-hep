@@ -44,7 +44,7 @@ def train_model(model, data, labels, train_params, logfolder, mask):
         callbacks=[
             tfk.callbacks.ReduceLROnPlateau(monitor="loss", patience=8, verbose=1),
             tfk.callbacks.EarlyStopping(
-                monitor="loss", patience=12, verbose=1, restore_best_weights=True
+                monitor="val_loss", patience=12, verbose=1, restore_best_weights=True
             ),
             tfk.callbacks.ModelCheckpoint(
                 os.path.join(logfolder, "checkpoint_{epoch:02d}"),
@@ -74,7 +74,7 @@ def main():
     config = check_activation(get_config())
     model = GraphNet(**config["graphnet"])
     start = time.time()
-    data, true_label = load_data(config["data"])
+    data, true_label = load_data(config["data"], plot_dists="tmp.png")
 
     train_model(
         model=model,

@@ -83,13 +83,24 @@ def make_continues(jets, noise=False):
     return continues_jets
 
 
-def load_data(params):
-    def load_file(file):
+def load_data(params, test=False, plot_dists=None):
+    def load_file(file, key=None):
         if file.endswith("npz"):
+            if test:
+                file = file.replace("50", "100_test")
+            print(file)
             dat = np.load(file)["jets"][: params["n_jets"], : params["n_const"]]
         elif file.endswith("h5"):
-            dat = pd.read_hdf(file, key="discretized", stop=params["n_jets"])
-            dat = dat.to_numpy(dtype=np.int64)[:, : params["n_const"] * 3]
+            if test:
+                dat = pd.read_hdf(
+                    file,
+                    key=key,
+                    start=100000,
+                    stop=100000 + params["n_jets"],
+                )
+            else:
+                dat = pd.read_hdf(file, key=key, stop=params["n_jets"])
+            dat = dat.to_numpy()[:, : params["n_const"] * 3]
             dat = dat.reshape(dat.shape[0], -1, 3)
         else:
             assert False, "Filetype for bg not supported"
@@ -97,33 +108,49 @@ def load_data(params):
         dat[dat == -1] = 0
         return dat
 
-    bg = load_file(params["bg_file"])
-    sig = load_file(params["sig_files"][0])
+    bg = load_file(params["bg_file"], key=params["bg_key"])
+    if params["bg_key"] == "discretized":
+        print("BG made continuous")
+        bg = make_continues(bg, params["bg_noise"])
+    print(f"BG sample:\n{bg[0, :20]}")
 
+    sig = load_file(params["sig_files"][0], key=params["sig_key"])
+    if params["sig_key"] == "discretized":
+        print("Sig made continuous")
+        sig = make_continues(sig, params["sig_noise"])
+    print(f"SIG sample:\n{sig[0, :20]}")
+
+    print(bg.shape, sig.shape)
     data = np.append(bg, sig, 0)
     labels = np.append(np.zeros(len(bg)), np.ones(len(sig)))
     shuffle = np.random.permutation(len(data))
-    data = make_continues(data, params["cont_noise"])
+
     data = transform_momenta(data)
 
-    # import matplotlib.pyplot as plt
+    if not plot_dists is None:
+        import matplotlib.pyplot as plt
 
-    # features = data.shape[-1]
-    # fig, axes = plt.subplots(
-    #     features, 1, constrained_layout=True, figsize=(features * 3, 10)
-    # )
-    # for i in range(data.shape[-1]):
-    #     axes[i].hist(
-    #         data[labels == 0, :, i][data[labels == 0, :, 2] != 0].flatten(),
-    #         bins=100,
-    #         histtype="step",
-    #     )
-    #     axes[i].hist(
-    #         data[labels == 1, :, i][data[labels == 1, :, 2] != 0].flatten(),
-    #         bins=100,
-    #         histtype="step",
-    #     )
-    # plt.show()
+        features = data.shape[-1]
+        fig, axes = plt.subplots(
+            features, 1, constrained_layout=True, figsize=(features * 3, 10)
+        )
+        for i in range(data.shape[-1]):
+            axes[i].hist(
+                data[labels == 0, :, i][data[labels == 0, :, 2] != 0].flatten(),
+                bins=100,
+                histtype="step",
+                density=True,
+                label="Background",
+            )
+            axes[i].hist(
+                data[labels == 1, :, i][data[labels == 1, :, 2] != 0].flatten(),
+                bins=100,
+                histtype="step",
+                density=True,
+                label="Signal",
+            )
+        axes[0].legend()
+        fig.savefig(plot_dists)
 
     return data[shuffle], labels[shuffle]
 

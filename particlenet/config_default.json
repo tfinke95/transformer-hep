@@ -29,11 +29,13 @@
   },
   "data": {
     "sig_files": [
-      "/mnt/wsl/PHYSICALDRIVE1p1/thorben/Data/jet_datasets/top_benchmark/v0/test_qcd_30_bins.h5"
+      "/hpcwork/bn227573/Transformers/models/end_token/end_token_noAdd_qcd/samples_50.npz"
     ],
-    "bg_file": "/mnt/wsl/PHYSICALDRIVE1p1/thorben/Data/jet_datasets/top_benchmark/v0/test_top_30_bins.h5",
+    "bg_file": "/hpcwork/bn227573/top_benchmark/test_qcd_30_bins.h5",
     "n_jets": 100000,
     "n_const": 50,
+    "bg_key": "discretized",
+    "sig_key": "discretized",
     "f1": [
       0.0
     ],
@@ -41,13 +43,14 @@
       1.0
     ],
     "seed": 0,
-    "cont_noise": true
+    "bg_noise": true,
+    "sig_noise": true
   },
   "training": {
     "batch_size": 256,
     "epochs": 75,
-    "validation_data": false,
-    "validation_freq": 5,
+    "validation_split": 0.1,
+    "validation_freq": 1,
     "verbose": 1
   },
   "logging": {
