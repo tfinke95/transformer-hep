@@ -40,15 +40,17 @@ python sample_jets.py \\
         )
 
 
-tmp = os.listdir("/hpcwork/bn227573/Transformers/models/scan2/")
+tmp = os.listdir("/hpcwork/bn227573/Transformers/models/end_token/")
 MODEL_DIRS = [
-    os.path.join("/hpcwork/bn227573/Transformers/models/scan2/", x) for x in tmp
+    os.path.join("/hpcwork/bn227573/Transformers/models/end_token/", x)
+    for x in tmp
+    if "noAdd" in x
 ]
 MODEL_NAMES = ["model_last.pt"] * len(MODEL_DIRS)
-SAVETAGS = ["100"] * len(MODEL_DIRS)
+SAVETAGS = ["100_test"] * len(MODEL_DIRS)
 NUM_SAMPLES = [20000] * len(MODEL_DIRS)
 NUM_CONST = [100] * len(MODEL_DIRS)
-SEEDS = [0] * len(MODEL_DIRS)
+SEEDS = [19950107] * len(MODEL_DIRS)
 
 
 for i in range(len(MODEL_DIRS)):
