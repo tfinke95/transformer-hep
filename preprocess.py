@@ -143,23 +143,157 @@ def imagePreprocessing(jets, filename=None):
     return jets
 
 
+def discretize_data(
+    class_label: int,
+    tag: str,
+    input_file: str,
+    output_file: str,
+    lower_q: str,
+    upper_q: str,
+    nBins: list[int],
+    nJets=None,
+):
+    def read_input():
+        es = [f"E_{i}" for i in range(200)]
+        px = [f"PX_{i}" for i in range(200)]
+        py = [f"PY_{i}" for i in range(200)]
+        pz = [f"PZ_{i}" for i in range(200)]
+        cols = [item for sublist in zip(es, px, py, pz) for item in sublist]
+
+        df = pd.read_hdf(
+            input_file,
+            key="table",
+            stop=nJets,
+        )
+        df = df[df["is_signal_new"] == class_label]
+        df = df[cols]
+        data = df.to_numpy()
+        data = data.reshape((-1, 200, 4))
+        return data
+
+    def calculate_features(momenta):
+        jets = data.sum(1)
+        jets_p = np.sqrt(np.square(jets[:, 1:]).sum(1))
+        # jets_pt = np.sqrt(np.square(jets[:, 1:3]).sum(1))
+        jets_phi = np.arctan2(jets[:, 2], jets[:, 1])
+        jets_eta = 0.5 * np.log((jets_p + jets[:, 3]) / (jets_p - jets[:, 3]))
+
+        const_p = np.sqrt(np.square(momenta[:, :, 1:]).sum(2))
+        const_pt = np.sqrt(np.square(momenta[:, :, 1:3]).sum(2))
+        const_pt = np.sqrt(np.square(momenta[:, :, 1:3]).sum(2))
+        const_phi = np.arctan2(momenta[:, :, 2], momenta[:, :, 1])
+        const_eta = 0.5 * np.log(
+            (const_p + momenta[:, :, 3]) / (const_p - momenta[:, :, 3])
+        )
+
+        d_eta = const_eta - jets_eta[..., np.newaxis]
+        d_phi = const_phi - jets_phi[..., np.newaxis]
+        d_phi = (d_phi + np.pi) % (2 * np.pi) - np.pi
+
+        d_eta[const_pt == 0] = 0
+        d_phi[const_pt == 0] = 0
+
+        return const_pt, d_eta, d_phi
+
+    def check_pt_oredering(pts):
+        for i in range(len(pts)):
+            assert np.all(pts[i, :-1] >= pts[i, 1:]), "Data not sorted in pT"
+
+    def get_binning():
+        # If QCD training as input, get the bins
+        if input_file.split("/")[-1] == "train.h5" and class_label == 0:
+            pt_bins = np.linspace(
+                np.quantile(np.log(const_pt[const_pt != 0]), lower_q),
+                np.quantile(np.log(const_pt[const_pt != 0]), upper_q),
+                nBins[0],
+            )
+            eta_bins = np.linspace(-0.8, 0.8, nBins[1])
+            phi_bins = np.linspace(-0.8, 0.8, nBins[2])
+
+            np.save(f"preprocessing_bins/pt_bins_{tag}", pt_bins)
+            np.save(f"preprocessing_bins/eta_bins_{tag}", eta_bins)
+            np.save(f"preprocessing_bins/phi_bins_{tag}", phi_bins)
+            print("Created bins")
+        # Else load the binning according to given tag
+        else:
+            pt_bins = np.load(f"pt_bins_{tag}.npy")
+            eta_bins = np.load(f"eta_bins_{tag}.npy")
+            phi_bins = np.load(f"phi_bins_{tag}.npy")
+            print(f"Loaded bins with tag {tag}")
+        return pt_bins, eta_bins, phi_bins
+
+    def discretize():
+        # Get the discrete values
+        const_pt_disc = np.digitize(np.log(const_pt), pt_bins).astype(np.int16)
+        d_eta_disc = np.digitize(d_eta, eta_bins).astype(np.int16)
+        d_phi_disc = np.digitize(d_phi, phi_bins).astype(np.int16)
+
+        # Apply mask
+        const_pt_disc[const_pt == 0] = -1
+        d_eta_disc[const_pt == 0] = -1
+        d_phi_disc[const_pt == 0] = -1
+        return const_pt_disc, d_eta_disc, d_phi_disc
+
+    def get_df(pt, eta, phi):
+        stacked = np.stack([pt, eta, phi], -1)
+        stacked = stacked.reshape((-1, 600))
+        cols = [
+            item
+            for sublist in [f"PT_{i},Eta_{i},Phi_{i}".split(",") for i in range(200)]
+            for item in sublist
+        ]
+        df = pd.DataFrame(stacked, columns=cols)
+        return df
+
+    print(f"Input: {input_file}\nOutput: {output_file}")
+
+    data = read_input()
+    print(f"Data shape: {data.shape}")
+    const_pt, d_eta, d_phi = calculate_features(data)
+    check_pt_oredering(const_pt)
+
+    pt_bins, eta_bins, phi_bins = get_binning()
+    const_pt_disc, d_eta_disc, d_phi_disc = discretize()
+
+    print(f"pT bin range: {const_pt_disc.min()} {const_pt_disc.max()}")
+    print(f"eta bin range: {d_eta_disc.min()} {d_eta_disc.max()}")
+    print(f"phi bin range: {d_phi_disc.min()} {d_phi_disc.max()}")
+
+    # Collect continuous data in dataframe
+    raw = get_df(const_pt, d_eta, d_phi)
+    disc = get_df(const_pt_disc, d_eta_disc, d_phi_disc)
+
+    # Write dataframes into compressed hdf5 file
+    raw.to_hdf(output_file, key="raw", mode="w", complevel=9)
+    disc.to_hdf(output_file, key="discretized", mode="r+", complevel=9)
+
+    print("Discretized dataframe discription")
+    print(disc.describe())
+
+
 if __name__ == "__main__":
-    df = pd.read_hdf(
-        "/hpcwork/bn227573/top_benchmark/train_qcd_30_bins.h5",
-        key="discretized",
-        stop=10000,
+    from argparse import ArgumentParser
+
+    parser = ArgumentParser()
+    parser.add_argument("--class_label", type=int, choices=[0, 1])
+    parser.add_argument("--train_test", type=str, choices=["train", "test"])
+    parser.add_argument("--tag", type=str)
+    parser.add_argument("--nBins", "-n", type=int, nargs=3)
+    parser.add_argument("--input_file", "-I", type=str)
+    parser.add_argument("--lower_q", "-l", type=float, default=0.0)
+    parser.add_argument("--upper_q", "-u", type=float, default=1.0)
+    parser.add_argument("--nJets", type=int, default=None)
+    args = parser.parse_args()
+
+    output_file = f"{args.train_test}_{['qcd', 'top'][args.class_label]}_{args.tag}.h5"
+
+    discretize_data(
+        class_label=args.class_label,
+        tag=args.tag,
+        input_file=args.input_file,
+        output_file=output_file,
+        lower_q=args.lower_q,
+        upper_q=args.upper_q,
+        nBins=args.nBins,
+        nJets=args.nJets,
     )
-    x, pad, bin = preprocess_dataframe(
-        df=df,
-        num_features=3,
-        num_bins=(41, 31, 31),
-        num_const=30,
-        to_tensor=False,
-        reverse=False,
-        start=True,
-        end=True,
-        limit_nconst=False,
-    )
-    print(x.shape, pad.shape, bin.shape)
-    # print(x[0])
-    print(bin[:10])
