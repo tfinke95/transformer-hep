@@ -22,34 +22,22 @@ TEST = True
 def plot_trainHistory(folder):
     fig, ax = plt.subplots(constrained_layout=True)
     max_ep = 0
-    i = 0
-    colors = plt.cm.jet(np.linspace(0, 1, 10))
-    for fold, _, files in os.walk(folder):
-        if "f2_0.5" in fold and (("250000" in fold) or ("125000" in fold)):
-            if "training.npz" in files:
-                fit = np.load(os.path.join(fold, "training.npz"))
-                epochs = len(fit["loss"])
-                if epochs > max_ep:
-                    max_ep = epochs
-                ax.plot(
-                    np.arange(1, epochs + 1),
-                    fit["loss"],
-                    c=colors[i],
-                    label=f"{fold.split('/')[-3].split('_')[-1]}",
-                )
-                ax.plot(
-                    np.arange(1, epochs + 1),
-                    fit["val_loss"],
-                    c=colors[i],
-                    linestyle="--",
-                )
-                i += 1
+
+    fit = np.load(os.path.join(folder, "training.npz"))
+    epochs = len(fit["loss"])
+    if epochs > max_ep:
+        max_ep = epochs
+    ax.plot(
+        np.arange(1, epochs + 1),
+        fit["loss"],
+        label=f"Loss",
+    )
+    ax.plot(np.arange(1, epochs + 1), fit["val_loss"], linestyle="--", label="Val Loss")
     ax.legend()
     ax.set_xlabel("Epoch")
     ax.set_ylabel("Loss")
     ax.set_xticks(np.arange(0, max_ep + 1, 5))
-    # fig.savefig(os.path.join(folder, 'training.pdf'))
-    plt.show()
+    fig.savefig(os.path.join(folder, "training.pdf"))
 
 
 def plot_roc(predictions, labels, folder, plot=False):
@@ -84,6 +72,52 @@ def plot_roc(predictions, labels, folder, plot=False):
         plt.close(fig)
 
 
+def plot_high_low_preds(data, preds, folder):
+    high = np.quantile(preds[:, 1], 0.9)
+    low = np.quantile(preds[:, 1], 0.1)
+    fig, axes = plt.subplots(5, constrained_layout=True)
+    for i in range(5):
+        range_min = data[1][:, :, i][data[1][:, :, i] != -100].min()
+        range_max = data[1][:, :, i].max()
+        axes[i].hist(
+            (data[1][preds[:, 1] > high, :, i] * data[2][preds[:, 1] > high]).min(1),
+            bins=80,
+            range=[range_min, range_max],
+            density=True,
+            histtype="step",
+            label="high",
+        )
+        axes[i].hist(
+            (data[1][preds[:, 1] < low, :, i] * data[2][preds[:, 1] < low]).min(1),
+            bins=80,
+            range=[range_min, range_max],
+            density=True,
+            histtype="step",
+            label="low",
+        )
+        axes[i].hist(
+            (data[1][preds[:, 1] > high, :, i] * data[2][preds[:, 1] > high]).max(1),
+            bins=80,
+            range=[range_min, range_max],
+            density=True,
+            histtype="step",
+            label="high",
+        )
+        axes[i].hist(
+            (data[1][preds[:, 1] < low, :, i] * data[2][preds[:, 1] < low]).max(1),
+            bins=80,
+            range=[range_min, range_max],
+            density=True,
+            histtype="step",
+            label="low",
+        )
+    axes[0].legend()
+    fig.savefig(os.path.join(folder, f"high_and_low.pdf"))
+
+    plt.show()
+    plt.close(fig)
+
+
 def check_weights(model, folder, data, load=True):
     if load:
         model.load_weights(os.path.join(folder, "model_weights.h5"))
@@ -99,6 +133,7 @@ def check_weights(model, folder, data, load=True):
 def main():
     model = GraphNet(**NETWOKPARAMS)
     config = get_config(test=True)
+    config["data"]["n_jets"] = 10000
     data, labels = load_data(
         config["data"],
         test=TEST,
@@ -108,16 +143,18 @@ def main():
     model([data[:2, :, :2], data[:2]])
     model = check_weights(model, config["logging"]["logfolder"], data=data)
     if config["mask"]:
-        data = [data[:, :, :2], data, data[:, :, 2] != 0]
+        data = [data[:, :, :2], data, data[:, :, 2] != -100]
     else:
         data = [data[:, :, :2], data]
     preds = model.predict(data, batch_size=1024, verbose=1)
+
     plot_roc(
         predictions=preds,
         labels=labels,
         folder=config["logging"]["logfolder"],
         plot=True,
     )
+    plot_trainHistory(folder=config["logging"]["logfolder"])
     np.savez(
         os.path.join(
             config["logging"]["logfolder"], f"predictions_{'test' if TEST else 'train'}"
@@ -125,8 +162,6 @@ def main():
         predictions=preds,
         labels=labels,
     )
-
-    pass
 
 
 if __name__ == "__main__":

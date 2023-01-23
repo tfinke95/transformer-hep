@@ -5,14 +5,14 @@ import pandas as pd
 
 def transform_momenta(momenta, features="last"):
     pts = momenta[:, :, 0]
-    mask = pts == 0
+    mask = pts != -100
     etas = momenta[:, :, 1]
     phis = momenta[:, :, 2]
 
     drs = np.sqrt(np.sum(np.square(momenta[:, :, 1:3]), -1))
 
-    pxs = np.cos(phis) * pts
-    pys = np.sin(phis) * pts
+    pxs = np.cos(phis) * pts * mask
+    pys = np.sin(phis) * pts * mask
     pxj = np.sum(pxs, -1)
     pyj = np.sum(pys, 1)
 
@@ -23,7 +23,7 @@ def transform_momenta(momenta, features="last"):
         -1,
     )
     for i in range(newVec.shape[-1]):
-        newVec[mask, i] = 0
+        newVec[~mask, i] = -100
     return newVec
 
 
@@ -58,9 +58,12 @@ def make_continues(jets, noise=False):
     phi_bins = np.load("../preprocessing_bins/phi_bins_30_bins.npy")
 
     pt_disc = jets[:, :, 0]
+    print(pt_disc.max(), pt_bins.shape)
     mask = pt_disc == 0
     eta_disc = jets[:, :, 1]
+    print(eta_disc.max(), eta_bins.shape)
     phi_disc = jets[:, :, 2]
+    print(phi_disc.max(), phi_bins.shape)
 
     if noise:
         pt_con = (pt_disc - np.random.uniform(0.0, 1.0, size=pt_disc.shape)) * (
@@ -78,18 +81,20 @@ def make_continues(jets, noise=False):
         phi_con = phi_disc * (phi_bins[1] - phi_bins[0]) + phi_bins[0]
 
     continues_jets = np.stack((np.exp(pt_con), eta_con, phi_con), -1)
-    continues_jets[mask] = 0
+    continues_jets[mask] = -100
 
     return continues_jets
 
 
 def load_data(params, test=False, plot_dists=None):
     def load_file(file, key=None):
+        # Load  sample file
         if file.endswith("npz"):
             if test:
                 file = file.replace("50", "100_test")
             print(file)
             dat = np.load(file)["jets"][: params["n_jets"], : params["n_const"]]
+        # Load data file
         elif file.endswith("h5"):
             if test:
                 dat = pd.read_hdf(
@@ -104,23 +109,29 @@ def load_data(params, test=False, plot_dists=None):
             dat = dat.reshape(dat.shape[0], -1, 3)
         else:
             assert False, "Filetype for bg not supported"
+        # Delete empty jest (can occur in samplings)
         dat = np.delete(dat, np.where(dat[:, 0, 0] == 0)[0], axis=0)
         dat[dat == -1] = 0
         return dat
+
+    print(params["bg_file"])
+    print(params["sig_files"])
 
     bg = load_file(params["bg_file"], key=params["bg_key"])
     if params["bg_key"] == "discretized":
         print("BG made continuous")
         bg = make_continues(bg, params["bg_noise"])
-    print(f"BG sample:\n{bg[0, :20]}")
+    else:
+        bg[bg[:, :, 0] == 0] = -100
 
     sig = load_file(params["sig_files"][0], key=params["sig_key"])
     if params["sig_key"] == "discretized":
         print("Sig made continuous")
         sig = make_continues(sig, params["sig_noise"])
-    print(f"SIG sample:\n{sig[0, :20]}")
-
+    else:
+        sig[sig[:, :, 0] == 0] = -100
     print(bg.shape, sig.shape)
+
     data = np.append(bg, sig, 0)
     labels = np.append(np.zeros(len(bg)), np.ones(len(sig)))
     shuffle = np.random.permutation(len(data))
@@ -135,22 +146,27 @@ def load_data(params, test=False, plot_dists=None):
             features, 1, constrained_layout=True, figsize=(features * 3, 10)
         )
         for i in range(data.shape[-1]):
+            range_min = data[:, :, i][data[:, :, i] != -100].min()
+            range_max = data[:, :, i].max()
             axes[i].hist(
-                data[labels == 0, :, i][data[labels == 0, :, 2] != 0].flatten(),
-                bins=100,
+                data[labels == 0, :, i][data[labels == 0, :, 0] != -100].flatten(),
+                bins=300,
+                range=[range_min, range_max],
                 histtype="step",
                 density=True,
                 label="Background",
             )
             axes[i].hist(
-                data[labels == 1, :, i][data[labels == 1, :, 2] != 0].flatten(),
-                bins=100,
+                data[labels == 1, :, i][data[labels == 1, :, 0] != -100].flatten(),
+                bins=300,
+                range=[range_min, range_max],
                 histtype="step",
                 density=True,
                 label="Signal",
             )
         axes[0].legend()
         fig.savefig(plot_dists)
+        plt.close(fig)
 
     return data[shuffle], labels[shuffle]
 
