@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import torch
+import os
 from tqdm import tqdm
 
 
@@ -180,7 +181,6 @@ def discretize_data(
 
         const_p = np.sqrt(np.square(momenta[:, :, 1:]).sum(2))
         const_pt = np.sqrt(np.square(momenta[:, :, 1:3]).sum(2))
-        const_pt = np.sqrt(np.square(momenta[:, :, 1:3]).sum(2))
         const_phi = np.arctan2(momenta[:, :, 2], momenta[:, :, 1])
         const_eta = 0.5 * np.log(
             (const_p + momenta[:, :, 3]) / (const_p - momenta[:, :, 3])
@@ -210,16 +210,19 @@ def discretize_data(
             eta_bins = np.linspace(-0.8, 0.8, nBins[1])
             phi_bins = np.linspace(-0.8, 0.8, nBins[2])
 
+            if not os.path.isdir("preprocessing_bins"):
+                os.makedirs("preprocessing_bins")
+
             np.save(f"preprocessing_bins/pt_bins_{tag}", pt_bins)
             np.save(f"preprocessing_bins/eta_bins_{tag}", eta_bins)
             np.save(f"preprocessing_bins/phi_bins_{tag}", phi_bins)
-            print("Created bins")
+            print("Created bins\n")
         # Else load the binning according to given tag
         else:
-            pt_bins = np.load(f"pt_bins_{tag}.npy")
-            eta_bins = np.load(f"eta_bins_{tag}.npy")
-            phi_bins = np.load(f"phi_bins_{tag}.npy")
-            print(f"Loaded bins with tag {tag}")
+            pt_bins = np.load(f"preprocessing_bins/pt_bins_{tag}.npy")
+            eta_bins = np.load(f"preprocessing_bins/eta_bins_{tag}.npy")
+            phi_bins = np.load(f"preprocessing_bins/phi_bins_{tag}.npy")
+            print(f"\nLoaded bins with tag {tag}\n")
         return pt_bins, eta_bins, phi_bins
 
     def discretize():
@@ -248,16 +251,16 @@ def discretize_data(
     print(f"Input: {input_file}\nOutput: {output_file}")
 
     data = read_input()
-    print(f"Data shape: {data.shape}")
+    print(f"Data shape: {data.shape}\n")
     const_pt, d_eta, d_phi = calculate_features(data)
     check_pt_oredering(const_pt)
 
     pt_bins, eta_bins, phi_bins = get_binning()
     const_pt_disc, d_eta_disc, d_phi_disc = discretize()
 
-    print(f"pT bin range: {const_pt_disc.min()} {const_pt_disc.max()}")
-    print(f"eta bin range: {d_eta_disc.min()} {d_eta_disc.max()}")
-    print(f"phi bin range: {d_phi_disc.min()} {d_phi_disc.max()}")
+    print(f"\npT bin range: {const_pt_disc[const_pt!=0].min()} {const_pt_disc.max()}")
+    print(f"eta bin range: {d_eta_disc[const_pt!=0].min()} {d_eta_disc.max()}")
+    print(f"phi bin range: {d_phi_disc[const_pt!=0].min()} {d_phi_disc.max()}\n")
 
     # Collect continuous data in dataframe
     raw = get_df(const_pt, d_eta, d_phi)
@@ -267,7 +270,7 @@ def discretize_data(
     raw.to_hdf(output_file, key="raw", mode="w", complevel=9)
     disc.to_hdf(output_file, key="discretized", mode="r+", complevel=9)
 
-    print("Discretized dataframe discription")
+    print("\nDiscretized dataframe discription")
     print(disc.describe())
 
 
@@ -276,16 +279,22 @@ if __name__ == "__main__":
 
     parser = ArgumentParser()
     parser.add_argument("--class_label", type=int, choices=[0, 1])
-    parser.add_argument("--train_test", type=str, choices=["train", "test"])
     parser.add_argument("--tag", type=str)
     parser.add_argument("--nBins", "-n", type=int, nargs=3)
     parser.add_argument("--input_file", "-I", type=str)
     parser.add_argument("--lower_q", "-l", type=float, default=0.0)
     parser.add_argument("--upper_q", "-u", type=float, default=1.0)
-    parser.add_argument("--nJets", type=int, default=None)
+    parser.add_argument("--nJets", "-N", type=int, default=None)
     args = parser.parse_args()
 
-    output_file = f"{args.train_test}_{['qcd', 'top'][args.class_label]}_{args.tag}.h5"
+    train_test = args.input_file.split("/")[-1][:-3]
+    print(f"Dataset: {train_test}")
+    output_path = os.path.join(os.path.dirname(args.input_file), "discretized")
+    if not os.path.exists(output_path):
+        print("\nCreating output path\n")
+        os.makedirs(output_path)
+    output_file = f"{train_test}_{['qcd', 'top'][args.class_label]}_{args.tag}.h5"
+    output_file = os.path.join(output_path, output_file)
 
     discretize_data(
         class_label=args.class_label,
