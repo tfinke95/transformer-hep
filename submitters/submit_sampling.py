@@ -4,16 +4,17 @@ import numpy as np
 
 
 def write_jobscript():
-    with open("jobscript.sh", "w") as f:
+    with open(filename, "w") as f:
         f.write(
             f"""#!/usr/bin/env zsh
 
+#SBATCH --account rwth0934
 #SBATCH --job-name sample_{tag}
 
 #SBATCH --output /home/bn227573/out/sample_{tag}_%J.log
 #SBATCH --error /home/bn227573/out/sample_{tag}_%J_err.log
 
-#SBATCH --time 30
+#SBATCH --time 75
 
 #SBATCH --cpus-per-task 4
 #SBATCH --mem-per-cpu 2G
@@ -40,20 +41,24 @@ python sample_jets.py \\
         )
 
 
-tmp = os.listdir("/hpcwork/bn227573/Transformers/models/end_token/")
+tmp = os.listdir("/hpcwork/rwth0934/Transformers/")
 MODEL_DIRS = [
-    os.path.join("/hpcwork/bn227573/Transformers/models/end_token/", x)
+    os.path.join("/hpcwork/rwth0934/Transformers/", x)
     for x in tmp
-    if "noAdd" in x
 ]
 MODEL_NAMES = ["model_last.pt"] * len(MODEL_DIRS)
-SAVETAGS = ["100_test"] * len(MODEL_DIRS)
-NUM_SAMPLES = [20000] * len(MODEL_DIRS)
+SAVETAGS = ["train_100"] * len(MODEL_DIRS)
+NUM_SAMPLES = [200000] * len(MODEL_DIRS)
 NUM_CONST = [100] * len(MODEL_DIRS)
-SEEDS = [19950107] * len(MODEL_DIRS)
+SEEDS = [int(time.time())] * len(MODEL_DIRS)
 
-
+n = 0
 for i in range(len(MODEL_DIRS)):
+    n += 1
+    filename = f"jobscript_{n}.sh"
+    if os.path.isfile(os.path.join(MODEL_DIRS[i], f"samples_{SAVETAGS[i]}.npz")):
+        continue
+    print(MODEL_DIRS[i])
     model_dir = MODEL_DIRS[i]
     model_name = MODEL_NAMES[i]
     savetag = SAVETAGS[i]
@@ -64,5 +69,5 @@ for i in range(len(MODEL_DIRS)):
     tag = model_dir.split("/")[-1]
     write_jobscript()
 
-    os.system("sbatch jobscript.sh")
+    os.system(f"sbatch {filename}")
     time.sleep(1)
