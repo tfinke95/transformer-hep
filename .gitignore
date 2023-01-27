@@ -5,6 +5,8 @@ samples/*
 samples_cluster/*
 samples_tests*
 *egg-inf*
+particlenet/configs/*
+
 
 __init__.py
 __pycache__*

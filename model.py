@@ -267,7 +267,7 @@ class JetTransformer(Module):
 
                 # Remove low probs
                 if not trunc is None:
-                    preds = torch.where(preds < trunc, 0, preds)
+                    preds = torch.where(preds < trunc, torch.zeros(1, device=device), preds)
                 preds = preds / torch.sum(preds, -1, keepdim=True)
 
                 idx = select_idx()

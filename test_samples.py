@@ -92,15 +92,15 @@ def plot_data_dist():
         axes[i].hist(
             bg[:, :, i][bg[:, :, 0] != 0].flatten(),
             histtype="step",
-            bins=nBins,
-            density=False,
+            bins=np.linspace(-0.5, nBins + 0.5, nBins + 2),
+            density=True,
             label="Background",
         )
         axes[i].hist(
             sig[:, :, i][sig[:, :, 0] != 0].flatten(),
             histtype="step",
-            bins=nBins,
-            density=False,
+            bins=np.linspace(-0.5, nBins + 0.5, nBins + 2),
+            density=True,
             label="Signal",
         )
         if i == 0:
@@ -220,7 +220,6 @@ plot_data_dist()
 data = jets_to_images(data)
 
 # %%
-
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 classi = CNNclass()
@@ -293,7 +292,6 @@ ax.legend()
 fig.savefig(os.path.join(args.save_dir, "roc.png"))
 
 # %%
-
 fig, ax = plt.subplots(constrained_layout=True)
 ax.hist([preds[labels == 0], preds[labels == 1]], bins=100, histtype="step")
 ax.set_yscale("log")

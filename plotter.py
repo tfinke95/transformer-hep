@@ -2,6 +2,8 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import roc_auc_score, roc_curve
+import pandas as pd
+from tqdm import tqdm
 
 size = 12
 FIGSIZE = (4,8/3)
@@ -242,13 +244,44 @@ def plot_max_index(dir):
     fig.savefig('idx.png')
 
 
+def plot_bin_distribution():
+    bg_file = "/hpcwork/rwth0934/top_benchmark/discretized/train_qcd_pt40_eta30_phi30.h5"
+    from preprocess import preprocess_dataframe
+
+    bg_data = pd.read_hdf(bg_file, key="discretized", stop=None)
+
+    bg_data, mask, bg_bins = preprocess_dataframe(
+        bg_data, 3, (41, 31, 31), 50, False, False,False, False, False,
+    )
+
+    bins = np.zeros(39402)
+    for i in tqdm(bg_bins[mask].flatten()):
+        bins[i] += 1
+    bins /= bins.sum()
+    print(bins[bins!=0].min())
+    print((bins==0).sum())
+    print((bins!=0).sum())
+
+    fig, axes = plt.subplots(ncols=3, figsize=(15, 8), sharey=True, constrained_layout=True)
+
+    max_bin = np.argmax(bins)
+    axes[0].plot(bins)
+    axes[1].plot(bins)
+    axes[2].plot(bins)
+    axes[1].set_xlim(max_bin - (41 * 31) / 2, max_bin + 41 * 31 * 1.5)
+    axes[2].set_xlim(max_bin - 41 * 3.5, max_bin + 41 * 3.5)
+    axes[0].set_yscale("log")
+    axes[0].set_xlabel("bin number")
+    fig.savefig("figures/bins_dist.png")
+
 
 if __name__ == '__main__':
-    dirname = '1part/20fixed'
+    plot_bin_distribution()
+    # dirname = '1part/20fixed'
     # dirname = 'N600k_E100_nC100_nBin30_LRcos_reverse'
     # plot_scores(dirname)
-    plot_rocs(dirname, sic=False)
-    plot_rocs(dirname, sic=True)
+    # plot_rocs(dirname, sic=False)
+    # plot_rocs(dirname, sic=True)
     # plot_loss_pC(dirname)
     # plot_probs(dirname)
     # plot_max_index(dirname)

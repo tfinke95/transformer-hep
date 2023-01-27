@@ -20,6 +20,7 @@ parser.add_argument("--num_samples", type=int, default=1000)
 parser.add_argument("--batchsize", type=int, default=100)
 parser.add_argument("--num_const", type=int, default=50)
 parser.add_argument("--seed", type=int, default=0)
+parser.add_argument("--trunc", type=float, default=None)
 
 args = parser.parse_args()
 
@@ -45,6 +46,7 @@ for i in tqdm(range(n_batches), total=n_batches, desc="Sampling batch"):
         starts=torch.zeros((args.batchsize, 3), device=device),
         device=device,
         len_seq=args.num_const + 1,
+        trunc=args.trunc,
     )
     jets.append(_jets.cpu().numpy())
     bins.append(_bins.cpu().numpy())
@@ -61,11 +63,11 @@ if rest != 0:
 
 jets = np.concatenate(jets, 0)
 bins = np.concatenate(bins, 0)
-print(jets.dtype)
 
 np.savez(
     os.path.join(args.model_dir, f"samples_{args.savetag}"),
     jets=jets[:, 1:],
     bins=bins[:, 1:],
 )
-print(int(time.time() - start))
+print(f"Time needed {(time.time() - start) / float(args.num_samples)} seconds per jet")
+print(f"\t{int(time.time() - start)} seconds in total")

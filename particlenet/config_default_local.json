@@ -28,20 +28,12 @@
     "static": false
   },
   "data": {
-    "sig_files": [
-      "/home/thorben/Projects/Transformers/physics_transformers/notebooks/train_qcd_many_bins.h5"
-    ],
+    "sig_file": "/home/thorben/Projects/Transformers/physics_transformers/notebooks/train_qcd_many_bins.h5",
     "bg_file": "/home/thorben/Projects/Transformers/physics_transformers/notebooks/train_qcd_many_bins.h5",
     "n_jets": 100000,
     "n_const": 50,
     "bg_key": "raw",
     "sig_key": "discretized",
-    "f1": [
-      0.0
-    ],
-    "f2": [
-      1.0
-    ],
     "seed": 0,
     "bg_noise": false,
     "sig_noise": true

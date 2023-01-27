@@ -17,7 +17,7 @@ NETWOKPARAMS = {
     "static": False,
 }
 TEST = True
-
+MASKING_VALUE = 0
 
 def plot_trainHistory(folder):
     fig, ax = plt.subplots(constrained_layout=True)
@@ -37,7 +37,7 @@ def plot_trainHistory(folder):
     ax.set_xlabel("Epoch")
     ax.set_ylabel("Loss")
     ax.set_xticks(np.arange(0, max_ep + 1, 5))
-    fig.savefig(os.path.join(folder, "training.pdf"))
+    fig.savefig(os.path.join(folder, "training.png"))
 
 
 def plot_roc(predictions, labels, folder, plot=False):
@@ -68,7 +68,7 @@ def plot_roc(predictions, labels, folder, plot=False):
         ax.set_yscale("log")
         ax.set_ylim(1, 6e3)
         ax.grid(which="both")
-        fig.savefig(os.path.join(folder, f"roc_{'test' if TEST else 'train'}.pdf"))
+        fig.savefig(os.path.join(folder, f"roc_{'test' if TEST else 'train'}.png"))
         plt.close(fig)
 
 
@@ -77,7 +77,7 @@ def plot_high_low_preds(data, preds, folder):
     low = np.quantile(preds[:, 1], 0.1)
     fig, axes = plt.subplots(5, constrained_layout=True)
     for i in range(5):
-        range_min = data[1][:, :, i][data[1][:, :, i] != -100].min()
+        range_min = data[1][:, :, i][data[1][:, :, i] != MASKING_VALUE].min()
         range_max = data[1][:, :, i].max()
         axes[i].hist(
             (data[1][preds[:, 1] > high, :, i] * data[2][preds[:, 1] > high]).min(1),
@@ -112,7 +112,7 @@ def plot_high_low_preds(data, preds, folder):
             label="low",
         )
     axes[0].legend()
-    fig.savefig(os.path.join(folder, f"high_and_low.pdf"))
+    fig.savefig(os.path.join(folder, f"high_and_low.png"))
 
     plt.show()
     plt.close(fig)
@@ -133,17 +133,21 @@ def check_weights(model, folder, data, load=True):
 def main():
     model = GraphNet(**NETWOKPARAMS)
     config = get_config(test=True)
-    config["data"]["n_jets"] = 10000
     data, labels = load_data(
         config["data"],
         test=TEST,
         plot_dists=os.path.join(config["logging"]["logfolder"], "dists.png"),
+        masking_value=MASKING_VALUE,
     )
-    print(f"{data.shape=} {labels.shape=}")
+    print(f"\nData shape {data.shape} Labels shape {labels.shape}")
+    print(f"First labels {labels[:15]}\n")
+
     model([data[:2, :, :2], data[:2]])
     model = check_weights(model, config["logging"]["logfolder"], data=data)
     if config["mask"]:
-        data = [data[:, :, :2], data, data[:, :, 2] != -100]
+        data = [data[:, :, :2], data, data[:, :, 2] != MASKING_VALUE]
+        print(data[0][0])
+        print(data[-1][0])
     else:
         data = [data[:, :, :2], data]
     preds = model.predict(data, batch_size=1024, verbose=1)

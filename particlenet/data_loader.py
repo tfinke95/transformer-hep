@@ -3,9 +3,9 @@ import sys, json, os
 import pandas as pd
 
 
-def transform_momenta(momenta, features="last"):
+def transform_momenta(momenta, masking_value=0):
     pts = momenta[:, :, 0]
-    mask = pts != -100
+    mask = pts != masking_value
     etas = momenta[:, :, 1]
     phis = momenta[:, :, 2]
 
@@ -23,7 +23,7 @@ def transform_momenta(momenta, features="last"):
         -1,
     )
     for i in range(newVec.shape[-1]):
-        newVec[~mask, i] = -100
+        newVec[~mask, i] = masking_value
     return newVec
 
 
@@ -52,10 +52,10 @@ def get_config(test=False):
     return config
 
 
-def make_continues(jets, noise=False):
-    pt_bins = np.load("../preprocessing_bins/pt_bins_30_bins.npy")
-    eta_bins = np.load("../preprocessing_bins/eta_bins_30_bins.npy")
-    phi_bins = np.load("../preprocessing_bins/phi_bins_30_bins.npy")
+def make_continues(jets, noise=False, masking_value=0):
+    pt_bins = np.load("../preprocessing_bins/pt_bins_pt40_eta30_phi30_lower001.npy")
+    eta_bins = np.load("../preprocessing_bins/eta_bins_pt40_eta30_phi30_lower001.npy")
+    phi_bins = np.load("../preprocessing_bins/phi_bins_pt40_eta30_phi30_lower001.npy")
 
     pt_disc = jets[:, :, 0]
     print(pt_disc.max(), pt_bins.shape)
@@ -81,27 +81,28 @@ def make_continues(jets, noise=False):
         phi_con = phi_disc * (phi_bins[1] - phi_bins[0]) + phi_bins[0]
 
     continues_jets = np.stack((np.exp(pt_con), eta_con, phi_con), -1)
-    continues_jets[mask] = -100
+    continues_jets[mask] = masking_value
 
     return continues_jets
 
 
-def load_data(params, test=False, plot_dists=None):
+def load_data(params, test=False, plot_dists=None, masking_value=0):
     def load_file(file, key=None):
         # Load  sample file
         if file.endswith("npz"):
             if test:
-                file = file.replace("50", "100_test")
-            print(file)
+                file = file.replace("train_", "test_")
+            print(f"\nChanged file to {file}")
             dat = np.load(file)["jets"][: params["n_jets"], : params["n_const"]]
         # Load data file
         elif file.endswith("h5"):
             if test:
+                file = file.replace("val", "test")
+                print(f"\nChanged file to {file}")
                 dat = pd.read_hdf(
                     file,
                     key=key,
-                    start=100000,
-                    stop=100000 + params["n_jets"],
+                    stop=params["n_jets"],
                 )
             else:
                 dat = pd.read_hdf(file, key=key, stop=params["n_jets"])
@@ -115,28 +116,28 @@ def load_data(params, test=False, plot_dists=None):
         return dat
 
     print(params["bg_file"])
-    print(params["sig_files"])
+    print(params["sig_file"])
 
     bg = load_file(params["bg_file"], key=params["bg_key"])
     if params["bg_key"] == "discretized":
-        print("BG made continuous")
-        bg = make_continues(bg, params["bg_noise"])
+        print(f"BG made continuous, with noise {params['bg_noise']}\n")
+        bg = make_continues(bg, params["bg_noise"], masking_value=masking_value)
     else:
-        bg[bg[:, :, 0] == 0] = -100
+        bg[bg[:, :, 0] == 0] = masking_value
 
-    sig = load_file(params["sig_files"][0], key=params["sig_key"])
+    sig = load_file(params["sig_file"], key=params["sig_key"])
     if params["sig_key"] == "discretized":
-        print("Sig made continuous")
-        sig = make_continues(sig, params["sig_noise"])
+        print(f"Sig made continuous, with noise {params['bg_noise']}\n")
+        sig = make_continues(sig, params["sig_noise"], masking_value=masking_value)
     else:
-        sig[sig[:, :, 0] == 0] = -100
-    print(bg.shape, sig.shape)
+        sig[sig[:, :, 0] == 0] = masking_value
+    print(f"Bg shape {bg.shape}, Sig shape {sig.shape}\n")
 
     data = np.append(bg, sig, 0)
     labels = np.append(np.zeros(len(bg)), np.ones(len(sig)))
     shuffle = np.random.permutation(len(data))
 
-    data = transform_momenta(data)
+    data = transform_momenta(data, masking_value=masking_value)
 
     if not plot_dists is None:
         import matplotlib.pyplot as plt
@@ -146,10 +147,10 @@ def load_data(params, test=False, plot_dists=None):
             features, 1, constrained_layout=True, figsize=(features * 3, 10)
         )
         for i in range(data.shape[-1]):
-            range_min = data[:, :, i][data[:, :, i] != -100].min()
+            range_min = data[:, :, i][data[:, :, i] != masking_value].min()
             range_max = data[:, :, i].max()
             axes[i].hist(
-                data[labels == 0, :, i][data[labels == 0, :, 0] != -100].flatten(),
+                data[labels == 0, :, i][data[labels == 0, :, 0] != masking_value].flatten(),
                 bins=300,
                 range=[range_min, range_max],
                 histtype="step",
@@ -157,7 +158,7 @@ def load_data(params, test=False, plot_dists=None):
                 label="Background",
             )
             axes[i].hist(
-                data[labels == 1, :, i][data[labels == 1, :, 0] != -100].flatten(),
+                data[labels == 1, :, i][data[labels == 1, :, 0] != masking_value].flatten(),
                 bins=300,
                 range=[range_min, range_max],
                 histtype="step",
