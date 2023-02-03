@@ -245,6 +245,9 @@ class JetTransformer(Module):
             idx = torch.searchsorted(preds_cum, rand).squeeze(1)
             return idx
 
+        if not trunc is None and trunc >= 1:
+            trunc = torch.tensor(trunc, dtype=torch.long)
+
         jets = -torch.ones((len(starts), len_seq, 3), dtype=torch.long, device=device)
         true_bins = torch.zeros((len(starts), len_seq), dtype=torch.long, device=device)
 
@@ -267,10 +270,18 @@ class JetTransformer(Module):
 
                 # Remove low probs
                 if not trunc is None:
-                    preds = torch.where(preds < trunc, torch.zeros(1, device=device), preds)
+                    if trunc < 1:
+                        preds = torch.where(
+                            preds < trunc, torch.zeros(1, device=device), preds
+                        )
+                    else:
+                        preds, indices = torch.topk(preds, trunc, -1, sorted=False)
+
                 preds = preds / torch.sum(preds, -1, keepdim=True)
 
                 idx = select_idx()
+                if not trunc is None and trunc >= 1:
+                    idx = indices[torch.arange(len(indices)), idx]
                 finished[idx == 39401] = True
 
                 # Get tuple from found bin and set next particle properties

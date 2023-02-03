@@ -56,6 +56,7 @@ if rest != 0:
         starts=torch.zeros((rest, 3), device=device),
         device=device,
         len_seq=51,
+        trunc=args.trunc,
     )
     jets.append(_jets.cpu().numpy())
     bins.append(_bins.cpu().numpy())
