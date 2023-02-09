@@ -98,6 +98,7 @@ def load_data(params, test=False, plot_dists=None, masking_value=0):
         elif file.endswith("h5"):
             if test:
                 file = file.replace("val", "test")
+                file = file.replace("train", "test")
                 print(f"\nChanged file to {file}")
                 dat = pd.read_hdf(
                     file,

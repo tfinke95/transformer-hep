@@ -25,8 +25,8 @@ export CONDA_ROOT=$HOME/miniconda3
 export PATH="$CONDA_ROOT/bin:$PATH"
 
 cd /home/bn227573/
-conda activate torchEnv
-cd Projects/AnomalyDetection/physics_transformers
+conda activate torchProd
+cd Projects/Transformers/physics_transformers
 
 python test_samples.py --bg {bg} \\
     --sig {sig} \\

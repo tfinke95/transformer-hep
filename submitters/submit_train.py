@@ -18,7 +18,7 @@ with open("jobscript.sh", "w") as f:
 #SBATCH --output /home/bn227573/out/trade_{args.tag}_%J.log
 #SBATCH --error /home/bn227573/out/trade_{args.tag}_%J_err.log
 
-#SBATCH --time 300
+#SBATCH --time 330
 
 #SBATCH --cpus-per-task 4
 #SBATCH --mem-per-cpu 2G
@@ -30,8 +30,8 @@ export CONDA_ROOT=$HOME/miniconda3
 export PATH="$CONDA_ROOT/bin:$PATH"
 
 cd /home/bn227573/
-conda activate torchEnv
-cd Projects/AnomalyDetection/physics_transformers
+conda activate torchProd
+cd Projects/Transformers/physics_transformers
 
 python train.py \\
     --num_epochs 50 \\
