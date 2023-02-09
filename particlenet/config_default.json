@@ -28,10 +28,10 @@
     "static": false
   },
   "data": {
-    "sig_file": "/hpcwork/rwth0934/Transformers/qcd_50/samples_train_50.npz",
-    "bg_file": "/hpcwork/rwth0934/top_benchmark/discretized/val_qcd_pt40_eta30_phi30.h5",
-    "n_jets": 100000,
-    "n_const": 50,
+    "sig_file": "/hpcwork/rwth0934/Transformers/qcd_lowerq/samples_train_100.npz",
+    "bg_file": "/hpcwork/rwth0934/top_benchmark/discretized/val_qcd_pt40_eta30_phi30_lower001.h5",
+    "n_jets": 10000,
+    "n_const": 100,
     "bg_key": "discretized",
     "sig_key": "discretized",
     "seed": 0,
