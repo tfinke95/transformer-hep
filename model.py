@@ -225,8 +225,7 @@ class JetTransformer(Module):
         # select probs of true bins
         sel_idx = torch.arange(probs.shape[0], dtype=torch.long, device=probs.device)
         probs = probs[sel_idx, true_bin].view(batch_size, padded_seq_len - 1)
-        probs[~padding_mask[:, :-1]] = 1.0
-
+        probs[~padding_mask[:, 1:]] = 1.0
         if perplexity:
             probs = probs ** (1 / seq_len.float().view(-1, 1))
 

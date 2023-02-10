@@ -199,7 +199,7 @@ def load_data(
     path,
     n_events,
     num_features=3,
-    num_bins=[41, 31, 31],
+    num_bins=(41, 31, 31),
     num_const=20,
     reverse=False,
     start_token=False,
