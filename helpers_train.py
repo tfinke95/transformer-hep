@@ -207,6 +207,7 @@ def load_data(
     limit_const=True,
     batch_size=100,
     num_workers=4,
+    shuffle=True,
 ):
     df = pd.read_hdf(path, "discretized", stop=n_events)
     x, padding_mask, bins = preprocess_dataframe(
@@ -226,7 +227,7 @@ def load_data(
         train_dataset,
         batch_size=batch_size,
         num_workers=num_workers,
-        shuffle=True,
+        shuffle=shuffle,
     )
     return train_loader
 

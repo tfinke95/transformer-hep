@@ -1,4 +1,4 @@
-import torch
+import torch, os
 from argparse import ArgumentParser
 from helpers_train import set_seeds, load_data
 import numpy as np
@@ -9,6 +9,7 @@ def get_args():
     parser = ArgumentParser()
     parser.add_argument("--model", type=str, help="Path to model")
     parser.add_argument("--data", type=str, help="Path to data")
+    parser.add_argument("--tag", type=str, help="Tag for storing results")
     parser.add_argument(
         "--num_const",
         type=int,
@@ -37,14 +38,21 @@ def get_probs(model, loader):
     model.to(device)
     model.eval()
     probs = []
+    n_const = []
     for x, mask, bins in tqdm(loader, total=len(loader)):
         with torch.no_grad():
             x, mask, bins = x.to(device), mask.to(device), bins.to(device)
             logits = model.forward(x, mask)
             probability = model.probability(logits, mask, bins, logarithmic=True)
             probs.append(probability.cpu().numpy())
+            n_const.append(mask.sum(dim=-1).cpu().numpy() - 1)
 
-    return np.concatenate(probs, 0)
+    results = {
+        "probs": np.concatenate(probs, 0),
+        "n_const": np.concatenate(n_const, 0),
+    }
+
+    return results
 
 
 def main():
@@ -58,14 +66,11 @@ def main():
         end_token=True,
         limit_const=False,
         num_const=args.num_const,
+        shuffle=False,
     )
-    probs = get_probs(model=model, loader=loader)
-    import matplotlib.pyplot as plt
-
-    print(args.model.split("/")[:-1])
-    plt.hist(probs, bins=30)
-    plt.show()
-    print(probs.shape)
+    results = get_probs(model=model, loader=loader)
+    dir = os.path.dirname(args.model)
+    np.savez(os.path.join(dir, f"results_{args.tag}.npz"), **results)
 
 
 if __name__ == "__main__":
