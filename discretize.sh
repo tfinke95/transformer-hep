@@ -7,7 +7,7 @@ do
     python preprocess.py \
       --class_label $i \
       --tag pt80_eta60_phi60_lower001 \
-      --nBins 80 60 60 \
+      --nBins 40 30 30 \
       --input_file /hpcwork/rwth0934/top_benchmark/$dataset.h5 \
       --lower_q 0.001 \
       --upper_q 1.0
