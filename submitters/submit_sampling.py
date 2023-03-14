@@ -14,7 +14,7 @@ def write_jobscript():
 #SBATCH --output /home/bn227573/out/sample_{tag}_%J.log
 #SBATCH --error /home/bn227573/out/sample_{tag}_%J_err.log
 
-#SBATCH --time 45
+#SBATCH --time 150
 
 #SBATCH --cpus-per-task 4
 #SBATCH --mem-per-cpu 2G
@@ -27,7 +27,7 @@ export PATH="$CONDA_ROOT/bin:$PATH"
 
 cd /home/bn227573/
 conda activate torchProd
-cd Projects/Transformers/physics_transformers
+cd {REPO_DIR}
 
 python sample_jets.py \\
     --model_dir {model_dir} \\
@@ -36,61 +36,35 @@ python sample_jets.py \\
     --num_samples {num_samples} \\
     --batchsize {batchsize} \\
     --num_const {num_const} \\
-    --seed {seed} \\
-    --trunc {trunc}
+    --seed {seed}
 """
         )
 
+REPO_DIR = "/home/bn227573/Projects/Transformers/final_repo"
 
-tmp = os.listdir("/hpcwork/rwth0934/Transformers/")
-MODEL_DIRS = [
-    os.path.join("/hpcwork/rwth0934/Transformers/", x)
-    for x in tmp
-]
+mother_dir = f"{REPO_DIR}/models/top_final/"
+tmp = os.listdir(mother_dir)
+MODEL_DIRS = [os.path.join(mother_dir, x) for x in ["top_hl8_hd256_3", "top_hl8_hd256_4"]]
 MODEL_NAMES = ["model_last.pt"] * len(MODEL_DIRS)
-SAVETAGS = ["test_150"] * len(MODEL_DIRS)
-NUM_SAMPLES = [100000] * len(MODEL_DIRS)
-NUM_CONST = [150] * len(MODEL_DIRS)
+SAVETAGS = ["train_100"] * len(MODEL_DIRS)
+NUM_SAMPLES = [200000] * len(MODEL_DIRS)
+NUM_CONST = [100] * len(MODEL_DIRS)
 SEEDS = [int(time.time())] * len(MODEL_DIRS)
 
 n = 0
-TRUNCS = [15000, 20000, 30000]
-for trunc in TRUNCS:
-    model_dir = "/hpcwork/rwth0934/Transformers/qcd_lowerq"
-    model_name = "model_last.pt"
-    savetags = [f"top{trunc}_train_100", f"top{trunc}_test_100"]
-    num_samples = 100000
+for i in range(len(MODEL_DIRS)):
+    n += 1
+    filename = f"jobscript_{n}.sh"
+    print(MODEL_DIRS[i])
+    model_dir = MODEL_DIRS[i]
+    model_name = MODEL_NAMES[i]
+    savetag = SAVETAGS[i]
+    num_samples = NUM_SAMPLES[i]
     batchsize = 100
-    num_const = 100
-    seed = SEEDS[0]
-    tag = str(trunc)
-    for savetag in savetags:
-        if savetag == "test_100":
-            seed = SEEDS[0] + 123678
-        filename = f"jobscript_{trunc}_{savetag}.sh"
-        write_jobscript()
-        os.system(f"sbatch {filename}")
-        # time.sleep(1)
+    num_const = NUM_CONST[i]
+    seed = SEEDS[i]
+    tag = model_dir.split("/")[-1]
+    write_jobscript()
 
-# for i in range(len(MODEL_DIRS)):
-#     if "many" in MODEL_DIRS[i]:
-#         continue
-#     if os.path.isfile(os.path.join(MODEL_DIRS[i], f"samples_{SAVETAGS[i]}.npz")):
-#         continue
-#     if not "lowerq" in MODEL_DIRS[i]:
-#         continue
-#     n += 1
-#     filename = f"jobscript_{n}.sh"
-#     print(MODEL_DIRS[i])
-#     model_dir = MODEL_DIRS[i]
-#     model_name = MODEL_NAMES[i]
-#     savetag = SAVETAGS[i]
-#     num_samples = NUM_SAMPLES[i]
-#     batchsize = 100
-#     num_const = NUM_CONST[i]
-#     seed = SEEDS[i]
-#     tag = model_dir.split("/")[-1]
-#     write_jobscript()
-
-#     # os.system(f"sbatch {filename}")
-#     time.sleep(1)
+    os.system(f"sbatch {filename}")
+    time.sleep(1)

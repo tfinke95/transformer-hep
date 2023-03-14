@@ -18,10 +18,10 @@ with open("jobscript.sh", "w") as f:
 #SBATCH --output /home/bn227573/out/trade_{args.tag}_%J.log
 #SBATCH --error /home/bn227573/out/trade_{args.tag}_%J_err.log
 
-#SBATCH --time 330
+#SBATCH --time 360
 
 #SBATCH --cpus-per-task 4
-#SBATCH --mem-per-cpu 2G
+#SBATCH --mem-per-cpu 2500M
 
 #SBATCH --gres=gpu:1
 
@@ -31,22 +31,22 @@ export PATH="$CONDA_ROOT/bin:$PATH"
 
 cd /home/bn227573/
 conda activate torchProd
-cd Projects/Transformers/physics_transformers
+cd Projects/Transformers/final_repo
 
 python train.py \\
     --num_epochs 50 \\
     --data_path {args.data_path} \\
     --seed {int(time.time())} \\
     --log_dir {args.log_dir} \\
-    --batch_size 50 \\
+    --batch_size 100 \\
     --num_events 600000 \\
     --num_const 50 \\
     --num_bins {" ".join(args.num_bins)} \\
     --logging_steps 50 \\
     --checkpoint_steps 12000 \\
     --lr 5e-4 \\
-    --num_layers 6 \\
-    --hidden_dim 128 \\
+    --num_layers 8 \\
+    --hidden_dim 256 \\
     --num_heads 4 \\
     --dropout 0.1 \\
     --start_token \\

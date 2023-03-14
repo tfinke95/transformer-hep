@@ -1,5 +1,6 @@
 import os, json
 import time
+import numpy as np
 
 submit = True
 
@@ -16,10 +17,10 @@ def write_jobscript():
 #SBATCH --output /home/bn227573/out/pnet_{tag}_{setting}_%J.log
 #SBATCH --error /home/bn227573/out/pnet_{tag}_{setting}_%J_err.log
 
-#SBATCH --time 600
+#SBATCH --time 400
 
 #SBATCH --cpus-per-task 4
-#SBATCH --mem-per-cpu 3G
+#SBATCH --mem-per-cpu 2G
 
 #SBATCH --gres=gpu:1
 
@@ -28,7 +29,7 @@ cd /home/bn227573
 source .zshrc
 conda activate monoJet
 
-cd Projects/Transformers/physics_transformers/particlenet
+cd Projects/Transformers/final_repo/particlenet
 
 python train.py {config_file}
 """
@@ -42,8 +43,8 @@ config["data"]["bg_file"] = "/hpcwork/rwth0934/top_benchmark/discretized/train_q
 config["data"]["bg_key"] = "discretized"
 config["data"]["sig_file"] = "/hpcwork/rwth0934/top_benchmark/discretized/train_top_pt40_eta30_phi30_lower001.h5"
 config["data"]["sig_key"] = "discretized"
-config["data"]["n_const"] = 50
-config["data"]["n_jets"] = 600000
+config["data"]["n_const"] = 100
+config["data"]["n_jets"] = 200000
 config["data"]["seed"] = int(time.time())
 config["data"]["bg_noise"] = False
 config["data"]["sig_noise"] = False
@@ -68,7 +69,7 @@ config["training"]["verbose"] = 2
 
 
 # Run top vs QCD as data test for discrete and continuous data
-for setting in ["discretized"]:
+for setting in ["discretized", "raw"]:
     job_n += 1
     filename = f"jobscripts/jobscript_data_{job_n}.sh"
 
@@ -88,28 +89,38 @@ for setting in ["discretized"]:
     print(f"Submitted {filename}")
 
 # Run for samples
-bg_files = [
-    "/hpcwork/rwth0934/top_benchmark/discretized/val_qcd_pt40_eta30_phi30.h5",
-    "/hpcwork/rwth0934/top_benchmark/discretized/val_top_pt40_eta30_phi30.h5",
-]
+bg_files = ["/hpcwork/rwth0934/top_benchmark/discretized/val_qcd_pt40_eta30_phi30_lower001.h5"] * 2 + \
+    ["/hpcwork/rwth0934/top_benchmark/discretized/val_top_pt40_eta30_phi30_lower001.h5"]* 2
+
 sig_files = [
-    "/hpcwork/rwth0934/Transformers/qcd_50/samples_train_50.npz",
-    "/hpcwork/rwth0934/Transformers/top_50/samples_train_50.npz",
+    "/home/bn227573/Projects/Transformers/final_repo/models/qcd_final_1/qcd_hl8_hd256/samples_train_100.h5",
+    "/home/bn227573/Projects/Transformers/final_repo/models/qcd_final_1/qcd_hl8_hd256/samples_train_top5k_100.h5",
+    "/home/bn227573/Projects/Transformers/final_repo/models/top_final/top_hl8_hd256/samples_train_100.h5",
+    "/home/bn227573/Projects/Transformers/final_repo/models/top_final/top_hl8_hd256/samples_train_top5k_100.h5",
 ]
 tag = "samples"
+setting = "samples"
+folders = [
+    "logs/qcd_final",
+    "logs/qcd_final_topK",
+    "logs/top_final",
+    "logs/top_final_topK",
+]
 
 job_n = 0
 for bg, sig in zip(bg_files, sig_files):
     job_n += 1
     filename = f"jobscripts/jobscript_samples_{job_n}.sh"
-    config["logging"]["logfolder"] = f"logs/samples_{'qcd' if job_n==1 else 'top'}_mask0"
+    config["logging"]["logfolder"] = folders[job_n-1]
     config["data"]["bg_file"] = bg
     config["data"]["bg_key"] = "discretized"
     config["data"]["sig_file"] = sig
     config["data"]["sig_key"] = "discretized"
+    config["data"]["seed"] = int(time.time()) + np.random.randint(0, 2**10)
     config_file = f"configs/config_samples_{job_n}.json"
     json.dump(config, open(config_file, "w"), sort_keys=True, indent=2)
     write_jobscript()
     if submit:
         os.system("sbatch {}".format(filename))
+    time.sleep(1)
     print(f"Submitted {filename}")
