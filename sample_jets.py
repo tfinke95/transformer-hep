@@ -62,8 +62,7 @@ if rest != 0:
     jets.append(_jets.cpu().numpy())
     bins.append(_bins.cpu().numpy())
 
-
-jets = np.concatenate(jets, 0)
+jets = np.concatenate(jets, 0)[:, 1:]
 bins = np.concatenate(bins, 0)
 bins = np.delete(bins, np.where(jets[:, 0, :].sum(-1) == 0), axis=0)
 jets = np.delete(jets, np.where(jets[:, 0, :].sum(-1) == 0), axis=0)

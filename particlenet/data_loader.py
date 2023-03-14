@@ -92,7 +92,7 @@ def make_continues(jets, mask, noise=False):
     return np.stack((pt_con, eta_con, phi_con), -1)
 
 
-def load_data(params, test=False, plot_dists=None, masking_value=0):
+def load_data(params, test=False, plot_dists=None,):
     def load_file(file, key=None):
         # Load  sample file
         if file.endswith("npz"):

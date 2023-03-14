@@ -17,7 +17,6 @@ NETWOKPARAMS = {
     "static": False,
 }
 TEST = True
-MASKING_VALUE = 0
 
 def plot_trainHistory(folder):
     fig, ax = plt.subplots(constrained_layout=True)
@@ -137,7 +136,6 @@ def main():
         config["data"],
         test=TEST,
         plot_dists=os.path.join(config["logging"]["logfolder"], "dists.png"),
-        masking_value=MASKING_VALUE,
     )
     print(f"\nData shape {data.shape} Labels shape {labels.shape}")
     print(f"First labels {labels[:15]}\n")
@@ -145,7 +143,7 @@ def main():
     model([data[:2, :, :2], data[:2]])
     model = check_weights(model, config["logging"]["logfolder"], data=data)
     if config["mask"]:
-        data = [data[:, :, :2], data, data[:, :, 2] != MASKING_VALUE]
+        data = [data[:, :, :2], data, data[:, :, 2] != 0]
         print(data[0][0])
         print(data[-1][0])
     else:

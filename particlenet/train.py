@@ -9,9 +9,7 @@ start = time.time()
 tfk = tf.keras
 
 gpu = tf.config.list_physical_devices("GPU")
-assert len(gpu) > 0, f"No GPU found, abord"
-
-MASKING_VALUE = 0
+assert len(gpu) > 0, f"No GPU found, abort"
 
 def train_model(model, data, labels, train_params, logfolder, mask):
     optimizer = tfk.optimizers.Adam(learning_rate=0.001)
@@ -21,7 +19,7 @@ def train_model(model, data, labels, train_params, logfolder, mask):
         metrics=[tfk.metrics.AUC(), "acc"],
     )
     if mask:
-        mask = data[:, :, 2] != MASKING_VALUE
+        mask = data[:, :, 2] != 0
         train_data = [data[:, :, :2], data, mask]
     else:
         train_data = [
@@ -77,8 +75,7 @@ def main():
     start = time.time()
     data, true_label = load_data(
         config["data"],
-        plot_dists=os.path.join(config["logging"]["logfolder"], "distributions.png"),
-        masking_value=MASKING_VALUE)
+        plot_dists=os.path.join(config["logging"]["logfolder"], "distributions.png"),)
     print(f"First labels {true_label[:15]}\n")
 
     train_model(
@@ -91,7 +88,7 @@ def main():
     )
     model.save_weights(os.path.join(config["logging"]["logfolder"], "model_weights.h5"))
     if config["mask"]:
-        mask = data[:, :, 2] != MASKING_VALUE
+        mask = data[:, :, 2] != 0
         test_data = [data[:, :, :2], data, mask]
     else:
         test_data = [data[:, :, :2], data]

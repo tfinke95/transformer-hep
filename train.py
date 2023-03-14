@@ -110,6 +110,7 @@ if __name__ == "__main__":
                         true_bin,
                         perplexity=True,
                         logarithmic=False,
+                        topk=False
                     )
 
             scaler.scale(loss).backward()

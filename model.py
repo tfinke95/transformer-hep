@@ -216,7 +216,7 @@ class JetTransformer(Module):
         true_bin,
         perplexity=False,
         logarithmic=False,
-        topk=5000,
+        topk=False,
     ):
         batch_size, padded_seq_len, num_bin = logits.shape
         seq_len = padding_mask.long().sum(dim=1)
