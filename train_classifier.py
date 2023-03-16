@@ -212,7 +212,9 @@ if __name__ == "__main__":
         num_heads=args.num_heads,
         num_features=num_features,
         dropout=args.dropout,
+        num_const=args.num_const,
     )
+    print(sum([p.numel() for p in model.parameters()]))
     model.to(device)
 
     # construct optimizer and auto-caster

@@ -13,10 +13,10 @@ def write_jobscript():
 #SBATCH --output /home/bn227573/out/{tag}_%J.log
 #SBATCH --error /home/bn227573/out/{tag}_%J_err.log
 
-#SBATCH --time 40
+#SBATCH --time 360
 
 #SBATCH --cpus-per-task 4
-#SBATCH --mem-per-cpu 2G
+#SBATCH --mem-per-cpu 4G
 
 #SBATCH --gres=gpu:1
 
@@ -40,20 +40,19 @@ python train_classifier.py --bg {bg} \\
 
 
 data_files = {}
-data_files["qcd"] = "/hpcwork/bn227573/top_benchmark/test_qcd_30_bins.h5"
-data_files["top"] = "/hpcwork/bn227573/top_benchmark/test_top_30_bins.h5"
+data_files["qcd"] = "/hpcwork/rwth0934/top_benchmark/discretized/train_qcd_pt40_eta30_phi30_lower001.h5"
+data_files["top"] = "/hpcwork/rwth0934/top_benchmark/discretized/train_top_pt40_eta30_phi30_lower001.h5"
 
 
-bgs = [data_files["qcd"]] * 3
-sigs = [
-    "/hpcwork/bn227573/Transformers/models/end_token/end_token_noAdd_qcd/samples_100.npz",
-    "/hpcwork/bn227573/Transformers/models/end_token/end_token_noAdd_tanh_qcd/samples_100.npz",
-    data_files["top"],
-]
+bgs = [data_files["qcd"]]
+sigs = [data_files["top"]]
+# sigs = [
+#     "/hpcwork/bn227573/Transformers/models/end_token/end_token_noAdd_qcd/samples_100.npz",
+#     "/hpcwork/bn227573/Transformers/models/end_token/end_token_noAdd_tanh_qcd/samples_100.npz",
+#     data_files["top"],
+# ]
 tags = [
-    "samples_qcd_100",
-    "samples_tanh_qcd_100",
-    "data_topVSqcd",
+    "topVSqcd",
 ]
 
 # sample_files = []
@@ -69,14 +68,15 @@ tags = [
 # for x, y in zip(sample_files, params):
 # for folder in os.listdir("/hpcwork/bn227573/Transformers/models/scan2"):
 
+print(bgs, sigs)
 for x, y, z in zip(bgs, sigs, tags):
     bg = x
     sig = y
-    N = 100000
-    E = 20
+    N = 600000
+    E = 50
     c = 100
     savedir = f"models/class/{z}"
     tag = z
     write_jobscript()
-    os.system("sbatch jobscript.sh")
-    time.sleep(0.5)
+    # os.system("sbatch jobscript.sh")
+    time.sleep(1)
