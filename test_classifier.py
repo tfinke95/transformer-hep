@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, roc_curve
 
 from preprocess import preprocess_dataframe
 
@@ -21,6 +21,7 @@ def load_model(name):
 def parse_input():
     parser = ArgumentParser()
     parser.add_argument("--model_dir", type=str, default='models/test', help="Model directory")
+    parser.add_argument("--model_name", type=str, default='best', help="Model name")
     parser.add_argument("--data_path", type=str, default='/hpcwork/bn227573/top_benchmark/', help="Path to training data file")
 
     parser.add_argument("--num_workers", type=int, default=1, help="Number of workers")
@@ -85,8 +86,8 @@ if __name__ == '__main__':
     test_loader = load_data(args.data_path, args.num_events)
 
     # construct model
-    model = load_model('best')
-    print("Loaded model")
+    model = load_model(args.model_name)
+    print(f"Loaded model '{args.model_name}'")
     model.to(device)
     model.eval()
 
@@ -114,8 +115,14 @@ if __name__ == '__main__':
     label_list = np.concatenate(label_list, axis=0)
     print(predictions.shape)
     print(label_list.shape)
-    print(roc_auc_score(label_list, predictions))
+    auc = roc_auc_score(label_list, predictions)
+    print(auc)
 
-    np.savez(os.path.join(args.model_dir, 'predictions.npz'),
+    np.savez(os.path.join(args.model_dir, f'predictions_{args.model_name}.npz'),
             predictions=predictions,
             labels=label_list)
+    fpr, tpr, _ = roc_curve(label_list, predictions)
+    np.savez(os.path.join(args.model_dir, f"roc_{args.model_name}.npz"),
+             fpr=fpr,
+             tpr=tpr,
+             auc=auc)
