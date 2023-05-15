@@ -310,7 +310,7 @@ class JetTransformer(Module):
 
                 padding_mask[~finished, particle + 1] = True
         return jets, true_bins
-    
+
     def sample(self, starts, device, len_seq, trunc=None):
         def select_idx():
             # Select bin at random according to probabilities

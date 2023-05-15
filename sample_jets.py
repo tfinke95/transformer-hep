@@ -67,6 +67,9 @@ bins = np.concatenate(bins, 0)
 bins = np.delete(bins, np.where(jets[:, 0, :].sum(-1) == 0), axis=0)
 jets = np.delete(jets, np.where(jets[:, 0, :].sum(-1) == 0), axis=0)
 
+print(f"Time needed {(time.time() - start) / float(len(jets))} seconds per jet")
+print(f"\t{int(time.time() - start)} seconds in total for {len(jets)} jets")
+
 jets[jets.sum(-1) == 0] = -1
 n, c, f = np.shape(jets)
 data = jets.reshape(n, c * f)
@@ -78,5 +81,3 @@ cols = [
 df = pd.DataFrame(data, columns=cols)
 df.to_hdf(os.path.join(args.model_dir, f"samples_{args.savetag}.h5"), key="discretized")
 
-print(f"Time needed {(time.time() - start) / float(len(jets))} seconds per jet")
-print(f"\t{int(time.time() - start)} seconds in total for {len(jets)} jets")
