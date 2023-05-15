@@ -29,6 +29,7 @@ set_seeds(args.seed)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 assert device == "cuda", "Not running on GPU"
+print(device)
 
 n_batches = args.num_samples // args.batchsize
 rest = args.num_samples % args.batchsize
@@ -49,23 +50,36 @@ for i in tqdm(range(n_batches), total=n_batches, desc="Sampling batch"):
         len_seq=args.num_const + 1,
         trunc=args.trunc,
     )
-    jets.append(_jets.cpu().numpy())
-    bins.append(_bins.cpu().numpy())
+    _jets = _jets.cpu().numpy()
+    _bins = _bins.cpu().numpy()
+    _jets_tmp = np.zeros((args.batchsize, args.num_const + 1, 3))
+    _jets_tmp[:, :_jets.shape[1]] = _jets
+    _bins_tmp = np.zeros((args.batchsize, args.num_const + 1))
+    _bins_tmp[:, :_bins.shape[1]] = _bins
+    jets.append(_jets_tmp)
+    bins.append(_bins_tmp)
 
 if rest != 0:
     _jets, _bins = model.sample(
         starts=torch.zeros((rest, 3), device=device),
         device=device,
-        len_seq=51,
+        len_seq=args.num_const+1,
         trunc=args.trunc,
     )
-    jets.append(_jets.cpu().numpy())
-    bins.append(_bins.cpu().numpy())
+    _jets = _jets.cpu().numpy()
+    _bins = _bins.cpu().numpy()
+    _jets_tmp = np.zeros((rest, args.num_const + 1, 3))
+    _jets_tmp[:, :_jets.shape[1]] = _jets
+    _bins_tmp = np.zeros((rest, args.num_const + 1))
+    _bins_tmp[:, :_bins.shape[1]] = _bins
+    jets.append(_jets_tmp)
+    bins.append(_bins_tmp)
 
 jets = np.concatenate(jets, 0)[:, 1:]
 bins = np.concatenate(bins, 0)
-bins = np.delete(bins, np.where(jets[:, 0, :].sum(-1) == 0), axis=0)
-jets = np.delete(jets, np.where(jets[:, 0, :].sum(-1) == 0), axis=0)
+dels = np.where(jets[:, 0, :].sum(-1) == 0)
+bins = np.delete(bins, dels, axis=0)
+jets = np.delete(jets, dels, axis=0)
 
 print(f"Time needed {(time.time() - start) / float(len(jets))} seconds per jet")
 print(f"\t{int(time.time() - start)} seconds in total for {len(jets)} jets")
