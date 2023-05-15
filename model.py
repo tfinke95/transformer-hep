@@ -254,7 +254,7 @@ class JetTransformer(Module):
             probs = probs.prod(dim=1)
         return probs
 
-    def sample(self, starts, device, len_seq, trunc=None):
+    def sample_old(self, starts, device, len_seq, trunc=None):
         def select_idx():
             # Select bin at random according to probabilities
             rand = torch.rand((len(jets), 1), device=device)
@@ -310,6 +310,64 @@ class JetTransformer(Module):
 
                 padding_mask[~finished, particle + 1] = True
         return jets, true_bins
+    
+    def sample(self, starts, device, len_seq, trunc=None):
+        def select_idx():
+            # Select bin at random according to probabilities
+            rand = torch.rand((len(jets), 1), device=device)
+            preds_cum = torch.cumsum(preds, -1)
+            preds_cum[:, -1] += 0.01  # If rand = 1, sort it to the last bin
+            idx = torch.searchsorted(preds_cum, rand).squeeze(1)
+            return idx
+
+        if not trunc is None and trunc >= 1:
+            trunc = torch.tensor(trunc, dtype=torch.long)
+
+        jets = -torch.ones((len(starts), 1, 3), dtype=torch.long, device=device)
+        true_bins = torch.zeros((len(starts), 1), dtype=torch.long, device=device)
+
+        # Set start bins and constituents
+        num_prior_bins = torch.cumprod(torch.tensor([1, 41, 31]), -1).to(device)
+        bins = (starts * num_prior_bins.reshape(1, 1, 3)).sum(axis=2)
+        true_bins[:, 0] = bins
+        jets[:, 0] = starts
+        padding_mask = jets[:, :, 0] != -1
+
+        self.eval()
+        finished = torch.ones(len(starts), device=device) != 1
+        with torch.no_grad():
+            for particle in range(len_seq - 1):
+                if all(finished):
+                    break
+                # Get probabilities for the next particles
+                preds = self.forward(jets, padding_mask)[:, particle]
+                preds = torch.nn.functional.softmax(preds[:, :], dim=-1)
+
+                # Remove low probs
+                if not trunc is None:
+                    if trunc < 1:
+                        preds = torch.where(
+                            preds < trunc, torch.zeros(1, device=device), preds
+                        )
+                    else:
+                        preds, indices = torch.topk(preds, trunc, -1, sorted=False)
+
+                preds = preds / torch.sum(preds, -1, keepdim=True)
+
+                idx = select_idx()
+                if not trunc is None and trunc >= 1:
+                    idx = indices[torch.arange(len(indices)), idx]
+                finished[idx == 39401] = True
+
+                # Get tuple from found bin and set next particle properties
+                true_bins = torch.concat((true_bins, idx.view(-1, 1)), dim=1)
+                bins = self.idx_to_bins(idx)
+                bins[finished] = 0
+                jets = torch.concat((jets, bins.view(-1, 1, self.num_features)), dim=1)
+                padding_mask = torch.concat((padding_mask, ~finished.view(-1, 1)), dim=1)
+
+        return jets, true_bins
+
 
     def idx_to_bins(self, x):
         pT = x % 41
@@ -317,7 +375,7 @@ class JetTransformer(Module):
             1271, 41, rounding_mode="trunc"
         )
         phi = torch.div((x - pT - 41 * eta), 1271, rounding_mode="trunc")
-        return pT, eta, phi
+        return torch.stack((pT, eta, phi), dim=-1)
 
 
 class CNNclass(Module):
