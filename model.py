@@ -129,6 +129,7 @@ class JetTransformer(Module):
     ):
         super(JetTransformer, self).__init__()
         self.num_features = num_features
+        self.num_bins = num_bins
         self.dropout = dropout
         self.total_bins = int(np.prod(num_bins))
         if end_token:
@@ -300,7 +301,7 @@ class JetTransformer(Module):
                 idx = select_idx()
                 if not trunc is None and trunc >= 1:
                     idx = indices[torch.arange(len(indices)), idx]
-                finished[idx == 39401] = True
+                finished[idx == self.total_bins] = True
 
                 # Get tuple from found bin and set next particle properties
                 true_bins[~finished, particle + 1] = idx[~finished]
@@ -327,7 +328,7 @@ class JetTransformer(Module):
         true_bins = torch.zeros((len(starts), 1), dtype=torch.long, device=device)
 
         # Set start bins and constituents
-        num_prior_bins = torch.cumprod(torch.tensor([1, 41, 31]), -1).to(device)
+        num_prior_bins = torch.cumprod(torch.tensor([1, self.num_bins[0], self.num_bins[1]]), -1).to(device)
         bins = (starts * num_prior_bins.reshape(1, 1, 3)).sum(axis=2)
         true_bins[:, 0] = bins
         jets[:, 0] = starts
@@ -357,7 +358,7 @@ class JetTransformer(Module):
                 idx = select_idx()
                 if not trunc is None and trunc >= 1:
                     idx = indices[torch.arange(len(indices)), idx]
-                finished[idx == 39401] = True
+                finished[idx == self.total_bins] = True
 
                 # Get tuple from found bin and set next particle properties
                 true_bins = torch.concat((true_bins, idx.view(-1, 1)), dim=1)
@@ -370,11 +371,11 @@ class JetTransformer(Module):
 
 
     def idx_to_bins(self, x):
-        pT = x % 41
-        eta = torch.div((x - pT), 41, rounding_mode="trunc") % torch.div(
-            1271, 41, rounding_mode="trunc"
+        pT = x % self.num_bins[0]
+        eta = torch.div((x - pT), self.num_bins[0], rounding_mode="trunc") % torch.div(
+            torch.prod(self.num_bins[:2]), self.num_bins[0], rounding_mode="trunc"
         )
-        phi = torch.div((x - pT - 41 * eta), 1271, rounding_mode="trunc")
+        phi = torch.div((x - pT - self.num_bins[0] * eta), torch.prod(self.num_bins[:2]), rounding_mode="trunc")
         return torch.stack((pT, eta, phi), dim=-1)
 
 

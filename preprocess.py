@@ -270,7 +270,7 @@ def discretize_data(
     raw.to_hdf(output_file, key="raw", mode="w", complevel=9)
     disc.to_hdf(output_file, key="discretized", mode="r+", complevel=9)
 
-    print("\nDiscretized dataframe discription")
+    print("\nDiscretized dataframe description")
     print(disc.describe())
 
 

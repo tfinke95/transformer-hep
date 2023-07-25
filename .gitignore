@@ -7,6 +7,7 @@ samples_tests*
 *egg-inf*
 particlenet/configs/*
 
+.vscode*
 
 __init__.py
 __pycache__*
