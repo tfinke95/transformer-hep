@@ -17,7 +17,9 @@ vector.register_awkward()
 # Get all root files corresponding to a given label within a folder
 files = []
 label = "TTBar_"
-folder = "../../datasets/JetClass_Pythia_train_100M_part1/"
+type="train"
+folder = "../../datasets/JetClass/"+type+"/JetClass_Pythia_train_100M_part1/"
+out_file = folder+"/../"+type+"_"+f"{label}.h5"
 for moth, sub, fs in os.walk(folder):
     for f in fs:
         if f.startswith(label) and f.endswith(".root"):
@@ -93,7 +95,7 @@ def to_hdf_file(constituents, out_file):
 
 # %%
 
-out_file = f"{label}test_2.h5"
+
 i = 1
 while os.path.isfile(out_file):
     tmp = out_file.split(".")[0]
