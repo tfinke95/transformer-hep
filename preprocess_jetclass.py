@@ -247,7 +247,7 @@ def discretize_data(
             eta_bins = np.load(f"preprocessing_bins/eta_bins_{tag}.npy")
             phi_bins = np.load(f"preprocessing_bins/phi_bins_{tag}.npy")
             print(f"\nLoaded bins with tag {tag}\n")
-            return pt_bins, eta_bins, phi_bins
+        return pt_bins, eta_bins, phi_bins
 
     def discretize():
         # Get the discrete values
