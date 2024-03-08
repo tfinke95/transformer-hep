@@ -212,11 +212,9 @@ def discretize_data(
         return np.trunc(values*10**decs)/(10**decs)
 
     def check_pt_oredering(pts):
-        print(pts[0, :])
-        print(pts[200000, :])
-        print(pts[859005,:])
+
         pts=trunc(pts)
-        print(pts[859005,:])
+     
         for i in range(len(pts)):
             if np.all(pts[i, :-1] >= pts[i, 1:])==False:
                 print(pts[i, :])
