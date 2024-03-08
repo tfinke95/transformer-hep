@@ -226,7 +226,7 @@ def discretize_data(
 
     def get_binning():
         # If QCD training as input, get the bins
-        #if input_file.split("/")[-1] == "train.h5" and class_label == 0:
+        if "train" in str(input_file):
             pt_bins = np.linspace(
                 np.quantile(np.log(const_pt[const_pt != 0]), lower_q),
                 np.quantile(np.log(const_pt[const_pt != 0]), upper_q),
@@ -243,7 +243,8 @@ def discretize_data(
             np.save(f"preprocessing_bins/phi_bins_{tag}", phi_bins)
             print("Created bins\n")
         # Else load the binning according to given tag
-        #else:
+        else:
+            print('preprocessing bins should exist')
             pt_bins = np.load(f"preprocessing_bins/pt_bins_{tag}.npy")
             eta_bins = np.load(f"preprocessing_bins/eta_bins_{tag}.npy")
             phi_bins = np.load(f"preprocessing_bins/phi_bins_{tag}.npy")
