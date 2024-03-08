@@ -219,7 +219,7 @@ def discretize_data(
             if np.all(pts[i, :-1] >= pts[i, 1:])==False:
                 print(pts[i, :])
                 print(i)
-        exit()
+        
             #assert np.all(pts[i, :-1] >= pts[i, 1:]),'Data not sorted in pT'
 
     def get_binning():
@@ -314,7 +314,7 @@ if __name__ == "__main__":
 
     train_test = args.input_file.split("/")[-1][:-3]
     print(f"Dataset: {train_test}")
-    output_path = os.path.join(os.path.dirname(args.input_file), "discretized")
+    output_path = os.path.join(os.path.dirname(args.input_file), "../discretized")
     if not os.path.exists(output_path):
         print("\nCreating output path\n")
         os.makedirs(output_path)
