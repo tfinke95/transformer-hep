@@ -36,9 +36,9 @@ def moving_average(a, n=3):
 
 # %%
 def make_continues(jets,bin_tag):
-    pt_bins = np.load("preprocessing_bins/pt_bins_"+str(30_bins)+".npy")
-    eta_bins = np.load("preprocessing_bins/eta_bins_"+str(30_bins)+".npy")
-    phi_bins = np.load("preprocessing_bins/phi_bins_"+str(30_bins)+".npy")
+    pt_bins = np.load("preprocessing_bins/pt_bins_"+str(bin_tag)+".npy")
+    eta_bins = np.load("preprocessing_bins/eta_bins_"+str(bin_tag)+".npy")
+    phi_bins = np.load("preprocessing_bins/phi_bins_"+str(bin_tag)+".npy")
 
     pt_disc = jets[:, :, 0]
     mask = pt_disc == 0

@@ -36,7 +36,7 @@ for model in models_list:
         
         sg=model_path+'samples_'+tag_forsample+'.h5'
         save_dir=model_path+save_dir_tag
-        command_test_sample='python test_samples.py --bg'+str(bg)+' --sig'+str(sg)+' --save_dir '+str(save_dir)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs_test)+' -N'+str(num_samples)
+        command_test_sample='python test_samples.py --bg '+str(bg)+' --sig '+str(sg)+' --save_dir '+str(save_dir)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs_test)+' -N '+str(num_samples)+' --bin_tag '+str(bin_tag)
 
 
         os.system(command_test_sample)
