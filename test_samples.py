@@ -18,6 +18,7 @@ parser.add_argument("--num_jets", "-N", type=int, default=100000)
 parser.add_argument("--num_const", "-c", type=int, default=50)
 parser.add_argument("--num_epochs", "-E", type=int, default=30)
 parser.add_argument("--continuous", action="store_true")
+parser.add_argument("--bin_tag", type=str, default="30_bins")
 args = parser.parse_args()
 
 if not os.path.isdir(args.save_dir):
@@ -34,10 +35,10 @@ def moving_average(a, n=3):
 
 
 # %%
-def make_continues(jets):
-    pt_bins = np.load("preprocessing_bins/pt_bins_30_bins.npy")
-    eta_bins = np.load("preprocessing_bins/eta_bins_30_bins.npy")
-    phi_bins = np.load("preprocessing_bins/phi_bins_30_bins.npy")
+def make_continues(jets,bin_tag):
+    pt_bins = np.load("preprocessing_bins/pt_bins_"+str(30_bins)+".npy")
+    eta_bins = np.load("preprocessing_bins/eta_bins_"+str(30_bins)+".npy")
+    phi_bins = np.load("preprocessing_bins/phi_bins_"+str(30_bins)+".npy")
 
     pt_disc = jets[:, :, 0]
     mask = pt_disc == 0
@@ -79,7 +80,7 @@ def load_data(file, continuous=False, orig=False):
     dat[dat == -1] = 0
 
     if continuous:
-        dat = make_continues(dat)
+        dat = make_continues(dat,args.bin_tag)
     return dat
 
 
