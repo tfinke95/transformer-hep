@@ -17,11 +17,11 @@ num_const=100
 bg=test_dataset
 bin_tag='jetclass_subset1_bin40'
 save_dir_tag='test_sample_test'
-
+num_epochs_test=5
 
 models_list=os.listdir(mother_dir)
 for model in models_list:
-    if tag_ofrtrain in model:
+    if tag_oftrain in model:
         
         model_path=mother_dir+'/'+model+'/'
         
