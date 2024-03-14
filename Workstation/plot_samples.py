@@ -108,7 +108,7 @@ def LoadTrue(discrete_truedata_filename):
     return jets_true,ptj_true,mj_true
 
 
-
+'''
 bins_path_prefix='test_results/preprocessing_bins/'
 pt_bins = np.load(bins_path_prefix+'pt_bins_None.npy')
 eta_bins = np.load(bins_path_prefix+'eta_bins_None.npy')
@@ -129,8 +129,8 @@ print(jets[0])
 print(jets[0][0])
 print(np.shape(jets[:,:,0]))
 print(np.shape(jets))
-
-discrete_truedata_filename='test_results/discretized/test_top_None.h5'
+'''
+discrete_truedata_filename='../../datasets/JetClass/discretized/train_TTBar__top_JetClassttbar_1.h5'
 jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename)
 print(mj_true)
 

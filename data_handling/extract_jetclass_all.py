@@ -13,7 +13,7 @@ start = time.time()
 
 vector.register_awkward()
 
-
+print('at the top')
 
 
 # %%
@@ -87,12 +87,20 @@ def to_hdf_file(constituents, out_file):
 label = "TTBar_"
 type='train'
 out_file = f"{label}"+type+".h5"
+
 all_constituents=[]
-mother_path='../../datasets/JetClass/'+type+'/'
-parts=os.listdirs(mother_path)
+mother_path='/net/data_t2k/transformers-hep/JetClass/'+type+'/'
+out_file=mother_path+out_file
+parts=os.listdir(mother_path)
+
+print('hello')
 for part in parts:
-
-
+    print(part)
+    if '.tar' in part:
+        os.system('mkdir '+mother_path+part.split('.')[0])
+        os.system('tar -xvf '+mother_path+part+' --directory '+mother_path+part.split('.')[0])
+    else:
+        continue
     # Get all root files corresponding to a given label within a folder
     files = []
     
