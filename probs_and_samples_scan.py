@@ -25,7 +25,7 @@ for model in models_list:
         
         model_path=mother_dir+'/'+model+'/'
         
-        '''
+        
         commad_eval='python evaluate_probabilities.py --model '+str(model_path)+str(model_type)+' --data '+str(test_dataset)+' --tag '+tag_foreval+' --num_const '+str(num_const)+' --num_events '+str(num_samples)
         
         
@@ -33,7 +33,7 @@ for model in models_list:
         commad_sample= 'python sample_jets.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)
         os.system(commad_sample)
         
-        '''
+        
         sg=model_path+'samples_'+tag_forsample+'.h5'
         save_dir=model_path+save_dir_tag
         command_test_sample='python test_samples.py --bg'+str(bg)+' --sig'+str(sg)+' --save_dir '+str(save_dir)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs_test)+' -N'+str(num_samples)
