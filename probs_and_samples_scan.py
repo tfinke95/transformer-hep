@@ -21,7 +21,7 @@ save_dir_tag='test_sample_test'
 
 models_list=os.listdir(mother_dir)
 for model in models_list:
-    if tag_fortrain in model:
+    if tag_ofrtrain in model:
         
         model_path=mother_dir+'/'+model+'/'
         
