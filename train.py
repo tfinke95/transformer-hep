@@ -44,7 +44,7 @@ if __name__ == "__main__":
     print("Loading validation set")
     val_loader = load_data(
         path=args.data_path.replace("train", "val"),
-        n_events=100000,
+        n_events=500000,
         num_features=num_features,
         num_bins=num_bins,
         num_const=args.num_const,
