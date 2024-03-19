@@ -9,7 +9,7 @@ from helpers_train import *
 
 torch.multiprocessing.set_sharing_strategy("file_system")
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 if __name__ == "__main__":
     args = parse_input()
     save_arguments(args)

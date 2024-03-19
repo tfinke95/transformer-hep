@@ -2,18 +2,18 @@ import os
 
 
 
-data_path='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_train_top_10M_ttbar.h5'
-model_path='/net/data_t2k/transformers-hep/JetClass/ttbar_models/ttbar_run_a'
-log_dir='/net/data_t2k/transformers-hep/JetClass/ttbar_models/ttbar_run_a'
+data_path='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_train_qcd_10M_zjettonunu.h5'
+model_path='/net/data_t2k/transformers-hep/JetClass/ztonunu_models/zjettonunu_run_b'
+log_dir='/net/data_t2k/transformers-hep/JetClass/ztonunu_models/zjettonunu_run_b'
 output='linear'
 
 
 
 num_const_list=[50]
-num_epochs_list=[2]
+num_epochs_list=[50]
 lr_list=[.0005]
 lr_decay_list=[.000001]
-num_events_list=[100000,200000]
+num_events_list=[2000000,5000000,10000000]
 dropout_list=[.1]
 num_heads_list=[4]
 num_layers_list=[8]
