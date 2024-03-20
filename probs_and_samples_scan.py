@@ -4,10 +4,10 @@ import os
 
 
 
-test_dataset='../datasets/JetClass/discretized/test_TTBar__top_jetclass_subset1_bin40.h5'
-mother_dir='models/'
+test_dataset='/net/data_t2k/transformers-hep/JetClass/test/test_ZJetsToNuNu_.h5'
+mother_dir='/net/data_t2k/transformers-hep/JetClass/ztonunu_models/'
 model_type='model_last.pt'
-tag_oftrain='test_jetclass_bin_40_ttbar_scantest_2'
+tag_oftrain='zjettonunu_run_b'
 num_samples=200
 tag_foreval='test_eval_0'
 tag_forsample='test_sample_0'
@@ -15,14 +15,14 @@ num_const=100
 
 ###For test samples
 bg=test_dataset
-bin_tag='jetclass_subset1_bin40'
-save_dir_tag='test_sample_test'
+bin_tag='10M_zjettonunu'
+save_dir_tag='test_sample_test_0'
 num_epochs_test=5
 
 models_list=os.listdir(mother_dir)
 for model in models_list:
     if tag_oftrain in model:
-        
+               
         model_path=mother_dir+'/'+model+'/'
         
         

@@ -9,7 +9,7 @@ from sklearn.metrics import roc_curve, roc_auc_score
 from preprocess import imagePreprocessing
 from argparse import ArgumentParser
 import os
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 parser = ArgumentParser()
 parser.add_argument("--bg", "-b", type=str)
 parser.add_argument("--sig", "-s", type=str)

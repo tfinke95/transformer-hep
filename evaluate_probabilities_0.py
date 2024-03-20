@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from helpers_train import set_seeds, load_data
 import numpy as np
 from tqdm import tqdm
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 def get_args():
     parser = ArgumentParser()
