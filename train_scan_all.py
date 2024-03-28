@@ -17,7 +17,7 @@ batch_size_list=[500]
 
 for jet in list_of_jets:
 
-    data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train_top_10M_'+jet+'.h5'
+    data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
     model_path='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'+jet+'_run_testwall_10M'
     log_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'+jet+'_run_testwall_10M'
     output='linear'
@@ -35,7 +35,7 @@ for jet in list_of_jets:
                                         for num_heads in num_heads_list:
                                             for lr in lr_list:
                                                 for hidden_dim in hidden_dim_list:
-                                                    os.system('python train_2.py --data_path '+str(data_path)+' --model_path '+str(model_path)+' --log_dir '+str(log_dir)+'  --output '+str(output)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --lr_decay '+str(lr_decay)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --dropout '+str(dropout)+' --num_heads '+str(num_heads)+' --num_layers '+str(num_layers)+' --num_bins '+str(num_bins)+' --weight_decay '+str(weight_decay)+' --hidden_dim '+str(hidden_dim)+' --end_token --start_token ')
+                                                    os.system('python train_3.py --data_path '+str(data_path)+' --model_path '+str(model_path)+' --log_dir '+str(log_dir)+'  --output '+str(output)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --lr_decay '+str(lr_decay)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --dropout '+str(dropout)+' --num_heads '+str(num_heads)+' --num_layers '+str(num_layers)+' --num_bins '+str(num_bins)+' --weight_decay '+str(weight_decay)+' --hidden_dim '+str(hidden_dim)+' --end_token --start_token ')
                                         
                                         
                                     
