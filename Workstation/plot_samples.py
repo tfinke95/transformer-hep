@@ -115,44 +115,53 @@ def LoadTrue(discrete_truedata_filename,n_samples):
 
 
 
-test_results_dir='/Users/humbertosmac/Documents/work/Transformers/Transformers_finke/test_results/'
+#test_results_dir='/Users/humbertosmac/Documents/work/Transformers/Transformers_finke/test_results/'
+main_dir='/net/data_t2k/transformers-hep/JetClass/'
+test_results_dir=main_dir+'/TTBar_models/'
+test_data_name='/discretized/TTBar_test_top_10M_ttbar.h5'
 
 bins_path_prefix=test_results_dir+'/preprocessing_bins/'
-pt_bins = np.load(bins_path_prefix+'pt_bins_10M_ttbar.npy')
-eta_bins = np.load(bins_path_prefix+'eta_bins_10M_ttbar.npy')
-phi_bins = np.load(bins_path_prefix+'phi_bins_10M_ttbar.npy')
+bin_tag='10M_TTBar'
+
+tag_oftrain='TTBar_run_testwall_10M'
+tag_foreval='test_eval_200k'
+tag_foreval_other='test_eval_other_200k'
+tag_forsample='test_sample_200k_trunc'
+
+pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
+eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
+phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
 
-filename = test_results_dir+"/ttbar_run_b_2_6/samples_test_sample_200k.h5"
-discrete_truedata_filename=test_results_dir+'/test_data/TTBar_test_top_10M_ttbar.h5'
-path_to_plots=test_results_dir+"/ttbar_run_b_2_6"
-n_samples=200000
-tmp = pd.read_hdf(filename, key="discretized", stop=None)
-    
-    
-tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
-print(tmp.shape)
-
-mask = tmp[:, :, 0] == -1
-print(mask)
-jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
-
-
-print(jets)
-
-print(jets[0])
-print(jets[0][0])
-print(np.shape(jets[:,:,0]))
-print(np.shape(jets))
-
-
+discrete_truedata_filename=main_dir+test_data_name
 jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_samples)
 print(mj_true)
 
-Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
-print(jets)
-print(ptj)
+n_samples=200000
+n_trains=6
+for j in range(4,n_trains):
 
 
-print(mj_true)
-print(mj)
+    
+    filename=test_results_dir+'/'+tag_oftrain+'_'+str(j)+'/samples_'+tag_forsample+'.h5'
+
+    path_to_plots=test_results_dir+'/'+tag_oftrain+'_'+str(j)+'/'
+
+    #filename = test_results_dir+"/ttbar_run_b_2_6/samples_test_sample_200k.h5"
+    tmp = pd.read_hdf(filename, key="discretized", stop=None)
+    
+    
+    tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
+    print(tmp.shape)
+
+    mask = tmp[:, :, 0] == -1
+    print(mask)
+    jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
+
+    Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
+
+
+
+
+
+# /net/data_t2k/transformers-hep/JetClass/TTBar_models/TTBar_run_testwall_10M_4/samples_test_sample_200k_trunc.h5
