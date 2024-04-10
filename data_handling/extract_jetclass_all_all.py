@@ -85,7 +85,7 @@ def to_hdf_file(constituents, out_file):
 
 # %%
 
-label_list=["HToBB_","HToCC_","HToGG_","HToWW2Q1L_","HToWW4Q_","TTBarLep_","WToQQ_"]
+label_list=["ZToQQ_"]
 for label in label_list:
     type='train'
     out_file = f"{label}"+type+".h5"

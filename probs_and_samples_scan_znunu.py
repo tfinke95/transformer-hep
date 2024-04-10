@@ -12,9 +12,9 @@ tag_oftrain='zjettonunu_run_b'
 num_samples=200000
 tag_foreval='test_eval_200k'
 tag_foreval_other='test_eval_other_200k'
-tag_forsample='test_sample_200k'
+tag_forsample='test_sample_200k_5ktrunc'
 num_const=100
-
+trunc=5000
 ###For test samples
 bg=test_dataset
 bin_tag='10M_zjettonunu'
@@ -39,7 +39,7 @@ for model in models_list:
         os.system(command_eval_other)
 
 
-        command_sample= 'python sample_jets_0.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)
+        command_sample= 'python sample_jets_0.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)
         os.system(command_sample)
         
         

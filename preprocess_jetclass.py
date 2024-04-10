@@ -307,7 +307,7 @@ if __name__ == "__main__":
     parser.add_argument("--tag", type=str)
     parser.add_argument("--nBins", "-n", type=int, nargs=3)
     parser.add_argument("--input_file", "-I", type=str)
-    parser.add_argument("--lower_q", "-l", type=float, default=0.0)
+    parser.add_argument("--lower_q", "-l", type=float, default=0.001)
     parser.add_argument("--upper_q", "-u", type=float, default=1.0)
     parser.add_argument("--nJets", "-N", type=int, default=None)
     args = parser.parse_args()
@@ -318,7 +318,7 @@ if __name__ == "__main__":
     if not os.path.exists(output_path):
         print("\nCreating output path\n")
         os.makedirs(output_path)
-    output_file = f"{train_test}_{['qcd', 'top'][args.class_label]}_{args.tag}.h5"
+    output_file = f"{train_test}_{['_', '_'][args.class_label]}_{args.tag}.h5"
     output_file = os.path.join(output_path, output_file)
 
     discretize_data(

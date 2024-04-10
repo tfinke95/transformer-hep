@@ -1,9 +1,9 @@
 import os
 
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
-list_of_jets=['TTBar','ZJetsToNuNu']
-num_const_list=[50,100]
-num_epochs_list=[2]
+list_of_jets=['ZJetsToNuNu']
+num_const_list=[50,50,50,50,50,100]
+num_epochs_list=[50]
 lr_list=[.0005]
 lr_decay_list=[.000001]
 num_events_list=[10000000]

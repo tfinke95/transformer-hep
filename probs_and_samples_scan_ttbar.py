@@ -6,25 +6,25 @@ import os
 
 test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test_top_10M_ttbar.h5'
 test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test_qcd_10M_zjettonunu.h5'
-mother_dir='/net/data_t2k/transformers-hep/JetClass/ttbar_models/'
+mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/'
 model_type='model_last.pt'
-tag_oftrain='ttbar_run_b_2'
+tag_oftrain='TTBar_run_testwall_10M'
 num_samples=200000
 tag_foreval='test_eval_200k'
 tag_foreval_other='test_eval_other_200k'
-tag_forsample='test_sample_200k'
+tag_forsample='test_sample_200k_trunc'
 num_const=100
-
+trunc=5000
 ###For test samples
 bg=test_dataset
-bin_tag='10M_ttbar'
-save_dir_tag='test_sample_test_0'
+bin_tag='10M_TTBar'
+save_dir_tag='sample_test_0'
 num_epochs_test=5
 
 models_list=os.listdir(mother_dir)
 for model in models_list:
     if tag_oftrain in model:
-        if ('_6' not in model) and ('_5' not in model):
+        if ('_4' not in model) and ('_5' not in model):
             continue
         model_path=mother_dir+'/'+model+'/'
         print(model)         
@@ -39,7 +39,7 @@ for model in models_list:
         os.system(command_eval_other)
 
 
-        command_sample= 'python sample_jets.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)
+        command_sample= 'python sample_jets.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)
         os.system(command_sample)
         
         
