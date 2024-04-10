@@ -120,7 +120,7 @@ main_dir='/net/data_t2k/transformers-hep/JetClass/'
 test_results_dir=main_dir+'/TTBar_models/'
 test_data_name='/discretized/TTBar_test_top_10M_ttbar.h5'
 
-bins_path_prefix=test_results_dir+'/preprocessing_bins/'
+bins_path_prefix='../preprocessing_bins/'
 bin_tag='10M_TTBar'
 
 tag_oftrain='TTBar_run_testwall_10M'
