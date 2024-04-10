@@ -9,7 +9,7 @@ test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToN
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/'
 model_type='model_last.pt'
 tag_oftrain='TTBar_run_testwall_10M'
-num_samples_list=[20,50]
+num_samples_list=[200,500]
 
 num_const=100
 trunc_list=[5001]
