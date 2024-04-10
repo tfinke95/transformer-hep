@@ -32,7 +32,7 @@ for num_samples in num_samples_list:
         for model in models_list:
             if tag_oftrain in model:
                 if ('_4' not in model) and ('_5' not in model):
-                continue
+                    continue
                 model_path=mother_dir+'/'+model+'/'
                 print(model)
         
