@@ -15,6 +15,7 @@ python train.py
 
 
 **CITATION**
+
 If this code is used for a scientfic publication, please add the following citation
 ```
 @article{Finke:2023veq,
