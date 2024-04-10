@@ -118,7 +118,7 @@ def LoadTrue(discrete_truedata_filename,n_samples):
 #test_results_dir='/Users/humbertosmac/Documents/work/Transformers/Transformers_finke/test_results/'
 main_dir='/net/data_t2k/transformers-hep/JetClass/'
 test_results_dir=main_dir+'/TTBar_models/'
-test_data_name='/discretized/TTBar_test_top_10M_ttbar.h5'
+test_data_name='/discretized/TTBar_test___10M_TTBar.h5'
 
 bins_path_prefix='../preprocessing_bins/'
 bin_tag='10M_TTBar'
