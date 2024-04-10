@@ -9,10 +9,10 @@ test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToN
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/'
 model_type='model_last.pt'
 tag_oftrain='TTBar_run_testwall_10M'
-num_samples_list=[200,500]
-
+num_samples_list=[500]
+train_batch_size=500
 num_const=100
-trunc_list=[5001]
+trunc_list=[5000]
 ###For test samples
 bg=test_dataset
 bin_tag='10M_TTBar'
@@ -46,7 +46,8 @@ for num_samples in num_samples_list:
                 os.system(command_eval_other)
 
 
-                command_sample= 'python sample_jets.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)
+                command_sample= 'python sample_jets.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)
+                print(command_sample)
                 os.system(command_sample)
         
         
