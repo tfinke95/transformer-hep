@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-filename = "test_results/full_test_qcd/_1/samples_test_qcd_1_200000samplestopk5k.h5"
+
 
 
 def make_continues(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
@@ -51,25 +51,25 @@ def make_continues(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
 
     return continues_jets, ptj, mj
 
-def Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true):
+def Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots):
 
     plt.hist(np.log(jets[:,:,0]).flatten(), bins=pt_bins, color='blue',histtype='step',density=True)
     plt.hist(np.log(jets_true[:,:,0]).flatten(), bins=pt_bins, color='red',histtype='step',density=True)
     plt.xlabel('$\log (p_T)$')
     
-    plt.savefig('plot_pt_trans.png')
+    plt.savefig(path_to_plots+'/plot_pt_trans.png')
     plt.close()
     
     plt.hist(jets[:,:,1].flatten(), bins=eta_bins, color='blue',histtype='step',density=True)
     plt.hist(jets_true[:,:,1].flatten(), bins=eta_bins, color='red',histtype='step',density=True)
     plt.xlabel('$\Delta\eta$')
-    plt.savefig('plot_eta_trans.png')
+    plt.savefig(path_to_plots+'/plot_eta_trans.png')
     plt.close()
     
     plt.hist(jets[:,:,2].flatten(), bins=phi_bins, color='blue',histtype='step',density=True)
     plt.hist(jets_true[:,:,2].flatten(), bins=phi_bins, color='red',histtype='step',density=True)
     plt.xlabel('$\Delta\phi$')
-    plt.savefig('plot_phi_trans.png')
+    plt.savefig(path_to_plots+'/plot_phi_trans.png')
     plt.close()
     
     mask = jets[:, :, 0] != 0
@@ -77,30 +77,35 @@ def Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true):
     mask = jets_true[:, :, 0] != 0
     plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 100.5, 102),color='red',histtype='step',density=True)
     plt.xlabel('Multiplicity')
-    plt.savefig('plot_mul_trans.png')
+    plt.savefig(path_to_plots+'/plot_mul_trans.png')
     plt.close()
     
     
-    mj_bins = np.linspace(0, 450, 100)
+    mj_bins = np.linspace(0, 1, 100)
     plt.hist(np.clip(mj, mj_bins[0], mj_bins[-1]), bins=mj_bins,color='blue',histtype='step',density=True)
     plt.hist(np.clip(mj_true, mj_bins[0], mj_bins[-1]), bins=mj_bins,color='red',histtype='step',density=True)
     plt.xlabel('$m_{jet}$')
-    plt.savefig('plot_mj_trans.png')
+    plt.savefig(path_to_plots+'/plot_mj_trans.png')
     plt.close()
     return
 
 
-def LoadTrue(discrete_truedata_filename):
+def LoadTrue(discrete_truedata_filename,n_samples):
 
 
     tmp = pd.read_hdf(discrete_truedata_filename, key="discretized", stop=None)
     print(tmp)
     print(tmp.shape)
+    
     tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
     print(tmp)
     print(tmp.shape)
-    
-    exit()
+    print('hello')
+    tmp=tmp[:n_samples,:,:]
+    print(tmp.shape)
+    print('hello')
+ 
+
     mask = tmp[:, :, 0] == -1
     print(mask)
     jets_true,ptj_true,mj_true = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
@@ -108,34 +113,46 @@ def LoadTrue(discrete_truedata_filename):
     return jets_true,ptj_true,mj_true
 
 
-'''
-bins_path_prefix='test_results/preprocessing_bins/'
-pt_bins = np.load(bins_path_prefix+'pt_bins_None.npy')
-eta_bins = np.load(bins_path_prefix+'eta_bins_None.npy')
-phi_bins = np.load(bins_path_prefix+'phi_bins_None.npy')
 
 
+test_results_dir='/Users/humbertosmac/Documents/work/Transformers/Transformers_finke/test_results/'
+
+bins_path_prefix=test_results_dir+'/preprocessing_bins/'
+pt_bins = np.load(bins_path_prefix+'pt_bins_10M_ttbar.npy')
+eta_bins = np.load(bins_path_prefix+'eta_bins_10M_ttbar.npy')
+phi_bins = np.load(bins_path_prefix+'phi_bins_10M_ttbar.npy')
+
+
+filename = test_results_dir+"/ttbar_run_b_2_6/samples_test_sample_200k.h5"
+discrete_truedata_filename=test_results_dir+'/test_data/TTBar_test_top_10M_ttbar.h5'
+path_to_plots=test_results_dir+"/ttbar_run_b_2_6"
+n_samples=200000
 tmp = pd.read_hdf(filename, key="discretized", stop=None)
     
     
 tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
 print(tmp.shape)
+
 mask = tmp[:, :, 0] == -1
 print(mask)
 jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
+
+
 print(jets)
 
 print(jets[0])
 print(jets[0][0])
 print(np.shape(jets[:,:,0]))
 print(np.shape(jets))
-'''
-discrete_truedata_filename='../../datasets/JetClass/discretized/train_TTBar__top_JetClassttbar_1.h5'
-jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename)
+
+
+jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_samples)
 print(mj_true)
 
-Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true)
+Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
 print(jets)
 print(ptj)
 
 
+print(mj_true)
+print(mj)
