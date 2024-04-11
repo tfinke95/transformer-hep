@@ -4,8 +4,8 @@ import os
 
 
 
-test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test_top_10M_ttbar.h5'
-test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test_qcd_10M_zjettonunu.h5'
+test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
+test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/'
 model_type='model_last.pt'
 tag_oftrain='TTBar_run_testwall_10M'
