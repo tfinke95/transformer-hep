@@ -167,6 +167,7 @@ if __name__ == "__main__":
                 print('new val loss:'+str(np.mean(val_loss))+'<'+str(mean_val_loss)+' saving new model as best' )
                 save_model(model, args.log_dir, "best")
                 mean_val_loss=np.mean(val_loss)
+                save_opt_states_best(opt, scheduler, scaler, args.log_dir)
             
         save_model(model, args.log_dir, "last")
         save_opt_states(opt, scheduler, scaler, args.log_dir)

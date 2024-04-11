@@ -48,11 +48,29 @@ def save_opt_states(optimizer, scheduler, scaler, log_dir):
     )
 
 
+def save_opt_states_best(optimizer, scheduler, scaler, log_dir):
+    torch.save(
+        {
+            "opt_state_dict_best": optimizer.state_dict(),
+            "sched_state_dict_best": scheduler.state_dict(),
+            "scaler_state_dict_best": scaler.state_dict(),
+        },
+        os.path.join(log_dir, "opt_state_dict_best.pt"),
+    )
+
+
 def load_opt_states(optimizer, scheduler, scaler, log_dir):
     state_dicts = torch.load(os.path.join(log_dir, "opt_state_dict.pt"))
     optimizer.load_state_dict(state_dicts["opt_state_dict"])
     scheduler.load_state_dict(state_dicts["sched_state_dict"])
     scaler.load_state_dict(state_dicts["scaler_state_dict"])
+
+
+def load_opt_states_best(optimizer, scheduler, scaler, log_dir):
+    state_dicts = torch.load(os.path.join(log_dir, "opt_state_dict_best.pt"))
+    optimizer.load_state_dict(state_dicts["opt_state_dict_best"])
+    scheduler.load_state_dict(state_dicts["sched_state_dict_best"])
+    scaler.load_state_dict(state_dicts["scaler_state_dict_best"])
 
 
 def save_model(model, log_dir, name):
