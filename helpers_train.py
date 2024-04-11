@@ -113,6 +113,11 @@ def parse_input():
     parser.add_argument(
         "--num_events", type=int, default=10000, help="Number of events for training"
     )
+    
+    parser.add_argument(
+        "--num_events_val", type=int, default=500000, help="Number of events for training"
+    )
+    
     parser.add_argument(
         "--num_bins",
         type=int,
