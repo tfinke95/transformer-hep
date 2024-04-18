@@ -1,19 +1,19 @@
 import os
 
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
-list_of_jets=['ZJetsToNuNu']
-num_const_list=[50,50,50,50,50,100]
+list_of_jets=['TTBar']
+num_const_list=[50]
 num_epochs_list=[50]
 lr_list=[.0005]
 lr_decay_list=[.000001]
-num_events_list=[10000000]
+num_events_list=[600000]
 dropout_list=[.1]
 num_heads_list=[4]
 num_layers_list=[8]
 num_bins_list=["41 31 31"]
 weight_decay_list=[0.00001]
 hidden_dim_list=[256]
-batch_size_list=[500]
+batch_size_list=[100]
 
 for jet in list_of_jets:
 

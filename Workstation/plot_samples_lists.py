@@ -132,17 +132,18 @@ pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
 eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
-n_samples=200000
+n_samples=2000000
 discrete_truedata_filename=main_dir+test_data_name
 jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_samples)
 print(mj_true)
 
 num_samples_list=[200000]
-trunc_list=[2500,1000,10000]
+trunc_list=[5000]
 
 
-n_trains=6
-for j in range(4,n_trains):
+n_trains=5
+#for j in range(4,n_trains):
+for j in [9,11]:
     for trunc in trunc_list:
         for num_samples in num_samples_list:
 

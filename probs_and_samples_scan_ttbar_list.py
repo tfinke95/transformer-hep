@@ -9,30 +9,33 @@ test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToN
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/'
 model_type='model_last.pt'
 tag_oftrain='TTBar_run_testwall_10M'
-num_samples_list=[2000000]
+num_samples_list=[200000]
 train_batch_size=500
 num_const=100
 trunc_list=[5000]
 ###For test samples
 bg=test_dataset
 bin_tag='10M_TTBar'
-
+list_of_results=[6,10]
 num_epochs_test=5
 
 models_list=os.listdir(mother_dir)
 
-for num_samples in num_samples_list:
-    for trunc in trunc_list:
+for result in list_of_results:
+        model=tag_oftrain+'_'+str(result)
+    #if tag_oftrain in model:
+    #    if ('_6' not in model) and ('_10' not in model):
+     #       continue
 
-        tag_foreval='test_eval_nsamples'+str(num_samples)
-        tag_foreval_other='test_eval_other_nsamples'+str(num_samples)
-        tag_forsample='samples_nsamples'+str(num_samples)+'_trunc_'+str(trunc)
-        save_dir_tag='some_results_nsamples'+str(num_samples)+'_trunc_'+str(trunc)
 
-        for model in models_list:
-            if tag_oftrain in model:
-                if ('_4' not in model) and ('_5' not in model):
-                    continue
+        for num_samples in num_samples_list:
+            for trunc in trunc_list:
+
+                tag_foreval='test_eval_nsamples'+str(num_samples)
+                tag_foreval_other='test_eval_other_nsamples'+str(num_samples)
+                tag_forsample='samples_nsamples'+str(num_samples)+'_trunc_'+str(trunc)
+                save_dir_tag='some_results_nsamples'+str(num_samples)+'_trunc_'+str(trunc)
+
                 model_path=mother_dir+'/'+model+'/'
                 print(model)
         
@@ -46,14 +49,14 @@ for num_samples in num_samples_list:
                 #os.system(command_eval_other)
 
 
-                command_sample= 'python sample_jets.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)
+                command_sample= 'python sample_jets_3.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)
                 print(command_sample)
                 os.system(command_sample)
         
         
                 sg=model_path+'samples_'+tag_forsample+'.h5'
                 save_dir=model_path+save_dir_tag
-                command_test_sample='python test_samples.py --bg '+str(bg)+' --sig '+str(sg)+' --save_dir '+str(save_dir)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs_test)+' -N '+str(num_samples)+' --bin_tag '+str(bin_tag)
+                command_test_sample='python test_samples_3.py --bg '+str(bg)+' --sig '+str(sg)+' --save_dir '+str(save_dir)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs_test)+' -N '+str(num_samples)+' --bin_tag '+str(bin_tag)
 
 
                 os.system(command_test_sample)

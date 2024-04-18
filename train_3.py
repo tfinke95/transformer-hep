@@ -44,7 +44,7 @@ if __name__ == "__main__":
     print("Loading validation set")
     val_loader = load_data(
         path=args.data_path.replace("train", "val"),
-        n_events=500000,
+        n_events=args.num_events_val,
         num_features=num_features,
         num_bins=num_bins,
         num_const=args.num_const,
@@ -89,6 +89,7 @@ if __name__ == "__main__":
     global_step = args.global_step
     loss_list = []
     perplexity_list = []
+    mean_val_loss=9999999
     for epoch in range(args.num_epochs):
         model.train()
 
@@ -161,6 +162,12 @@ if __name__ == "__main__":
 
             logger.add_scalar("Val/Loss", np.mean(val_loss), global_step)
             logger.add_scalar("Val/Perplexity", np.mean(val_perplexity), global_step)
-
+        
+        if np.mean(val_loss) < mean_val_loss:
+                print('new val loss:'+str(np.mean(val_loss))+'<'+str(mean_val_loss)+' saving new model as best' )
+                save_model(model, args.log_dir, "best")
+                mean_val_loss=np.mean(val_loss)
+                save_opt_states_best(opt, scheduler, scaler, args.log_dir)
+            
         save_model(model, args.log_dir, "last")
         save_opt_states(opt, scheduler, scaler, args.log_dir)
