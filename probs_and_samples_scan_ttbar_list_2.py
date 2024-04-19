@@ -12,11 +12,11 @@ tag_oftrain='TTBar_run_testwall_10M'
 num_samples_list=[200000]
 train_batch_size=100
 num_const=100
-trunc_list=[2500,1000,10000]
+trunc_list=[5000]
 ###For test samples
 bg=test_dataset
 bin_tag='10M_TTBar'
-
+model_name='model_best.pt'
 num_epochs_test=5
 
 models_list=os.listdir(mother_dir)
@@ -31,7 +31,7 @@ for num_samples in num_samples_list:
 
         for model in models_list:
             if tag_oftrain in model:
-                if ('_4' not in model) and ('_5' not in model):
+                if ('_12' not in model) and ('_13' not in model):
                     continue
                 model_path=mother_dir+'/'+model+'/'
                 print(model)
@@ -46,7 +46,7 @@ for num_samples in num_samples_list:
                 #os.system(command_eval_other)
 
 
-                command_sample= 'python sample_jets_0.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)
+                command_sample= 'python sample_jets_0.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
                 print(command_sample)
                 os.system(command_sample)
         

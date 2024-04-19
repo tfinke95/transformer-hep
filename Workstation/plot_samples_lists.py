@@ -143,7 +143,7 @@ trunc_list=[5000]
 
 n_trains=5
 #for j in range(4,n_trains):
-for j in [9,11]:
+for j in [12,13]:
     for trunc in trunc_list:
         for num_samples in num_samples_list:
 
