@@ -195,7 +195,7 @@ for jet in list_of_jets:
                                                 
                                                     name_sufix=random_string()
                                                 
-                                                    os.system('python train_2.py --data_path '+str(data_path)+' --model_path '+str(model_path)+' --log_dir '+str(log_dir)+'  --output '+str(output)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --lr_decay '+str(lr_decay)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --dropout '+str(dropout)+' --num_heads '+str(num_heads)+' --num_layers '+str(num_layers)+' --num_bins '+str(num_bins)+' --weight_decay '+str(weight_decay)+' --hidden_dim '+str(hidden_dim)+' --end_token --start_token '+' --name_sufix '+str(name_sufix)+' --num_events_val '+str(num_events_val))
+                                                    os.system('python train_2.py --data_path '+str(data_path)+' --model_path '+str(model_path)+' --log_dir '+str(log_dir)+'  --output '+str(output)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --lr_decay '+str(lr_decay)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --dropout '+str(dropout)+' --num_heads '+str(num_heads)+' --num_layers '+str(num_layers)+' --num_bins '+str(num_bins)+' --weight_decay '+str(weight_decay)+' --hidden_dim '+str(hidden_dim)+' --end_token --start_token '+' --name_sufix '+str(name_sufix)+' --num_events_val '+str(num_events_val)+' --checkpoint_steps 1200000')
                                                     
                                                     
 
@@ -204,7 +204,7 @@ for jet in list_of_jets:
                                                     for num_samples_test in num_samples_test_list:
                                                     
                                                         tag_foreval='test_eval_nsamples'+str(num_samples_test)
-                                                        command_eval='python evaluate_probabilities.py --model '+str(model_path_curr)+' --data '+str(test_dataset)+' --tag '+tag_foreval+' --num_const '+str(num_const_test)+' --num_events '+str(num_samples_test)
+                                                        command_eval='python evaluate_probabilities.py --model '+str(model_path_curr)+'/'+str(model_name)+' --data '+str(test_dataset)+' --tag '+tag_foreval+' --num_const '+str(num_const_test)+' --num_events '+str(num_samples_test)
         
         
                                                         os.system(command_eval)
