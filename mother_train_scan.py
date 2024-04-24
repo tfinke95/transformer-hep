@@ -39,6 +39,7 @@ num_const_test=100
 trunc_test_list=[5000]
 model_name='model_best.pt'
 
+main_dir='/net/data_t2k/transformers-hep/JetClass/'
 bins_path_prefix='preprocessing_bins/'
 ###Training stage
 for jet in list_of_jets:
