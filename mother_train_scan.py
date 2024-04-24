@@ -200,7 +200,7 @@ for jet in list_of_jets:
                                                     
 
 
-
+                                                    model_path_curr=model_path+'_'+name_sufix
                                                     for num_samples_test in num_samples_test_list:
                                                     
                                                         tag_foreval='test_eval_nsamples'+str(num_samples_test)
@@ -210,7 +210,7 @@ for jet in list_of_jets:
                                                         os.system(command_eval)
                                                     
                                                         for trunc in trunc_test_list:
-                                                            model_path_curr=model_path+'_'+name_sufix
+                                                            
                                                             tag_forsample='_nsamples'+str(num_samples_test)+'_trunc_'+str(trunc)
                                                             command_sample= 'python sample_jets_0.py --model_dir '+model_path_curr+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples_test)+' --num_const '+str(num_const_test)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
                                                             print(command_sample)
