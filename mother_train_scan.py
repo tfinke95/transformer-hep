@@ -4,6 +4,7 @@ import h5py
 import pandas as pd
 import matplotlib.pyplot as plt
 import random
+import string
 ###make sufix a random number
 
 def make_continues(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
