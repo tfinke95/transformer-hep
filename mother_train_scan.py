@@ -111,4 +111,4 @@ for jet in list_of_jets:
                                                     mask = tmp[:, :, 0] == -1
                                                     jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
 
-                                                    Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots
+                                                    Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)

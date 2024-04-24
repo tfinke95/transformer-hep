@@ -123,6 +123,10 @@ def parse_input():
     parser.add_argument(
         "--num_const", type=int, default=100, help="Number of constituents"
     )
+    
+    parser.add_argument(
+        "--name_sufix", type=str, default="A1B2C3D", help="name of train dir"
+    )
     parser.add_argument(
         "--limit_const",
         action="store_true",
