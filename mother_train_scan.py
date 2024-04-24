@@ -64,6 +64,7 @@ for jet in list_of_jets:
     phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
     n_samples=200000
+    test_data_name='/discretized/'+jet+'_test___10M_'+jet+'.h5'
     discrete_truedata_filename=main_dir+test_data_name
     jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_samples)
     print(mj_true)
