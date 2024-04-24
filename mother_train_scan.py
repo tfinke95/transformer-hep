@@ -199,28 +199,28 @@ for jet in list_of_jets:
 
 
 
-                                                    name_sufix=random_string()
+                                                    for num_samples_test in num_samples_test_list:
+                                                        for trunc in trunc_test_list:
+                                                            model_path_curr=model_path+'_'+name_sufix
+                                                            tag_forsample='_nsamples'+str(num_samples_test)+'_trunc_'+str(trunc)
+                                                            command_sample= 'python sample_jets_0.py --model_dir '+model_path_curr+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples_test)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
+                                                            print(command_sample)
+                                                            os.system(command_sample)
                                                     
-                                                    model_path_curr=model_path+'_'+name_sufix
-                                                    
-                                                    command_sample= 'python sample_jets_0.py --model_dir '+model_path_curr+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
-                                                    print(command_sample)
-                                                    os.system(command_sample)
                                                     
                                                     
-                                                    
-                                                    ####plotting
-                                                    filename=model_path_curr+'/samples_'+tag_forsample+'.h5'
+                                                            ####plotting
+                                                            filename=model_path_curr+'/samples_'+tag_forsample+'.h5'
 
-                                                    path_to_plots=test_results_dir+'/'+tag_oftrain+'_'+str(j)+'/'+tag_forsample
-                                                    os.makedirs(path_to_plots,exist_ok=True)
+                                                            path_to_plots=test_results_dir+'/'+tag_oftrain+'_'+str(j)+'/'+tag_forsample
+                                                            os.makedirs(path_to_plots,exist_ok=True)
 
-                                                    #filename = test_results_dir+"/ttbar_run_b_2_6/samples_test_sample_200k.h5"
-                                                    tmp = pd.read_hdf(filename, key="discretized", stop=None)
-                                                    tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
-                                                    print(tmp.shape)
+                                                            #filename = test_results_dir+"/ttbar_run_b_2_6/samples_test_sample_200k.h5"
+                                                            tmp = pd.read_hdf(filename, key="discretized", stop=None)
+                                                            tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
+                                                            print(tmp.shape)
 
-                                                    mask = tmp[:, :, 0] == -1
-                                                    jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
+                                                            mask = tmp[:, :, 0] == -1
+                                                            jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
 
-                                                    Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
+                                                            Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
