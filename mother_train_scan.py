@@ -57,6 +57,7 @@ for jet in list_of_jets:
     
     
     ###for plotting samples
+    bin_tag='10M_'+str(jet)
     pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
     eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
     phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
