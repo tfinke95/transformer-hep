@@ -212,7 +212,7 @@ for jet in list_of_jets:
                                                             ####plotting
                                                             filename=model_path_curr+'/samples_'+tag_forsample+'.h5'
 
-                                                            path_to_plots=test_results_dir+'/'+tag_oftrain+'_'+str(j)+'/'+tag_forsample
+                                                            path_to_plots=model_path_curr+'/'+tag_forsample
                                                             os.makedirs(path_to_plots,exist_ok=True)
 
                                                             #filename = test_results_dir+"/ttbar_run_b_2_6/samples_test_sample_200k.h5"
