@@ -1,5 +1,5 @@
 import os
-import helpers_plot_samples.py
+
 ###make sufix a random number
 
 
@@ -20,10 +20,10 @@ def random_string():
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 list_of_jets=['TTBar']
 num_const_list=[50]
-num_epochs_list=[50]
+num_epochs_list=[3]
 lr_list=[.001,.0005]
 lr_decay_list=[.000001]
-num_events_list=[6000]
+num_events_list=[600]
 dropout_list=[0.1]
 num_heads_list=[4]
 num_layers_list=[8]
@@ -33,7 +33,7 @@ hidden_dim_list=[256]
 batch_size_list=[100]
 
 ###Sampling parameters
-num_samples_test_list=[200000]
+num_samples_test_list=[200]
 train_batch_size=100
 num_const_test=100
 trunc_test_list=[5000]
