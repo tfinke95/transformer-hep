@@ -1,13 +1,8 @@
 import os
 
-
-
-
-
 test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
 test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/'
-model_type='model_last.pt'
 tag_oftrain='TTBar_run_testwall_10M'
 num_samples_list=[200000]
 train_batch_size=100
@@ -36,12 +31,12 @@ for num_samples in num_samples_list:
                 model_path=mother_dir+'/'+model+'/'
                 print(model)
         
-                command_eval='python evaluate_probabilities.py --model '+str(model_path)+str(model_type)+' --data '+str(test_dataset)+' --tag '+tag_foreval+' --num_const '+str(num_const)+' --num_events '+str(num_samples)
+                command_eval='python evaluate_probabilities.py --model '+str(model_path)+str(model_name)+' --data '+str(test_dataset)+' --tag '+tag_foreval+' --num_const '+str(num_const)+' --num_events '+str(num_samples)
         
         
                 #os.system(command_eval)
 
-                command_eval_other='python evaluate_probabilities.py --model '+str(model_path)+str(model_type)+' --data '+str(test_dataset_other)+' --tag '+tag_foreval_other+' --num_const '+str(num_const)+' --num_events '+str(num_samples)
+                command_eval_other='python evaluate_probabilities.py --model '+str(model_path)+str(model_name)+' --data '+str(test_dataset_other)+' --tag '+tag_foreval_other+' --num_const '+str(num_const)+' --num_events '+str(num_samples)
 
                 #os.system(command_eval_other)
 

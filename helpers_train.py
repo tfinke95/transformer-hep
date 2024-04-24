@@ -202,7 +202,8 @@ def save_arguments(args):
     i = 0
     while os.path.isdir(tmp):
         i += 1
-        tmp = args.log_dir + f"_{i}"
+        #tmp = args.log_dir + f"_{i}"
+        tmp = args.log_dir+"_"+ args.name_sufix
 
     args.log_dir = tmp
     os.makedirs(args.log_dir)
