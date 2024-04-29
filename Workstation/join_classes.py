@@ -24,6 +24,7 @@ def read_input(input_file,nJets=None):
         
         data = data.reshape((-1, 200, 4))
         '''
+        print(data.head())
         data = df.to_numpy()
         return data
 
