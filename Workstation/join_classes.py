@@ -26,11 +26,27 @@ def read_input(input_file,nJets=None):
         '''
         print(df.head())
         data = df.to_numpy()
-        return data
+        return data,df
 
+
+def concat_and_save(df_1,df_2,out_file):
+
+    df_all=pd.concat([df_1,df_2],axis=0)
+    
+    df_all.to_hdf(out_file, key="raw", mode="a", complevel=9)
+
+    return
 
 input_file='/net/data_t2k/transformers-hep/JetClass/val/TTBar_val.h5'
-data=read_input(input_file)
+data_1,df_1=read_input(input_file)
 
 print(np.shape(data))
+
+input_file='/net/data_t2k/transformers-hep/JetClass/val/ZJetsToNuNu_val.h5'
+data_2,df_2=read_input(input_file)
+
+print(np.shape(data_2))
+
+out_file='/net/data_t2k/transformers-hep/JetClass/val/TTBar_ZJetsToNuNu_val.h5'
+concat_and_save(df_1,df_2,out_file)
 
