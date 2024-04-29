@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-def read_input():
+def read_input(input_file,nJets=None):
     
         '''
         es = [f"E_{i}" for i in range(200)]
@@ -28,7 +28,7 @@ def read_input():
         return data
 
 
-input_file='/net/data_t2k/transformers-hep/JetClass/val/'
+input_file='/net/data_t2k/transformers-hep/JetClass/val/TTBar_val.h5'
 data=read_input(input_file)
 
 print(np.shape(data))
