@@ -37,7 +37,7 @@ def concat_and_save(list_of_frames,out_file):
     
     return
 
-list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
+list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQQ','ZToQQ']
 
 n_per_jet=1000000
 types=['train']
