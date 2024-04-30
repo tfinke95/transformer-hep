@@ -29,32 +29,33 @@ def read_input(input_file,nJets=None):
         return data,df
 
 
-def concat_and_save(df_1,df_2,out_file):
+def concat_and_save(list_of_frames,out_file):
 
-    df_all=pd.concat([df_1,df_2],axis=0)
+    df_all=pd.concat(list_of_frames,axis=0)
     
     df_all.to_hdf(out_file, key="raw", mode="a", complevel=9)
     
     return
 
+list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 
-types=['test','train']
+n_per_jet=1000000
+types=['train']
 
+list_of_frames=[]
 for type in types:
+    for jet in list_of_jets:
 
-    print(type)
-    input_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/TTBar_'+type+'.h5'
+    input_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/'+jet+'_'+type+'.h5'
     data_1,df_1=read_input(input_file)
+    
+    if n_per_jet != 'all':
+        df_1=df_1.head(n_per_jet)
+    
+    list_of_frames.append(df_1)
 
-    print(np.shape(data_1))
-
-    input_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/ZJetsToNuNu_'+type+'.h5'
-    data_2,df_2=read_input(input_file)
-
-    print(np.shape(data_2))
-
-    out_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/TTBar_ZJetsToNuNu_'+type+'.h5'
-    concat_and_save(df_1,df_2,out_file)
+out_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/ALL_1M_'+type+'.h5'
+concat_and_save(list_of_frames,out_file)
 
 
     data_all,df_all=read_input(out_file)
