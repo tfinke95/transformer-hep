@@ -45,17 +45,17 @@ types=['train']
 list_of_frames=[]
 for type in types:
     for jet in list_of_jets:
-
-    input_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/'+jet+'_'+type+'.h5'
-    data_1,df_1=read_input(input_file)
+        print(jet)
+        input_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/'+jet+'_'+type+'.h5'
+        data_1,df_1=read_input(input_file)
     
-    if n_per_jet != 'all':
-        df_1=df_1.head(n_per_jet)
+        if n_per_jet != 'all':
+            df_1=df_1.head(n_per_jet)
     
-    list_of_frames.append(df_1)
+        list_of_frames.append(df_1)
 
-out_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/ALL_1M_'+type+'.h5'
-concat_and_save(list_of_frames,out_file)
+    out_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/ALL_1M_'+type+'.h5'
+    concat_and_save(list_of_frames,out_file)
 
 
     data_all,df_all=read_input(out_file)
