@@ -37,19 +37,25 @@ def concat_and_save(df_1,df_2,out_file):
     
     return
 
-input_file='/net/data_t2k/transformers-hep/JetClass/val/TTBar_val.h5'
-data_1,df_1=read_input(input_file)
 
-print(np.shape(data_1))
+types=['test','train']
 
-input_file='/net/data_t2k/transformers-hep/JetClass/val/ZJetsToNuNu_val.h5'
-data_2,df_2=read_input(input_file)
-
-print(np.shape(data_2))
-
-out_file='/net/data_t2k/transformers-hep/JetClass/val/TTBar_ZJetsToNuNu_val.h5'
-concat_and_save(df_1,df_2,out_file)
+for type in types:
 
 
-data_all,df_all=read_input(out_file)
-print(np.shape(data_all))
+    input_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/TTBar_'+type+'.h5'
+    data_1,df_1=read_input(input_file)
+
+    print(np.shape(data_1))
+
+    input_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/ZJetsToNuNu_'+type+'.h5'
+    data_2,df_2=read_input(input_file)
+
+    print(np.shape(data_2))
+
+    out_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/TTBar_ZJetsToNuNu_'+type+'.h5'
+    concat_and_save(df_1,df_2,out_file)
+
+
+    data_all,df_all=read_input(out_file)
+    print(np.shape(data_all))
