@@ -30,7 +30,7 @@ num_layers_list=[8]
 hidden_dim_list=[256]
 batch_size_list=[100]
 num_events_list=[10000]
-num_const_list=[120]
+num_const_list=[100]
 lr_list=[.001]
 
 tag_of_train='top_vs_qcd_jetclass_classifier_test_1'
