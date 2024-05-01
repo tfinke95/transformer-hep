@@ -239,7 +239,8 @@ def load_data(
     num_workers=4,
     shuffle=True,
 ):
-    df = pd.read_hdf(path, "discretized", stop=n_events)
+    df = pd.read_hdf(path, "discretized", stop=None)
+    df=df.sample(n_events)
     x, padding_mask, bins = preprocess_dataframe(
         df,
         num_features=num_features,
