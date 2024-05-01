@@ -22,7 +22,7 @@ num_events_list=[10000]
 num_const_list=[120]
 
 tag_of_train='top_vs_qcd_jetclass_classifier_test_1'
-log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/'+tag_oftrain
+log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/'+tag_of_train
 
 for sig in sig_list:
     for bg in bg_list:
