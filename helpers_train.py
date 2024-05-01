@@ -79,7 +79,7 @@ def save_model(model, log_dir, name):
 
 def load_model(model_path):
     model = torch.load(model_path)
-    print(f"Model uses tanh {model.tanh}")
+    #print(f"Model uses tanh {model.tanh}")
     return model
 
 
