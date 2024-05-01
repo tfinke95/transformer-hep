@@ -7,7 +7,18 @@ import matplotlib.pyplot as plt
 import random
 import string
 
-
+def random_string():
+    # initializing size of string
+    N = 7
+ 
+    # using random.choices()
+    # generating random strings
+    res = ''.join(random.choices(string.ascii_uppercase +
+                             string.digits, k=N))
+    # print result
+    print("The generated random string : " + str(res))
+    return str(res)
+    
 main_dir_discrete='/net/data_t2k/transformers-hep/JetClass/discretized/'
 
 sig_list=['TTBar_train___10M_TTBar.h5']
