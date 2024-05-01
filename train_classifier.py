@@ -66,6 +66,10 @@ def parse_input():
         help="Number of bins per feature",
     )
 
+    parser.add_argument(
+        "--name_sufix", type=str, default="A1B2C3D", help="name of train dir"
+    )
+
     parser.add_argument("--num_epochs", type=int, default=3, help="Number of epochs")
     parser.add_argument("--batch_size", type=int, default=100, help="Batch size")
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
