@@ -202,13 +202,15 @@ def parse_input():
 
 
 def save_arguments(args):
+    '''
     tmp = args.log_dir
     i = 0
     while os.path.isdir(tmp):
         i += 1
         #tmp = args.log_dir + f"_{i}"
         tmp = args.log_dir+"_"+ args.name_sufix
-
+    '''
+    tmp = args.log_dir+"_"+ args.name_sufix
     args.log_dir = tmp
     os.makedirs(args.log_dir)
     with open(os.path.join(args.log_dir, "arguments.txt"), "w") as f:
