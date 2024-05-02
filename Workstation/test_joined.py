@@ -18,7 +18,7 @@ eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
 n_test_samples=100000
-file_name_samples='/net/data_t2k/transformers-hep/JetClass/discretized/ALL_1M_test___10M_ALL_1M.h5'
+file_name_samples='/net/data_t2k/transformers-hep/JetClass/discretized/ALL_1M_val___10M_ALL_1M.h5'
 
 jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
 
@@ -27,6 +27,6 @@ discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/
 jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
 
 
-path_to_plots='test_plots_join_all_train_test_'+str(n_test_samples)
+path_to_plots='test_plots_join_all_train_val_'+str(n_test_samples)
 os.makedirs(path_to_plots,exist_ok=True)
 Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
