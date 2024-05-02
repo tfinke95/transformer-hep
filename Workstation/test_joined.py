@@ -11,6 +11,11 @@ def readFrameCont(path,n_samples):
     return tmp
 
 
+bins_path_prefix='../preprocessing_bins/'
+bin_tag='10M_TTBar_ZJetsToNuNu'
+pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
+eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
+phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
 
 file_name_samples='/net/data_t2k/transformers-hep/JetClass/TTBar_ZJetsToNuNu_models//TTBar_ZJetsToNuNu_run_scan_600k_XGNLMOG/samples__nsamples200000_trunc_5000.h5'
@@ -21,11 +26,6 @@ discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/
 n_test_samples=200000
 jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
 
-bins_path_prefix='../preprocessing_bins/'
-bin_tag='10M_TTBar_ZJetsToNuNu'
-pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
-eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
-phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
 path_to_plots='test_plots_join_'+str(n_test_samples)
 os.makedirs(path_to_plots,exist_ok=True)
