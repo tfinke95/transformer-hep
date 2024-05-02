@@ -46,7 +46,7 @@ def train_model(model, data, labels, train_params, logfolder, mask):
                 monitor="val_loss", patience=12, verbose=1, restore_best_weights=True
             ),
             tfk.callbacks.ModelCheckpoint(
-                os.path.join(logfolder, "checkpoint_{epoch:02d}_weights.h5"),
+                os.path.join(logfolder, "checkpoint_{epoch:02d}_.weights.h5"),
                 save_best_only=False,
                 save_freq=data.shape[0] // train_params["batch_size"] * 5,
                 save_weights_only=True,
