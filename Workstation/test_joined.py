@@ -17,7 +17,7 @@ pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
 eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
-n_test_samples=200000
+n_test_samples=100000
 file_name_samples='/net/data_t2k/transformers-hep/JetClass/TTBar_ZJetsToNuNu_models//TTBar_ZJetsToNuNu_run_scan_600k_XGNLMOG/samples__nsamples200000_trunc_5000.h5'
 
 jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
