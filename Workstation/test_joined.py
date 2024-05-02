@@ -14,7 +14,7 @@ def readFrameCont(path,n_samples):
 
 
 file_name_samples='/net/data_t2k/transformers-hep/JetClass/TTBar_ZJetsToNuNu_models//TTBar_ZJetsToNuNu_run_scan_600k_XGNLMOG/samples__nsamples200000_trunc_5000.h5'
-results=os.listdir(dir_name)
+
 jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins)
 
 discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_ZJetsToNuNu_test___10M_TTBar_ZJetsToNuNu.h5'
