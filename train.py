@@ -171,3 +171,4 @@ if __name__ == "__main__":
             
         save_model(model, args.log_dir, "last")
         save_opt_states(opt, scheduler, scaler, args.log_dir)
+    
