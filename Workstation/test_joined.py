@@ -18,11 +18,11 @@ eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
 n_test_samples=100000
-file_name_samples='/net/data_t2k/transformers-hep/JetClass/TTBar_ZJetsToNuNu_models//TTBar_ZJetsToNuNu_run_scan_600k_XGNLMOG/samples__nsamples200000_trunc_5000.h5'
+file_name_samples='/net/data_t2k/transformers-hep/JetClass/discretized/ALL_1M_test___10M_ALL_1M.h5'
 
 jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
 
-discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_ZJetsToNuNu_val___10M_TTBar_ZJetsToNuNu.h5'
+discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/ALL_1M_train___10M_ALL_1M.h5'
 
 jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
 
