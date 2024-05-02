@@ -22,11 +22,11 @@ file_name_samples='/net/data_t2k/transformers-hep/JetClass/TTBar_ZJetsToNuNu_mod
 
 jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
 
-discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_ZJetsToNuNu_train___10M_TTBar_ZJetsToNuNu.h5'
+discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_ZJetsToNuNu_val___10M_TTBar_ZJetsToNuNu.h5'
 
 jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
 
 
-path_to_plots='test_plots_join_'+str(n_test_samples)
+path_to_plots='test_plots_join_val_'+str(n_test_samples)
 os.makedirs(path_to_plots,exist_ok=True)
 Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
