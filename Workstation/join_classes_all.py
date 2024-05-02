@@ -50,7 +50,7 @@ for type in types:
         data_1,df_1=read_input(input_file)
     
         if n_per_jet != 'all':
-            df_1=df_1.head(n_per_jet)
+            df_1=df_1.sample(n_per_jet)
     
         list_of_frames.append(df_1)
 
