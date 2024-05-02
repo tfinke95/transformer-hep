@@ -300,7 +300,7 @@ class JetTransformer(Module):
                 idx = select_idx()
                 if not trunc is None and trunc >= 1:
                     idx = indices[torch.arange(len(indices)), idx]
-                finished[idx == 39401] = True
+                finished[idx == num_bins[0]*num_bins[1]*num_bins[2]] = True
 
                 # Get tuple from found bin and set next particle properties
                 true_bins[~finished, particle + 1] = idx[~finished]
@@ -310,6 +310,8 @@ class JetTransformer(Module):
 
                 padding_mask[~finished, particle + 1] = True
         return jets, true_bins
+        
+    '''
 
     def idx_to_bins(self, x):
         pT = x % 41
@@ -318,7 +320,16 @@ class JetTransformer(Module):
         )
         phi = torch.div((x - pT - 41 * eta), 1271, rounding_mode="trunc")
         return pT, eta, phi
-
+        
+    '''
+        
+    def idx_to_bins(self, x):
+        pT = x % self.num_bins[0]
+        eta = torch.div((x - pT), self.num_bins[0], rounding_mode="trunc") % torch.div(
+            torch.prod(self.num_bins[:2]), self.num_bins[0], rounding_mode="trunc"
+        )
+        phi = torch.div((x - pT - self.num_bins[0] * eta), torch.prod(self.num_bins[:2]), rounding_mode="trunc")
+        return pT, eta, phi
 
 class CNNclass(Module):
     def __init__(
