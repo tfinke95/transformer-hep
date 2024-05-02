@@ -60,9 +60,9 @@ def get_config(test=False):
 
 
 def make_continues(jets, mask, noise=False):
-    pt_bins = np.load("../preprocessing_bins/pt_bins_pt40_eta30_phi30_lower001.npy")
-    eta_bins = np.load("../preprocessing_bins/eta_bins_pt40_eta30_phi30_lower001.npy")
-    phi_bins = np.load("../preprocessing_bins/phi_bins_pt40_eta30_phi30_lower001.npy")
+    pt_bins = np.load("../preprocessing_bins/pt_bins_10M_TTBar.npy")
+    eta_bins = np.load("../preprocessing_bins/eta_bins_10M_TTBar.npy")
+    phi_bins = np.load("../preprocessing_bins/phi_bins_10M_TTBar.npy")
 
     pt_disc = jets[:, :, 0]
     eta_disc = jets[:, :, 1]
