@@ -1,7 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import os
-
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+from scipy import stats
+from data_eval_helpers import make_continues,Make_Plots,LoadTrue,LoadSGenamples,GetHighLevel,Wasserstein_distance
 
 def GetDataEval(file_dir):
     file_name='results_test_eval_nconst_nsamples200000.npz'
@@ -44,6 +46,23 @@ def extract_value(var,lines):
     return value
 
 
+def plot_multiplicity(path_to_plots):
+
+
+    mask = jets[:, :, 0] != 0
+    plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 100.5, 102),color=color,histtype='step',density=True,linestyle='dashed')
+    
+    plt.xlabel('Multiplicity')
+    plt.legend()
+    plt.savefig(path_to_plots+'/plot_mul_trans.png')
+    plt.close()
+
+
+
+    return
+
+
+
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/test_const_dep/'
 results_tag='TTBar_run_scan_const_1M_'
 
@@ -71,5 +90,37 @@ plt.legend(fontsize="large")
 plt.savefig(mother_dir+'plot_probs_test_1.png')
 plt.close()
 
+exit()
+######## PLOT SAMPLES #######
 
 
+
+data_dict={'name_sufix':[],'dropout':[],'lr':[],'hidden_dim':[],'num_layers':[],'num_heads':[]}
+data_dict_result={'w_distance_pt':[],'w_distance_mj':[] ,'w_distance_mul':[] }
+
+
+bins_path_prefix='../preprocessing_bins/'
+bin_tag='10M_TTBar'
+pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
+eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
+phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
+
+n_test_samples=200000
+discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/test/TTBar_test___10M_TTBar.h5'
+jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
+pt_true, eta_true,phi_true,mul_true=GetHighLevel(jets_true)
+
+mask = jets_true[:, :, 0] != 0
+plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 100.5, 102),color='black',histtype='step',density=True)
+
+for j  in range(len(results_list)):
+    result=results_list[j]
+    color=colors[j]
+
+    file_dir=mother_dir+'/'+result+'/'
+    
+    file_name_samples=mother_dir+'/'+result+'/samples__nsamples200000_trunc_5000.h5'
+    try:
+        jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins)
+        pt, eta,phi,mul=GetHighLevel(jets)
+        plot_multiplicity(path_to_plots)
