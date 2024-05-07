@@ -17,9 +17,9 @@ def GetDataEval(file_dir):
 def ReadArguments():
     return
 
-def plot_probs(evalprob):
+def plot_probs(evalprob,num_const,color):
 
- plt.hist(evalprob['probs'],histtype='step',bins=30,density=True,color='blue',label='num_const')
+ plt.hist(evalprob['probs'],histtype='step',bins=30,density=True,color=color,label=num_const)
 
 
  return
@@ -51,16 +51,19 @@ results_tag='TTBar_run_scan_const_1M_'
 
 results_list=os.listdir(mother_dir)
 
-for result in results_list:
+colors=['blue','green','red', 'cyan','magenta','yellow','black']
 
+for j  in len(results_list):
+    result=results_list[j]
+    color=colors[j]
 
     file_dir=mother_dir+'/'+result+'/'
     try:
         arguments_file=read_file(file_dir+'arguments.txt')
         num_const=extract_value('num_const',arguments_file)
-
+        print(num_const)
         evalprob=GetDataEval(file_dir)
-        plot_probs(evalprob,num_const)
+        plot_probs(evalprob,num_const,color)
     except:
         continue
     
