@@ -21,8 +21,8 @@ models_list=['0S1DG44','GGZNTEU']
 for num_samples in num_samples_list:
     for trunc in trunc_list:
 
-        tag_foreval='test_eval_nsamples'+str(num_samples)
-        tag_foreval_other='test_eval_other_nsamples'+str(num_samples)
+        tag_foreval='test_eval_top_nsamples'+str(num_samples)
+        tag_foreval_other='test_eval_qcd_nsamples'+str(num_samples)
         tag_forsample='samples_nsamples'+str(num_samples)+'_trunc_'+str(trunc)
         save_dir_tag='some_results_nsamples'+str(num_samples)+'_trunc_'+str(trunc)
 
