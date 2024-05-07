@@ -47,22 +47,24 @@ def extract_value(var,lines):
     return value
 
 
-mother_dir=''
-resluts_tag=''
-results_list=[]
+mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/test_const_dep/'
+results_tag='TTBar_run_scan_const_1M_'
 
+results_list=os.listdirs(mother_dir)
 
 for result in results_list:
 
 
-    file_dir=mother_dir+'/'+resluts_tag+result+'/'
-    
-    arguments_file=read_file(file_dir+'arguments.txt')
-    num_const=extract_value('num_const',arguments_file)
+    file_dir=mother_dir+'/'+result+'/'
+    try:
+        arguments_file=read_file(file_dir+'arguments.txt')
+        num_const=extract_value('num_const',arguments_file)
 
-    evalprob=GetDataEval(file_dir)
+        evalprob=GetDataEval(file_dir)
+        plot_probs(evalprob,num_const)
+    except:
+        continue
     
-    plot_probs(evalprob,num_const)
 
 plt.xlabel('log(p)')
 plt.legend()
