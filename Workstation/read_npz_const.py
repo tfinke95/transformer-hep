@@ -53,7 +53,7 @@ results_list=os.listdir(mother_dir)
 
 colors=['blue','green','red', 'cyan','magenta','yellow','black']
 
-for j  in len(results_list):
+for j  in range(len(results_list)):
     result=results_list[j]
     color=colors[j]
 
