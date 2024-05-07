@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-
+import os
 
 
 def GetDataEval(file_dir):
@@ -50,7 +49,7 @@ def extract_value(var,lines):
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/test_const_dep/'
 results_tag='TTBar_run_scan_const_1M_'
 
-results_list=os.listdirs(mother_dir)
+results_list=os.listdir(mother_dir)
 
 for result in results_list:
 
