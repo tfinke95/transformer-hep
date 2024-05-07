@@ -14,13 +14,11 @@ def GetDataEval(file_dir):
 
 
 
-def ReadArguments():
-    return
 
 def plot_probs(evalprob,num_const,color):
 
- plt.hist(evalprob['probs'],histtype='step',bins=30,density=True,color=color,label=str(num_const))
-
+    plt.hist(evalprob['probs'],histtype='step',bins=30,density=True,color=color,label=str(num_const))
+    plt.legend(fontsize="large")
 
  return
  
