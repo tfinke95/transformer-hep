@@ -106,7 +106,7 @@ eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
 n_test_samples=200000
-discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/test/TTBar_test___10M_TTBar.h5'
+discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
 jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
 pt_true, eta_true,phi_true,mul_true=GetHighLevel(jets_true)
 
