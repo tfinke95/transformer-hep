@@ -124,9 +124,9 @@ for k  in range(len(results_list)):
     num_const=extract_value('num_const',arguments_file)
 
     file_dir=mother_dir+'/'+result+'/'
-    
-    file_name_samples=mother_dir+'/'+result+'/samples__nsamples200000_trunc_5000.h5'
     try:
+        file_name_samples=mother_dir+'/'+result+'/samples__nsamples200000_trunc_5000.h5'
+
         jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
         print('jets')
         pt, eta,phi,mul=GetHighLevel(jets)
