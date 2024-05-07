@@ -4,7 +4,7 @@ from data_eval_helpers import make_continues,Make_Plots,LoadTrue,LoadSGenamples,
 import os
 import numpy as np
 
-
+'''
 def readFrameCont(path,n_samples):
     tmp = pd.read_hdf(discrete_truedata_filename, key="discretized", stop=None)
     tmp=tmb.sample(n_samples)
@@ -30,3 +30,70 @@ jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt
 path_to_plots='test_plots_join_all_test_val_'+str(n_test_samples)
 os.makedirs(path_to_plots,exist_ok=True)
 Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
+'''
+
+def GetEvalDataJoined(file_dir):
+
+
+    file_qcd=file_dir+'/results_test_eval_qcd_nsamples200000.npz'
+    evalprob_qcd = np.load(file_qcd)
+    
+    file_top=file_dir+'/'+'/results_test_eval_top_nsamples200000.npz'
+    evalprob_top = np.load(file_top)
+
+
+
+    return evalprob_top,evalprob_qcd
+    
+
+def GetEvalDataTop(file):
+
+    evalprob_top_best = np.load(file)
+
+    return evalprob_top_best
+
+
+
+def GetEvalDataQCD(file):
+
+  
+    evalprob_qcd_best = np.load(file)
+
+    return evalprob_qcd_best
+    
+    
+def plot_probs(evalprob_best,evalprob_joined,path_to_plots,tag):
+
+ plt.hist(evalprob_qcdfromqcd['probs'],histtype='step',bins=30,density=True,color='blue',label='single')
+ plt.hist(evalprob_qcdfromtop['probs'],histtype='step',bins=30,density=True,color='blue',linestyle='--',label='joined')
+ 
+ plt.xlabel('log(p)')
+ plt.legend()
+ plt.title(plot_title,loc='left')
+ plt.savefig(path_to_plots+'/plot_probs_'+tag+'.png')
+ plt.close()
+
+ return
+
+
+
+test_results_dir='/Users/humbertosmac/Documents/work/Transformers/Transformers_finke/test_results/'
+
+joined_file_dir=test_results_dir+'/TTBar_Znunu/success/'
+qcd_file_name=test_results_dir+'/ZJetsToNuNu_run_testwall_10M_6/results_test_eval_nsamples200000.npz'
+top_file_name=test_results_dir+'/TTBar_run_testwall_10M_11/results_test_eval_nsamples200000.npz'
+
+
+evalprob_top,evalprob_qcd=GetEvalDataJoined(joined_file_dir)
+evalprob_top_best=GetEvalDataTop(file)
+evalprob_qcd_best=GetEvalDataQCD(file)
+
+
+joined_result_tag='TBar_ZJetsToNuNu_run_test_joined_403030_'
+joined_result_list=['0S1DG44','GGZNTEU']
+
+for joined_result in joined_result_list:
+
+    path_to_plots=joined_file_dir+'/'+joined_result_tag+joined_result+'/'
+    plot_probs(evalprob_top_best,evalprob_joined,path_to_plots,'TTBar')
+    plot_probs(evalprob_qcd_best,evalprob_joined,path_to_plots,'QCD')

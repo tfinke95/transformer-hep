@@ -96,12 +96,12 @@ def LoadTrue(discrete_truedata_filename,n_samples):
     tmp = pd.read_hdf(discrete_truedata_filename, key="discretized", stop=None)
     print(tmp)
     print(tmp.shape)
-    
+    tmp=tmp.sample(n_samples)
     tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
     print(tmp)
     print(tmp.shape)
     print('hello')
-    tmp=tmp[:n_samples,:,:]
+    #tmp=tmp[:n_samples,:,:]
     print(tmp.shape)
     print('hello')
  
