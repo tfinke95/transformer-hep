@@ -54,7 +54,7 @@ def plot_multiplicity(path_to_plots):
     
     plt.xlabel('Multiplicity')
     plt.legend()
-    plt.savefig(path_to_plots+'/plot_mul_trans.png')
+    plt.savefig(path_to_plots+'/plot_mul.png')
     plt.close()
 
 
@@ -90,7 +90,7 @@ plt.legend(fontsize="large")
 plt.savefig(mother_dir+'plot_probs_test_1.png')
 plt.close()
 
-exit()
+
 ######## PLOT SAMPLES #######
 
 
@@ -123,6 +123,6 @@ for j  in range(len(results_list)):
     try:
         jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins)
         pt, eta,phi,mul=GetHighLevel(jets)
-        plot_multiplicity(path_to_plots)
+        plot_multiplicity(mother_dir)
     except:
         continue
