@@ -19,7 +19,7 @@ def ReadArguments():
 
 def plot_probs(evalprob,num_const,color):
 
- plt.hist(evalprob['probs'],histtype='step',bins=30,density=True,color=color,label=num_const)
+ plt.hist(evalprob['probs'],histtype='step',bins=30,density=True,color=color,label=str(num_const))
 
 
  return
@@ -69,7 +69,7 @@ for j  in range(len(results_list)):
     
 
 plt.xlabel('log(p)')
-plt.legend()
+plt.legend(fontsize="large")
 plt.savefig(mother_dir+'plot_probs_test_1.png')
 plt.close()
 
