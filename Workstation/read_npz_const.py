@@ -46,11 +46,11 @@ def extract_value(var,lines):
     return value
 
 
-def plot_multiplicity(path_to_plots):
+def plot_multiplicity(path_to_plots,num_const,color):
 
 
     mask = jets[:, :, 0] != 0
-    plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 100.5, 102),color=color,histtype='step',density=True,linestyle='dashed')
+    plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 100.5, 102),color=color,histtype='step',density=True,linestyle='dashed',label=str(num_const))
     
     plt.xlabel('Multiplicity')
     plt.legend()
@@ -105,7 +105,7 @@ pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
 eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
-n_test_samples=200000
+n_test_samples=190000
 discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
 jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
 pt_true, eta_true,phi_true,mul_true=GetHighLevel(jets_true)
@@ -117,6 +117,9 @@ for j  in range(len(results_list)):
     result=results_list[j]
     color=colors[j]
 
+    arguments_file=read_file(file_dir+'arguments.txt')
+    num_const=extract_value('num_const',arguments_file)
+
     file_dir=mother_dir+'/'+result+'/'
     
     file_name_samples=mother_dir+'/'+result+'/samples__nsamples200000_trunc_5000.h5'
@@ -125,7 +128,7 @@ for j  in range(len(results_list)):
     print('jets')
     pt, eta,phi,mul=GetHighLevel(jets)
     print('high level')
-    plot_multiplicity(mother_dir)
+    plot_multiplicity(mother_dir,num_const,color)
     print('plot')
    # except:
    #     continue
