@@ -1,5 +1,7 @@
 import os
 
+
+
 test_dataset_1='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
 test_dataset_2='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_ZJetsToNuNu/'
@@ -9,7 +11,7 @@ train_batch_size=100
 num_const=100
 trunc_list=[5000]
 ###For test samples
-bg=test_dataset
+#bg=test_dataset
 bin_tag='40_30_30_TTBar_ZJetsToNuNu'
 model_name='model_best.pt'
 num_epochs_test=5
