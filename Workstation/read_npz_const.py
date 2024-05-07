@@ -124,3 +124,5 @@ for j  in range(len(results_list)):
         jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins)
         pt, eta,phi,mul=GetHighLevel(jets)
         plot_multiplicity(path_to_plots)
+    except:
+        continue
