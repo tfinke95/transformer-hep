@@ -27,7 +27,7 @@ for num_samples in num_samples_list:
         save_dir_tag='some_results_nsamples'+str(num_samples)+'_trunc_'+str(trunc)
 
         for model in models_list:
-                model_path=mother_dir+'/'+tag_oftrain+'_'+model
+                model_path=mother_dir+'/'+tag_oftrain+'_'+model+'/'
                 print(model)
         
                 command_eval='python evaluate_probabilities.py --model '+str(model_path)+str(model_name)+' --data '+str(test_dataset_1)+' --tag '+tag_foreval+' --num_const '+str(num_const)+' --num_events '+str(num_samples)
