@@ -115,8 +115,9 @@ pt_true, eta_true,phi_true,mul_true=GetHighLevel(jets_true)
 mask = jets_true[:, :, 0] != 0
 plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 100.5, 102),color='black',histtype='step',density=True)
 
-for j  in range(len(results_list)):
-    result=results_list[j]
+j=0
+for k  in range(len(results_list)):
+    result=results_list[k]
     color=colors[j]
 
     arguments_file=read_file(file_dir+'arguments.txt')
@@ -125,12 +126,13 @@ for j  in range(len(results_list)):
     file_dir=mother_dir+'/'+result+'/'
     
     file_name_samples=mother_dir+'/'+result+'/samples__nsamples200000_trunc_5000.h5'
-    #try:
-    jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
-    print('jets')
-    pt, eta,phi,mul=GetHighLevel(jets)
-    print('high level')
-    plot_multiplicity(mother_dir,num_const,color)
-    print('plot')
-   # except:
-   #     continue
+    try:
+        jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
+        print('jets')
+        pt, eta,phi,mul=GetHighLevel(jets)
+        print('high level')
+        plot_multiplicity(mother_dir,num_const,color)
+        print('plot')
+        j=j+1
+    except:
+        continue
