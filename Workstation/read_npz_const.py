@@ -70,8 +70,9 @@ results_list=os.listdir(mother_dir)
 print(len(results_list))
 colors=['blue','green','red', 'cyan','magenta','yellow','black']
 
-for j  in range(len(results_list)):
-    result=results_list[j]
+j=0
+for k  in range(len(results_list)):
+    result=results_list[k]
     color=colors[j]
 
     file_dir=mother_dir+'/'+result+'/'
@@ -81,6 +82,7 @@ for j  in range(len(results_list)):
         print(num_const)
         evalprob=GetDataEval(file_dir)
         plot_probs(evalprob,num_const,color)
+        j=j+1
     except:
         continue
     
