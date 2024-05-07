@@ -120,12 +120,12 @@ for j  in range(len(results_list)):
     file_dir=mother_dir+'/'+result+'/'
     
     file_name_samples=mother_dir+'/'+result+'/samples__nsamples200000_trunc_5000.h5'
-    try:
-        jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins)
-        print('jets')
-        pt, eta,phi,mul=GetHighLevel(jets)
-        print('high level')
-        plot_multiplicity(mother_dir)
-        print('plot')
-    except:
-        continue
+    #try:
+    jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins)
+    print('jets')
+    pt, eta,phi,mul=GetHighLevel(jets)
+    print('high level')
+    plot_multiplicity(mother_dir)
+    print('plot')
+   # except:
+   '     continue
