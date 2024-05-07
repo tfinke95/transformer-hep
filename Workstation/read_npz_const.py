@@ -121,7 +121,7 @@ for j  in range(len(results_list)):
     
     file_name_samples=mother_dir+'/'+result+'/samples__nsamples200000_trunc_5000.h5'
     #try:
-    jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins)
+    jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
     print('jets')
     pt, eta,phi,mul=GetHighLevel(jets)
     print('high level')
