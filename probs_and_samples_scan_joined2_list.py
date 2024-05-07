@@ -4,7 +4,7 @@ import os
 
 test_dataset_1='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
 test_dataset_2='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
-mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_ZJetsToNuNu/'
+mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_ZJetsToNuNu_models/'
 tag_oftrain='TTBar_ZJetsToNuNu_run_test_joined_403030'
 num_samples_list=[200000]
 train_batch_size=100
