@@ -67,7 +67,7 @@ mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/test_const_dep/
 results_tag='TTBar_run_scan_const_1M_'
 
 results_list=os.listdir(mother_dir)
-
+print(len(results_list))
 colors=['blue','green','red', 'cyan','magenta','yellow','black']
 
 for j  in range(len(results_list)):
