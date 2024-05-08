@@ -170,7 +170,7 @@ data_dict_result={'num_const':[],'w_distance_mul':[] ,'bayes_factor':[]}
 
 
 model_100_file=mother_dir+'/TTBar_run_scan_const_1M_CIAH1GO/'
-evalprob_100=GetDataEval(model_100_file)
+evalprob_100['probs']=GetDataEval(model_100_file)
 
 
 
@@ -192,11 +192,13 @@ for k  in range(len(results_list)):
         print(mul)
         w_distance_mul=Wasserstein_distance(mul_true,mul)
         print(w_distance_mul)
-        evalprob=GetDataEval(file_dir)
+        evalprob['probs']=GetDataEval(file_dir)
         print('eval prob')
         print(evalprob)
         print(evalprob_100)
+        print()
         LR_statistic =  (np.sum(evalprob) /np.sum(evalprob_100))
+        print('LR')
         print(LR_statistic)
         data_dict_result.get('w_distance_mul').append(w_distance_mul)
         data_dict_result.get('num_const').append(int(num_const))
