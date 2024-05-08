@@ -78,8 +78,12 @@ for k  in range(len(results_list)):
 
     file_dir=mother_dir+'/'+result+'/'
     try:
+        
         arguments_file=read_file(file_dir+'arguments.txt')
         num_const=extract_value('num_const',arguments_file)
+        
+        if num_const=='120':
+            continue
         print(num_const)
         evalprob=GetDataEval(file_dir)
         print(evalprob)
@@ -129,7 +133,7 @@ for k  in range(len(results_list)):
     
         arguments_file=read_file(file_dir+'arguments.txt')
         num_const=extract_value('num_const',arguments_file)
-        if num_const==10:
+        if num_const=='10':
             continue
         file_name_samples=mother_dir+'/'+result+'/samples__nsamples200000_trunc_5000.h5'
 
