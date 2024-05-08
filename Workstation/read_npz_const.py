@@ -84,6 +84,10 @@ for k  in range(len(results_list)):
         
         if num_const=='120':
             continue
+        if num_const=='20':
+            continue
+        if num_const=='10':
+            continue
         print(num_const)
         evalprob=GetDataEval(file_dir)
         print(evalprob)
