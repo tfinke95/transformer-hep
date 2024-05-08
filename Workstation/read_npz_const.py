@@ -65,6 +65,14 @@ def plot_multiplicity(path_to_plots,num_const,color):
     return
 
 
+def dict_to_frame_and_save(data_dict,path):
+
+    frame=pd.DataFrame(data_dict)
+    frame=frame.sort_values(by=['num_const'])
+    frame.to_csv(path+'/results.txt',index=False)
+    
+    return
+
 
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/test_const_dep/'
 #results_tag='TTBar_run_scan_const_1M_'
@@ -147,8 +155,7 @@ for k  in range(len(results_list)):
         jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
         print('jets')
         pt, eta,phi,mul=GetHighLevel(jets)
-        w_distance_mul=Wasserstein_distance(mul_true,mul)
-        data_dict_result.get('w_distance_mul').append(w_distance_mul)
+   
         print('high level')
         plot_multiplicity(mother_dir,num_const,color)
         print('plot')
@@ -158,8 +165,12 @@ for k  in range(len(results_list)):
 plt.title('TTBar -- multiplicity')
 plt.close()
 
-'''
+
 data_dict_result={'num_const':[],'w_distance_mul':[] ,'bayes_factor':[]}
+
+
+model_100_file=mother_dir+'/TTBar_run_scan_const_1M_CIAH1GO/'
+evalprob_100=GetDataEval(file_dir)
 
 
 
@@ -178,10 +189,15 @@ for k  in range(len(results_list)):
         print('jets')
         pt, eta,phi,mul=GetHighLevel(jets)
         w_distance_mul=Wasserstein_distance(mul_true,mul)
+        evalprob=GetDataEval(file_dir)
+        LR_statistic =  (np.sum(evalprob) /np.sum(evalprob_100))
+        print(LR_statistic)
         data_dict_result.get('w_distance_mul').append(w_distance_mul)
         data_dict_result.get('num_const').append(int(num_const))
+        data_dict_result.get('bayes_factor').append(LR_statistic)
     except:
         continue
     
 
-'''
+
+dict_to_frame_and_save(data_dict,mother_dir)
