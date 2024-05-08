@@ -188,7 +188,10 @@ for k  in range(len(results_list)):
         jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
         print('jets')
         pt, eta,phi,mul=GetHighLevel(jets)
+        print('mul')
+        print(mul)
         w_distance_mul=Wasserstein_distance(mul_true,mul)
+        print(w_distance_mul)
         evalprob=GetDataEval(file_dir)
         LR_statistic =  (np.sum(evalprob) /np.sum(evalprob_100))
         print(LR_statistic)
@@ -200,4 +203,4 @@ for k  in range(len(results_list)):
     
 
 
-dict_to_frame_and_save(data_dict,mother_dir)
+dict_to_frame_and_save(data_dict_result,mother_dir)
