@@ -7,7 +7,7 @@ from data_eval_helpers import make_continues,Make_Plots,LoadTrue,LoadSGenamples,
 
 def GetDataEval(file_dir):
     file_name='results_test_eval_nconst_nsamples200000.npz'
-    file_name_qcd='results_test_eval_nconst_other_nsamples200000.npz'
+
     
     file=file_dir+'/'+file_name
     evalprob = np.load(file)
@@ -81,6 +81,7 @@ for k  in range(len(results_list)):
         num_const=extract_value('num_const',arguments_file)
         print(num_const)
         evalprob=GetDataEval(file_dir)
+        print(evalprob)
         plot_probs(evalprob,num_const,color)
         j=j+1
     except:
@@ -113,7 +114,7 @@ jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt
 pt_true, eta_true,phi_true,mul_true=GetHighLevel(jets_true)
 
 mask = jets_true[:, :, 0] != 0
-plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 100.5, 102),color='black',histtype='step',density=True)
+plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 100.5, 102),color='black',histtype='step',density=True,label='True')
 
 j=0
 for k  in range(len(results_list)):
