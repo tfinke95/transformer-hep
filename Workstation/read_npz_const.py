@@ -170,7 +170,7 @@ data_dict_result={'num_const':[],'w_distance_mul':[] ,'bayes_factor':[]}
 
 
 model_100_file=mother_dir+'/TTBar_run_scan_const_1M_CIAH1GO/'
-evalprob_100=GetDataEval(file_dir)
+evalprob_100=GetDataEval(model_100_file)
 
 
 
