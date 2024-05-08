@@ -6,7 +6,7 @@ from scipy import stats
 from data_eval_helpers import make_continues,Make_Plots,LoadTrue,LoadSGenamples,GetHighLevel,Wasserstein_distance
 
 def GetDataEval(file_dir):
-    file_name='results_test_eval_nconst_nsamples200000.npz'
+    file_name='results_test_eval_nsamples200000.npz'
 
     
     file=file_dir+'/'+file_name
