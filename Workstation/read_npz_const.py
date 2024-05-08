@@ -95,6 +95,7 @@ for k  in range(len(results_list)):
 
 plt.xlabel('log(p)')
 plt.legend(fontsize="large")
+plt.title('TTBar -- multiplicity')
 plt.savefig(mother_dir+'plot_probs_test_1.png')
 plt.close()
 
@@ -146,5 +147,5 @@ for k  in range(len(results_list)):
         j=j+1
     except:
         continue
-
+plt.title('TTBar -- multiplicity')
 plt.close()
