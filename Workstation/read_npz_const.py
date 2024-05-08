@@ -20,7 +20,7 @@ def GetDataEval(file_dir):
 
 def plot_probs(evalprob,num_const,color):
     print(evalprob['probs'])
-    plt.hist(evalprob['probs'],histtype='step',bins=30,density=True,color=color,label=str(num_const))
+    plt.hist(evalprob['probs'],histtype='step',bins=80,density=True,color=color,label=str(num_const))
     plt.legend(fontsize="large")
 
     return
@@ -65,11 +65,11 @@ def plot_multiplicity(path_to_plots,num_const,color):
 
 
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/test_const_dep/'
-results_tag='TTBar_run_scan_const_1M_'
+#results_tag='TTBar_run_scan_const_1M_'
 
 results_list=os.listdir(mother_dir)
 print(len(results_list))
-colors=['blue','green','red', 'cyan','magenta','yellow','black']
+colors=['blue','green','red', 'cyan','magenta','orange','black']
 
 j=0
 for k  in range(len(results_list)):
