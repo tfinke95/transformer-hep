@@ -18,7 +18,7 @@ def GetDataEval(file_dir):
 
 
 def plot_probs(evalprob,num_const,color):
-
+    print(evalprob['probs'])
     plt.hist(evalprob['probs'],histtype='step',bins=30,density=True,color=color,label=str(num_const))
     plt.legend(fontsize="large")
 
@@ -55,7 +55,7 @@ def plot_multiplicity(path_to_plots,num_const,color):
     plt.xlabel('Multiplicity')
     plt.legend()
     plt.savefig(path_to_plots+'/plot_mul.png')
-    plt.close()
+
 
 
 
@@ -138,3 +138,5 @@ for k  in range(len(results_list)):
         j=j+1
     except:
         continue
+
+plt.close()
