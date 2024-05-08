@@ -4,6 +4,8 @@ import pandas as pd
 import numpy as np
 from scipy import stats
 from data_eval_helpers import make_continues,Make_Plots,LoadTrue,LoadSGenamples,GetHighLevel,Wasserstein_distance
+from scipy import stats
+
 
 def GetDataEval(file_dir):
     file_name='results_test_eval_nsamples200000.npz'
@@ -88,6 +90,7 @@ for k  in range(len(results_list)):
             continue
         if num_const=='10':
             continue
+        print(result)
         print(num_const)
         evalprob=GetDataEval(file_dir)
         print(evalprob)
@@ -108,8 +111,7 @@ plt.close()
 
 
 
-data_dict={'name_sufix':[],'dropout':[],'lr':[],'hidden_dim':[],'num_layers':[],'num_heads':[]}
-data_dict_result={'w_distance_pt':[],'w_distance_mj':[] ,'w_distance_mul':[] }
+
 
 
 bins_path_prefix='../preprocessing_bins/'
@@ -145,6 +147,8 @@ for k  in range(len(results_list)):
         jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
         print('jets')
         pt, eta,phi,mul=GetHighLevel(jets)
+        w_distance_mul=Wasserstein_distance(mul_true,mul)
+        data_dict_result.get('w_distance_mul').append(w_distance_mul)
         print('high level')
         plot_multiplicity(mother_dir,num_const,color)
         print('plot')
@@ -153,3 +157,31 @@ for k  in range(len(results_list)):
         continue
 plt.title('TTBar -- multiplicity')
 plt.close()
+
+'''
+data_dict_result={'num_const':[],'w_distance_mul':[] ,'bayes_factor':[]}
+
+
+
+for k  in range(len(results_list)):
+    result=results_list[k]
+    file_dir=mother_dir+'/'+result+'/'
+    try:
+    
+        arguments_file=read_file(file_dir+'arguments.txt')
+        num_const=extract_value('num_const',arguments_file)
+        if num_const=='120':
+            continue
+        file_name_samples=mother_dir+'/'+result+'/samples__nsamples200000_trunc_5000.h5'
+    
+        jets,ptj,mj=LoadSGenamples(file_name_samples,pt_bins,eta_bins,phi_bins,n_test_samples)
+        print('jets')
+        pt, eta,phi,mul=GetHighLevel(jets)
+        w_distance_mul=Wasserstein_distance(mul_true,mul)
+        data_dict_result.get('w_distance_mul').append(w_distance_mul)
+        data_dict_result.get('num_const').append(int(num_const))
+    except:
+        continue
+    
+
+'''
