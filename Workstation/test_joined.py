@@ -79,7 +79,7 @@ def plot_probs(evalprob_best,evalprob_joined,path_to_plots,tag,plot_title):
 def EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset,tag_foreval):
 
     
-    command_eval='python ../evaluate_probabilities.py --fixed_number --model '+str(model_path_curr)+'/'+str(model_name)+' --data '+str(test_dataset)+' --tag '+tag_foreval+' --num_const '+str(num_const_test)+' --num_events '+str(num_samples_test)
+    command_eval='python ../evaluate_probabilities.py --fixed_samples --model '+str(model_path_curr)+'/'+str(model_name)+' --data '+str(test_dataset)+' --tag '+tag_foreval+' --num_const '+str(num_const_test)+' --num_events '+str(num_samples_test)
         
         
     os.system(command_eval)
