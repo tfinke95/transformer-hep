@@ -83,6 +83,25 @@ def BayesFactor(evalprob,evalprob_true):
     
     return LR_statistic
 
+def read_file(file_name):
+
+    f = open(file_name, "r")
+    lines = f.readlines()
+
+    return lines
+
+def extract_value(var,lines):
+
+    for line in lines:
+        if 'lr_' in line:
+            continue
+        if var in line:
+            line=line.replace(' ','')
+            line=line.replace('\n','')
+
+            value=line.split(var)[-1]
+    
+    return value
 
 test_results_dir='/net/data_t2k/transformers-hep/JetClass/'
 
@@ -104,14 +123,18 @@ for joined_result in joined_result_list:
     
     path=joined_file_dir+'/'+joined_result_tag+joined_result+'/'
     print(path)
+    file_name=path+'/arguments.txt'
+    lines=read_file(file_name)
+    num_samples=extract_value('num_events',lines)
+    
     evalprob_top,evalprob_qcd=GetEvalDataJoined(path)
     
     
     bayes_factor=BayesFactor(evalprob_top,evalprob_top_best)
     print(bayes_factor)
-    plot_probs(evalprob_top_best,evalprob_top,path,'TTBar','TTBar -- bayes_factor:'+str(bayes_factor))
+    plot_probs(evalprob_top_best,evalprob_top,path,'TTBar','TTBar -- bayes_factor:'+str(bayes_factor)+' -- n_samples:'+str(num_samples))
     
     
     bayes_factor=BayesFactor(evalprob_qcd,evalprob_qcd_best)
     print(bayes_factor)
-    plot_probs(evalprob_qcd_best,evalprob_qcd,path,'QCD','QCD -- bayes_factor:'+str(bayes_factor))
+    plot_probs(evalprob_qcd_best,evalprob_qcd,path,'QCD','QCD -- bayes_factor:'+str(bayes_factor)+' -- n_samples:'+str(num_samples))
