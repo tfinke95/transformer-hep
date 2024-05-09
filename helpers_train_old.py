@@ -231,7 +231,6 @@ def load_data(
     num_features=3,
     num_bins=(41, 31, 31),
     num_const=20,
-    fixed_samples=False
     reverse=False,
     start_token=False,
     end_token=False,
@@ -240,11 +239,8 @@ def load_data(
     num_workers=4,
     shuffle=True,
 ):
-    if fixed_samples==False:
-        df = pd.read_hdf(path, "discretized", stop=None)
-        df=df.sample(n_events)
-    else:
-        df = pd.read_hdf(path, "discretized", stop=n_events)
+    df = pd.read_hdf(path, "discretized", stop=None)
+    df=df.sample(n_events)
     x, padding_mask, bins = preprocess_dataframe(
         df,
         num_features=num_features,

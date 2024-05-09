@@ -28,6 +28,12 @@ def get_args():
         default=None,
         help="Number of jets used. Defaults to all available in 'data'",
     )
+    
+    parser.add_argument(
+        "--fixed_samples",
+        action="store_true",
+        help="fixed samples",
+    )
 
     return parser.parse_args()
 
@@ -64,6 +70,7 @@ def main():
         args.num_events,
         start_token=True,
         end_token=True,
+        fixed_samples=args.fixed_samples
         limit_const=False,
         num_const=args.num_const,
         shuffle=False,

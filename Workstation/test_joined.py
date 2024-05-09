@@ -32,13 +32,13 @@ os.makedirs(path_to_plots,exist_ok=True)
 Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
 '''
 
-def GetEvalDataJoined(file_dir):
+def GetEvalDataJoined(file_dir,eval_qcd,eval_top):
 
 
-    file_qcd=file_dir+'/results_test_eval_qcd_nsamples200000.npz'
+    file_qcd=file_dir+'/'+eval_qcd
     evalprob_qcd = np.load(file_qcd)
     
-    file_top=file_dir+'/'+'/results_test_eval_top_nsamples200000.npz'
+    file_top=file_dir+'/'+eval_top'
     evalprob_top = np.load(file_top)
 
 
@@ -75,6 +75,19 @@ def plot_probs(evalprob_best,evalprob_joined,path_to_plots,tag,plot_title):
 
  return
 
+
+def EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset,tag_foreval):
+
+    
+    command_eval='python evaluate_probabilities.py --model '+str(model_path_curr)+'/'+str(model_name)+' --data '+str(test_dataset)+' --tag '+tag_foreval+' --num_const '+str(num_const_test)+' --num_events '+str(num_samples_test)
+        
+        
+    os.system(command_eval)
+    
+    
+
+    return
+
 def BayesFactor(evalprob,evalprob_true):
 
 
@@ -105,19 +118,42 @@ def extract_value(var,lines):
 
 test_results_dir='/net/data_t2k/transformers-hep/JetClass/'
 
+
+
+test_dataset_top=
 joined_file_dir=test_results_dir+'/TTBar_ZJetsToNuNu_models/'
-qcd_file_name=test_results_dir+'ZJetsToNuNu_models/ZJetsToNuNu_run_testwall_10M_6/results_test_eval_nsamples200000.npz'
-top_file_name=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/results_test_eval_nsamples200000.npz'
 
 
 
-evalprob_top_best=GetEvalDataTop(top_file_name)['probs']
+
+model_name='model_best.pt'
+num_const_test=100
+num_samples_test=200000
+tag_foreval='nconst_eval_nsamples'+str(num_samples_test)
+
+test_dataset_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_'+jet+'.h5'
+model_path_curr=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/
+EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_top,tag_foreval)
+
+test_dataset_qcd='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_'+jet+'.h5'
+model_path_curr=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/
+EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval)
+
+
+qcd_file_name=test_results_dir+'ZJetsToNuNu_models/ZJetsToNuNu_run_testwall_10M_6/results_nconst_eval_nsamples'+str(num_samples_test)+'.npz'
 evalprob_qcd_best=GetEvalDataQCD(qcd_file_name)['probs']
+
+top_file_name=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/results_nconst_eval_nsamples'+str(num_samples_test)+'.npz'
+evalprob_top_best=GetEvalDataTop(top_file_name)['probs']
+
 
 
 joined_result_tag='TTBar_ZJetsToNuNu_run_test_joined_403030_'
 joined_result_list=['0S1DG44','GGZNTEU']
 
+
+tag_foreval_qcd='nconst_eval_qcd_nsamples'+str(num_samples_test)
+tag_foreval_top='nconst_eval_top_nsamples'+str(num_samples_test)
 for joined_result in joined_result_list:
 
     
@@ -127,7 +163,14 @@ for joined_result in joined_result_list:
     lines=read_file(file_name)
     num_samples=extract_value('num_events',lines)
     
-    evalprob_top,evalprob_qcd=GetEvalDataJoined(path)
+    
+    test_dataset_qcd='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_'+jet+'.h5'
+    model_path_curr=path
+    EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval_qcd)
+    
+    eval_qcd='results_nconst_eval_qcd_nsamples'+str(num_samples_test)+'.npz'
+    eval_top='results_nconst_eval_top_nsamples'+str(num_samples_test)+'.npz'
+    evalprob_top,evalprob_qcd=GetEvalDataJoined(path,eval_qcd,eval_top)
     
     
     bayes_factor=BayesFactor(evalprob_top,evalprob_top_best)
