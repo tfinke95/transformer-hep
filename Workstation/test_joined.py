@@ -64,8 +64,8 @@ def GetEvalDataQCD(file):
     
 def plot_probs(evalprob_best,evalprob_joined,path_to_plots,tag,plot_title):
 
- plt.hist(evalprob_best['probs'],histtype='step',bins=50,density=True,color='blue',label='single')
- plt.hist(evalprob_joined['probs'],histtype='step',bins=50,density=True,color='blue',linestyle='--',label='joined')
+ plt.hist(evalprob_best,histtype='step',bins=50,density=True,color='blue',label='single')
+ plt.hist(evalprob_joined,histtype='step',bins=50,density=True,color='blue',linestyle='--',label='joined')
  
  plt.xlabel('log(p)')
  plt.legend()
