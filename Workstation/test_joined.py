@@ -85,7 +85,7 @@ def EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_da
     os.system(command_eval)
     
     
-
+    print(command_eval)
     return
 
 def BayesFactor(evalprob,evalprob_true):
