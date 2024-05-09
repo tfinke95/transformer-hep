@@ -77,11 +77,11 @@ def plot_probs(evalprob_best,evalprob_joined,path_to_plots,tag):
 
 
 
-test_results_dir='/Users/humbertosmac/Documents/work/Transformers/Transformers_finke/test_results/'
+test_results_dir=' /net/data_t2k/transformers-hep/JetClass/'
 
-joined_file_dir=test_results_dir+'/TTBar_Znunu/success/'
-qcd_file_name=test_results_dir+'/ZJetsToNuNu_run_testwall_10M_6/results_test_eval_nsamples200000.npz'
-top_file_name=test_results_dir+'/TTBar_run_testwall_10M_11/results_test_eval_nsamples200000.npz'
+joined_file_dir=test_results_dir+'/TTBar_ZJetsToNuNu_models/'
+qcd_file_name=test_results_dir+'/ZJetsToNuNu_models/ZJetsToNuNu_run_testwall_10M_6/results_test_eval_nsamples200000.npz'
+top_file_name=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/results_test_eval_nsamples200000.npz'
 
 
 
