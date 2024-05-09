@@ -75,6 +75,13 @@ def plot_probs(evalprob_best,evalprob_joined,path_to_plots,tag,plot_title):
 
  return
 
+def BayesFactor(evalprob,evalprob_true):
+
+
+    LR_statistic =  (np.sum(evalprob) /np.sum(evalprob_true))
+    
+    
+    return LR_statistic
 
 
 test_results_dir='/net/data_t2k/transformers-hep/JetClass/'
@@ -96,8 +103,15 @@ for joined_result in joined_result_list:
 
     
     path=joined_file_dir+'/'+joined_result_tag+joined_result+'/'
-    
+    print(path)
     evalprob_top,evalprob_qcd=GetEvalDataJoined(path)
     
-    plot_probs(evalprob_top_best,evalprob_top,path,'TTBar','TTBar')
-    plot_probs(evalprob_qcd_best,evalprob_qcd,path,'QCD','QCD')
+    
+    bayes_factor=BayesFactor(evalprob_top,evalprob_top_best)
+    print(bayes_factor)
+    plot_probs(evalprob_top_best,evalprob_top,path,'TTBar','TTBar -- bayes_factor:'+str(bayes_factor))
+    
+    
+    bayes_factor=BayesFactor(evalprob_qcd,evalprob_qcd_best)
+    print(bayes_factor)
+    plot_probs(evalprob_qcd_best,evalprob_qcd,path,'QCD','QCD -- bayes_factor:'+str(bayes_factor))
