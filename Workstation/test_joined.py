@@ -43,7 +43,7 @@ def GetEvalDataJoined(file_dir):
 
 
 
-    return evalprob_top,evalprob_qcd
+    return evalprob_top['probs'],evalprob_qcd['probs']
     
 
 def GetEvalDataTop(file):
@@ -92,8 +92,8 @@ top_file_name=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/results_
 
 
 
-evalprob_top_best['probs']=GetEvalDataTop(qcd_file_name)
-evalprob_qcd_best['probs']=GetEvalDataQCD(top_file_name)
+evalprob_top_best=GetEvalDataTop(qcd_file_name)['probs']
+evalprob_qcd_best=GetEvalDataQCD(top_file_name)['probs']
 
 
 joined_result_tag='TTBar_ZJetsToNuNu_run_test_joined_403030_'
@@ -104,7 +104,7 @@ for joined_result in joined_result_list:
     
     path=joined_file_dir+'/'+joined_result_tag+joined_result+'/'
     print(path)
-    evalprob_top['probs'],evalprob_qcd['probs']=GetEvalDataJoined(path)
+    evalprob_top,evalprob_qcd=GetEvalDataJoined(path)
     
     
     bayes_factor=BayesFactor(evalprob_top,evalprob_top_best)
