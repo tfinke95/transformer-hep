@@ -120,7 +120,7 @@ test_results_dir='/net/data_t2k/transformers-hep/JetClass/'
 
 
 
-test_dataset_top=
+
 joined_file_dir=test_results_dir+'/TTBar_ZJetsToNuNu_models/'
 
 
