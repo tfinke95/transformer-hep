@@ -62,7 +62,7 @@ def GetEvalDataQCD(file):
     return evalprob_qcd_best
     
     
-def plot_probs(evalprob_best,evalprob_joined,path_to_plots,tag):
+def plot_probs(evalprob_best,evalprob_joined,path_to_plots,tag,plot_title):
 
  plt.hist(evalprob_best['probs'],histtype='step',bins=50,density=True,color='blue',label='single')
  plt.hist(evalprob_joined['probs'],histtype='step',bins=50,density=True,color='blue',linestyle='--',label='joined')
@@ -99,5 +99,5 @@ for joined_result in joined_result_list:
     
     evalprob_top,evalprob_qcd=GetEvalDataJoined(path)
     
-    plot_probs(evalprob_top_best,evalprob_top,path,'TTBar')
-    plot_probs(evalprob_qcd_best,evalprob_qcd,path,'QCD')
+    plot_probs(evalprob_top_best,evalprob_top,path,'TTBar','TTBar')
+    plot_probs(evalprob_qcd_best,evalprob_qcd,path,'QCD','QCD')
