@@ -84,7 +84,7 @@ qcd_file_name=test_results_dir+'/ZJetsToNuNu_run_testwall_10M_6/results_test_eva
 top_file_name=test_results_dir+'/TTBar_run_testwall_10M_11/results_test_eval_nsamples200000.npz'
 
 
-evalprob_top,evalprob_qcd=GetEvalDataJoined(joined_file_dir)
+
 evalprob_top_best=GetEvalDataTop(file)
 evalprob_qcd_best=GetEvalDataQCD(file)
 
@@ -94,6 +94,10 @@ joined_result_list=['0S1DG44','GGZNTEU']
 
 for joined_result in joined_result_list:
 
-    path_to_plots=joined_file_dir+'/'+joined_result_tag+joined_result+'/'
-    plot_probs(evalprob_top_best,evalprob_joined,path_to_plots,'TTBar')
-    plot_probs(evalprob_qcd_best,evalprob_joined,path_to_plots,'QCD')
+    
+    path=joined_file_dir+'/'+joined_result_tag+joined_result+'/'
+    
+    evalprob_top,evalprob_qcd=GetEvalDataJoined(path)
+    
+    plot_probs(evalprob_top_best,evalprob_joined,path,'TTBar')
+    plot_probs(evalprob_qcd_best,evalprob_joined,path,'QCD')
