@@ -70,7 +70,7 @@ def main():
         args.num_events,
         start_token=True,
         end_token=True,
-        fixed_samples=args.fixed_samples
+        fixed_samples=args.fixed_samples,
         limit_const=False,
         num_const=args.num_const,
         shuffle=False,
