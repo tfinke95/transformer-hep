@@ -167,6 +167,7 @@ for joined_result in joined_result_list:
  
     model_path_curr=path
     EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval_qcd)
+    EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_top,tag_foreval_top)
     
     
     eval_qcd='results_nconst_eval_qcd_nsamples'+str(num_samples_test)+'.npz'
