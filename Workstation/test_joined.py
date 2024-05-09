@@ -136,7 +136,7 @@ model_path_curr=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/'
 EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_top,tag_foreval)
 
 test_dataset_qcd='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
-model_path_curr=test_results_dir+'/TTBar_models/ZJetsToNuNu_run_testwall_10M_6/'
+model_path_curr=test_results_dir+'//ZJetsToNuNu_models/ZJetsToNuNu_run_testwall_10M_6/'
 EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval)
 
 
@@ -164,9 +164,10 @@ for joined_result in joined_result_list:
     num_samples=extract_value('num_events',lines)
     
     
-    test_dataset_qcd='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_'+jet+'.h5'
+ 
     model_path_curr=path
     EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval_qcd)
+    
     
     eval_qcd='results_nconst_eval_qcd_nsamples'+str(num_samples_test)+'.npz'
     eval_top='results_nconst_eval_top_nsamples'+str(num_samples_test)+'.npz'
