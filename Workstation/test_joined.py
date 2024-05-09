@@ -35,10 +35,10 @@ Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_
 def GetEvalDataJoined(file_dir,eval_qcd,eval_top):
 
 
-    file_qcd=file_dir+'/'+eval_qcd
+    file_qcd=file_dir+'/'+'eval_qcd'
     evalprob_qcd = np.load(file_qcd)
     
-    file_top=file_dir+'/'+eval_top'
+    file_top=file_dir+'/'+'eval_top'
     evalprob_top = np.load(file_top)
 
 
