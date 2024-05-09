@@ -131,12 +131,12 @@ num_const_test=100
 num_samples_test=200000
 tag_foreval='nconst_eval_nsamples'+str(num_samples_test)
 
-test_dataset_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_'+jet+'.h5'
+test_dataset_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
 model_path_curr=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/'
 EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_top,tag_foreval)
 
-test_dataset_qcd='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_'+jet+'.h5'
-model_path_curr=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/
+test_dataset_qcd='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
+model_path_curr=test_results_dir+'/TTBar_models/ZJetsToNuNu_run_testwall_10M_6/'
 EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval)
 
 
