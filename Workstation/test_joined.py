@@ -89,7 +89,7 @@ evalprob_top_best=GetEvalDataTop(qcd_file_name)
 evalprob_qcd_best=GetEvalDataQCD(top_file_name)
 
 
-joined_result_tag='TBar_ZJetsToNuNu_run_test_joined_403030_'
+joined_result_tag='TTBar_ZJetsToNuNu_run_test_joined_403030_'
 joined_result_list=['0S1DG44','GGZNTEU']
 
 for joined_result in joined_result_list:
