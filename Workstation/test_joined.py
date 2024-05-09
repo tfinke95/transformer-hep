@@ -92,8 +92,8 @@ top_file_name=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/results_
 
 
 
-evalprob_top_best=GetEvalDataTop(qcd_file_name)['probs']
-evalprob_qcd_best=GetEvalDataQCD(top_file_name)['probs']
+evalprob_top_best=GetEvalDataTop(top_file_name)['probs']
+evalprob_qcd_best=GetEvalDataQCD(qcd_file_name)['probs']
 
 
 joined_result_tag='TTBar_ZJetsToNuNu_run_test_joined_403030_'
