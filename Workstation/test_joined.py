@@ -93,7 +93,7 @@ def read_file(file_name):
 def extract_value(var,lines):
 
     for line in lines:
-        if 'lr_' in line:
+        if 'num_events_val' in line:
             continue
         if var in line:
             line=line.replace(' ','')
