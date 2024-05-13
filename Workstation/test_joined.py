@@ -96,7 +96,7 @@ def BayesFactor(evalprob,evalprob_true):
     
     return LR_statistic
 
-def LLR_2(evalprob,evalprob_true):
+def LLR2(evalprob,evalprob_true):
 
 
     LR_statistic_2 =  np.abs(np.sum(evalprob-evalprob_true))/int(np.shape(evalprob_true))
@@ -142,11 +142,11 @@ tag_foreval='nconst_eval_nsamples'+str(num_samples_test)
 
 test_dataset_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
 model_path_curr=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/'
-EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_top,tag_foreval)
+#EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_top,tag_foreval)
 
 test_dataset_qcd='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
 model_path_curr=test_results_dir+'//ZJetsToNuNu_models/ZJetsToNuNu_run_scan_10M_N1G96CW/'
-EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval)
+#EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval)
 
 
 qcd_file_name=test_results_dir+'ZJetsToNuNu_models/ZJetsToNuNu_run_scan_10M_N1G96CW/results_nconst_eval_nsamples'+str(num_samples_test)+'.npz'
@@ -175,8 +175,8 @@ for joined_result in joined_result_list:
     
  
     model_path_curr=path
-    EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval_qcd)
-    EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_top,tag_foreval_top)
+    #EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval_qcd)
+    #EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_top,tag_foreval_top)
     
     
     eval_qcd='results_nconst_eval_qcd_nsamples'+str(num_samples_test)+'.npz'
@@ -186,6 +186,10 @@ for joined_result in joined_result_list:
     
     bayes_factor=BayesFactor(evalprob_top,evalprob_top_best)
     print(bayes_factor)
+    llr_2=LLR2(evalprob,evalprob_true)
+    print(llr_2)
+    
+    
     plot_probs(evalprob_top_best,evalprob_top,path,'TTBar','TTBar -- bayes_factor:'+str(bayes_factor)+' -- n_samples:'+str(num_samples))
     
     
