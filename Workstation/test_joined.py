@@ -197,5 +197,10 @@ for joined_result in joined_result_list:
     
     
     bayes_factor=BayesFactor(evalprob_qcd,evalprob_qcd_best)
+    print('qcd')
     print(bayes_factor)
+
+    llr_2=LLR2(evalprob_qcd,evalprob_qcd_best)
+    print(llr_2)
     plot_probs(evalprob_qcd_best,evalprob_qcd,path,'QCD','QCD -- bayes_factor:'+str(bayes_factor)+' -- n_samples:'+str(num_samples))
+    
