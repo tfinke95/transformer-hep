@@ -185,8 +185,10 @@ for joined_result in joined_result_list:
     
     
     bayes_factor=BayesFactor(evalprob_top,evalprob_top_best)
+    print(joined_result)
+    print('top')
     print(bayes_factor)
-    llr_2=LLR2(evalprob,evalprob_true)
+    llr_2=LLR2(evalprob_top,evalprob_top_best)
     print(llr_2)
     
     
