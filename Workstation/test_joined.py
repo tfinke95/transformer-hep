@@ -136,11 +136,11 @@ model_path_curr=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/'
 EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_top,tag_foreval)
 
 test_dataset_qcd='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
-model_path_curr=test_results_dir+'//ZJetsToNuNu_models/ZJetsToNuNu_run_testwall_10M_6/'
+model_path_curr=test_results_dir+'//ZJetsToNuNu_models/ZJetsToNuNu_run_scan_10M_N1G96CW/'
 EvalProbs(num_samples_test,num_const_test,model_path_curr,model_name,test_dataset_qcd,tag_foreval)
 
 
-qcd_file_name=test_results_dir+'ZJetsToNuNu_models/ZJetsToNuNu_run_testwall_10M_6/results_nconst_eval_nsamples'+str(num_samples_test)+'.npz'
+qcd_file_name=test_results_dir+'ZJetsToNuNu_models/ZJetsToNuNu_run_scan_10M_N1G96CW/results_nconst_eval_nsamples'+str(num_samples_test)+'.npz'
 evalprob_qcd_best=GetEvalDataQCD(qcd_file_name)['probs']
 
 top_file_name=test_results_dir+'/TTBar_models/TTBar_run_testwall_10M_11/results_nconst_eval_nsamples'+str(num_samples_test)+'.npz'
@@ -149,7 +149,7 @@ evalprob_top_best=GetEvalDataTop(top_file_name)['probs']
 
 
 joined_result_tag='TTBar_ZJetsToNuNu_run_test_joined_403030_'
-joined_result_list=['0S1DG44','GGZNTEU']
+joined_result_list=['0S1DG44','GGZNTEU','RTP0JN6']
 
 
 tag_foreval_qcd='nconst_eval_qcd_nsamples'+str(num_samples_test)

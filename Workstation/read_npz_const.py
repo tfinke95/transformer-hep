@@ -71,6 +71,11 @@ def dict_to_frame_and_save(data_dict,path):
     frame=frame.sort_values(by=['num_const'])
     frame.to_csv(path+'/results.txt',index=False)
     
+    return frame
+
+
+def plot_frame():
+
     return
 
 
@@ -208,4 +213,4 @@ for k  in range(len(results_list)):
     
 
 
-dict_to_frame_and_save(data_dict_result,mother_dir)
+frame=dict_to_frame_and_save(data_dict_result,mother_dir)
