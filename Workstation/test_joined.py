@@ -98,8 +98,9 @@ def BayesFactor(evalprob,evalprob_true):
 
 def LLR2(evalprob,evalprob_true):
 
-
-    LR_statistic_2 =  np.abs(np.sum(evalprob-evalprob_true))/int(np.shape(evalprob_true))
+    N=int(np.shape(evalprob_true)[0])
+    print(N)
+    LR_statistic_2 =  np.abs(np.sum(evalprob-evalprob_true))/N)
     
     
     return LR_statistic_2
