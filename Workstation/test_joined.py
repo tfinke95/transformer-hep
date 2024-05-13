@@ -96,6 +96,15 @@ def BayesFactor(evalprob,evalprob_true):
     
     return LR_statistic
 
+def LLR_2(evalprob,evalprob_true):
+
+
+    LR_statistic_2 =  np.abs(np.sum(evalprob-evalprob_true))/int(np.shape(evalprob_true))
+    
+    
+    return LR_statistic_2
+
+
 def read_file(file_name):
 
     f = open(file_name, "r")
