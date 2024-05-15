@@ -70,7 +70,32 @@ def load_data(path1,path2, n_events):
     )
     print(x.shape)
     return train_loader
+    
+    
+    
 
+def plot_roc_curve(y_true, y_score,model_dir):
+    # Compute ROC curve and ROC area for each class
+    fpr, tpr, _ = roc_curve(y_true, y_score)
+    roc_auc = auc(fpr, tpr)
+
+    # Plot ROC curve
+    plt.figure()
+    lw = 2
+    plt.plot(fpr, tpr, color='darkorange', lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
+    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('ROC Curve')
+    plt.legend(loc="lower right")
+    plt.savefig(model_dir+'/roc_test.png')
+    return
+
+
+def saveAUC():
+
+    return
 
 if __name__ == '__main__':
     args = parse_input()
@@ -114,12 +139,13 @@ if __name__ == '__main__':
         loss_list.append(loss.cpu().detach().numpy())
         prediction_list.append(predictions.cpu().detach().numpy())
 
-    predictions = np.concatenate(prediction_list, axis=0)
+    predictions = np.concatenate(prediction_list, axis=0)[:,0]
     label_list = np.concatenate(label_list, axis=0)
     print(predictions.shape)
     print(label_list.shape)
     print(roc_auc_score(label_list, predictions))
-
+    
+    plot_roc_curve(label_list, prediction_list,model_dir)
     np.savez(os.path.join(args.model_dir, 'predictions_test.npz'),
             predictions=predictions,
             labels=label_list)
