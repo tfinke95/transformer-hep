@@ -146,6 +146,9 @@ if __name__ == '__main__':
     label_list = np.concatenate(label_list, axis=0)
     print(predictions.shape)
     print(label_list.shape)
+    print(predictions)
+    print(label_list)
+    
     print(roc_auc_score(label_list, predictions))
     
     plot_roc_curve(label_list, predictions,args.model_dir)
