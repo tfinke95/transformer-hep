@@ -39,7 +39,8 @@ def PlotAUCwN(frame_all,model_dir):
     plt.plot(frame_all['num_events']*2,frame_all['auc_score'],color='blue')
     plt.plot(frame_all['num_events']*2,frame_all['auc_score'],'.',color='blue')
     plt.xlabel('$N_{train}$')
-    plt.ylabel('$auc score$')
+    plt.ylabel('auc score')
+    plt.xscale('log')
     plt.savefig(mother_dir+'/auc_events.png')
     
 
@@ -81,6 +82,7 @@ for model_dir in model_dirs:
 
 
 frame_all=pd.DataFrame(dict_auc)
+frame_all=frame_all.sort_values(by=['num__events'])
 frame_all.to_csv(mother_dir+'/frame_auc.txt',index=False)
 PlotAUCwN(frame_all,mother_dir)
 
