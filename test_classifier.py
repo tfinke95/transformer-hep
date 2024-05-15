@@ -21,7 +21,8 @@ def load_model(name):
 def parse_input():
     parser = ArgumentParser()
     parser.add_argument("--model_dir", type=str, default='models/test', help="Model directory")
-    parser.add_argument("--data_path", type=str, default='/hpcwork/bn227573/top_benchmark/', help="Path to training data file")
+    parser.add_argument("--data_path_1", type=str, default='/hpcwork/bn227573/top_benchmark/', help="Path to training data file")
+    parser.add_argument("--data_path_2", type=str, default='/hpcwork/bn227573/qcd_benchmark/', help="Path to training data file")
 
     parser.add_argument("--num_workers", type=int, default=1, help="Number of workers")
     parser.add_argument("--batch_size", type=int, default=128, help="Number of workers")
@@ -36,8 +37,8 @@ def parse_input():
     return args
 
 
-def load_data(path, n_events):
-    df = pd.read_hdf(path, 'discretized', stop=n_events)
+def load_data(path1,path2, n_events):
+    df = pd.read_hdf(path1, 'discretized', stop=n_events)
     x, padding_mask, _ = preprocess_dataframe(df, num_features=num_features,
                                 num_bins=num_bins,
                                 to_tensor=True,
@@ -46,13 +47,16 @@ def load_data(path, n_events):
                                 limit_nconst=args.limit_const)
     labels = torch.zeros(len(x))
 
-    df = pd.read_hdf(path.replace('qcd', 'top'), 'discretized', stop=n_events)
+    df = pd.read_hdf(path2, 'discretized', stop=n_events)
     x1, padding_mask1, _ = preprocess_dataframe(df, num_features=num_features,
                                 num_bins=num_bins,
                                 to_tensor=True,
                                 num_const=args.num_const,
                                 reverse=args.reverse,
                                 limit_nconst=args.limit_const)
+                                
+                                
+                                
     labels = torch.concat((labels, torch.ones(len(x1))))
     x = torch.concat((x, x1), dim=0)
     padding_mask = torch.concat((padding_mask, padding_mask1), dim=0)
@@ -82,7 +86,7 @@ if __name__ == '__main__':
 
     # load and preprocess data
     print(f"Loading test set")
-    test_loader = load_data(args.data_path, args.num_events)
+    test_loader = load_data(args.data_path_1,args.data_path_2 , args.num_events)
 
     # construct model
     model = load_model('best')
@@ -116,6 +120,6 @@ if __name__ == '__main__':
     print(label_list.shape)
     print(roc_auc_score(label_list, predictions))
 
-    np.savez(os.path.join(args.model_dir, 'predictions.npz'),
+    np.savez(os.path.join(args.model_dir, 'predictions_test.npz'),
             predictions=predictions,
             labels=label_list)
