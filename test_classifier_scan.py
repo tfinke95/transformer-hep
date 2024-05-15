@@ -70,7 +70,7 @@ for model_dir in model_dirs:
         auc=readauc(mother_dir+model_dir)
         print(auc)
         dict_auc.get('num_events').append(num_events_train)
-        dict_auc.get('auc_score').append(auc_score)
+        dict_auc.get('auc_score').append(auc)
         print('done '+model_dir)
     except:
         continue
