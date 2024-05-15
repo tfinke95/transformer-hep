@@ -82,7 +82,7 @@ for model_dir in model_dirs:
 
 
 frame_all=pd.DataFrame(dict_auc)
-frame_all=frame_all.sort_values(by=['num__events'])
+frame_all=frame_all.sort_values(by=['num_events'])
 frame_all.to_csv(mother_dir+'/frame_auc.txt',index=False)
 PlotAUCwN(frame_all,mother_dir)
 
