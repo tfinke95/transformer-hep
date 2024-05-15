@@ -81,6 +81,6 @@ for model_dir in model_dirs:
 
 frame_all=pd.DataFrame(dict_auc)
 frame_all.to_csv(mother_dir+'/frame_auc.txt',index=False)
-PlotAUCwN(frame_all,mother_dir):
+PlotAUCwN(frame_all,mother_dir)
 
 
