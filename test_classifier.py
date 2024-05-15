@@ -145,7 +145,7 @@ if __name__ == '__main__':
     print(label_list.shape)
     print(roc_auc_score(label_list, predictions))
     
-    plot_roc_curve(label_list, prediction_list,model_dir)
+    plot_roc_curve(label_list, prediction_list,args.model_dir)
     np.savez(os.path.join(args.model_dir, 'predictions_test.npz'),
             predictions=predictions,
             labels=label_list)
