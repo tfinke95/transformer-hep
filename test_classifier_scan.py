@@ -36,8 +36,8 @@ def extract_value(var,lines):
 def PlotAUCwN(frame_all,model_dir):
 
 
-    plt.plot(frame_all['num_events']*2,frame_all['auc_score'],color=blue)
-    plt.plot(frame_all['num_events']*2,frame_all['auc_score'],'.',color=blue)
+    plt.plot(frame_all['num_events']*2,frame_all['auc_score'],color='blue')
+    plt.plot(frame_all['num_events']*2,frame_all['auc_score'],'.',color='blue')
     plt.xlabel('$N_{train}$')
     plt.ylabel('$auc score$')
     plt.savefig(mother_dir+'/auc_events.png')
