@@ -10,6 +10,9 @@ from tqdm import tqdm
 import os
 import pandas as pd
 
+import matplotlib.pyplot as plt
+from sklearn.metrics import roc_curve, auc
+
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 
