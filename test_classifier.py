@@ -96,7 +96,14 @@ def plot_roc_curve(y_true, y_score,model_dir):
     return
 
 
-def saveAUC():
+def saveAUCscore(model_dir,auc_score):
+
+    file=open(model_dir+'/auc.txt','w')
+    file.write('auc_score')
+    file.write('\n')
+    file.write(str(auc_score))
+    file.write('\n')
+    file.close()
 
     return
 
@@ -149,9 +156,12 @@ if __name__ == '__main__':
     print(predictions)
     print(label_list)
     
-    print(roc_auc_score(label_list, predictions))
+    auc_score=roc_auc_score(label_list, predictions)
+    print(auc_score)
     
     plot_roc_curve(label_list, predictions,args.model_dir)
+    saveAUCscore(args.model_dir,auc_score)
+    
     np.savez(os.path.join(args.model_dir, 'predictions_test.npz'),
             predictions=predictions,
             labels=label_list)
