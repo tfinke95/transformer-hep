@@ -27,7 +27,7 @@ pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
 eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
-n_test_samples=9000
+n_test_samples=10000000
 
 
 
@@ -42,11 +42,12 @@ for j in range(len(list_of_jets)):
     jet=list_of_jets[j]
     print(jet)
     discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
-    
+   
     jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
     
     PlotMultiplicity(jets_true,color_list[j])
-
+    if j==1:
+        break
 
 plt.xlabel('Multiplicity')
 plt.legend()
