@@ -17,7 +17,16 @@ def PlotMultiplicity(jets,color):
 
     return
 
+def TrueSamples(input_file,nJets):
 
+    df = pd.read_hdf(
+            input_file,
+            key="raw",
+            stop=nJets,
+        )
+
+    data = df.to_numpy()
+    return data
 
 discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_train___10M_TTBar.h5'
 
@@ -41,15 +50,17 @@ for j in range(len(list_of_jets)):
 
     jet=list_of_jets[j]
     print(jet)
-    discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
-   
-    jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
-    
+    #discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
+    input_file='/net/data_t2k/transformers-hep/JetClass/train/'+jet+'_train.h5'
+    #jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
+    jets=TrueSamples(input_file,nJets)
+    print(np.shape(jets))
+    exit()
     PlotMultiplicity(jets_true,color_list[j])
     if j==1:
         break
 
 plt.xlabel('Multiplicity')
 plt.legend()
-plt.savefig('/plot_mul_all.png')
+plt.savefig('plot_mul_all.png')
 plt.close()
