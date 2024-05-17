@@ -51,6 +51,7 @@ color_list=list(mcolors.TABLEAU_COLORS.values())
 
 
 max_mult_all=100
+jet_max='none'
 for j in range(len(list_of_jets)):
 
     jet=list_of_jets[j]
@@ -64,7 +65,7 @@ for j in range(len(list_of_jets)):
     max_mult=PlotMultiplicity(jets,color_list[j],jet)
     if max_mult>max_mult_all:
         max_mult_all=max_mult
-
+        jet_max=jet
 
 plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all))
 plt.xlabel('Multiplicity')
