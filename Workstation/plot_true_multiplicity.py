@@ -24,8 +24,11 @@ def TrueSamples(input_file,nJets):
             key="raw",
             stop=nJets,
         )
-
+    print(df.head())
     data = df.to_numpy()
+    x = data[:, : 600 * 3]
+    x = x.reshape(x.shape[0], -1, 3)
+    print(x)
     return data
 
 discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_train___10M_TTBar.h5'
