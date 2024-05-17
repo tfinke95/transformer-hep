@@ -9,7 +9,7 @@ import matplotlib.colors as mcolors
 
 
 
-def PlotMultiplicity(jets,color:
+def PlotMultiplicity(jets,color):
 
     mask = jets[:, :, 0] != 0
     print(np.shape(mask))
