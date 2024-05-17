@@ -53,7 +53,7 @@ for j in range(len(list_of_jets)):
     #discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
     input_file='/net/data_t2k/transformers-hep/JetClass/train/'+jet+'_train.h5'
     #jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
-    jets=TrueSamples(input_file,nJets)
+    jets=TrueSamples(input_file,n_test_samples)
     print(np.shape(jets))
     exit()
     PlotMultiplicity(jets_true,color_list[j])
