@@ -50,7 +50,7 @@ color_list=list(mcolors.TABLEAU_COLORS.values())
 
 
 
-max_mult=100
+max_mult_all=100
 for j in range(len(list_of_jets)):
 
     jet=list_of_jets[j]
