@@ -39,7 +39,7 @@ pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
 eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
-n_test_samples=100000
+n_test_samples=1000000
 
 
 
@@ -60,8 +60,7 @@ for j in range(len(list_of_jets)):
     print(np.shape(jets))
  
     PlotMultiplicity(jets,color_list[j],jet)
-    if j==1:
-        break
+
 
 plt.xlabel('Multiplicity')
 plt.legend()
