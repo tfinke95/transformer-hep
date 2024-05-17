@@ -9,11 +9,11 @@ import matplotlib.colors as mcolors
 
 
 
-def PlotMultiplicity(jets,color):
+def PlotMultiplicity(jets,color,jet):
 
     mask = jets[:, :, 0] != 0
     print(np.shape(mask))
-    plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color=color,histtype='step',density=True)
+    plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color=color,histtype='step',density=True,label=jet)
 
     return
 
@@ -26,7 +26,7 @@ def TrueSamples(input_file,nJets):
         )
     print(df.head())
     data = df.to_numpy()
-    x = data[:, : 600 * 3]
+    x = data[:, : 200 * 3]
     x = x.reshape(x.shape[0], -1, 3)
     print(x)
     return x
@@ -59,7 +59,7 @@ for j in range(len(list_of_jets)):
     jets=TrueSamples(input_file,n_test_samples)
     print(np.shape(jets))
  
-    PlotMultiplicity(jets,color_list[j])
+    PlotMultiplicity(jets,color_list[j],jet)
     if j==1:
         break
 
