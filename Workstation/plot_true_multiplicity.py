@@ -67,7 +67,7 @@ for j in range(len(list_of_jets)):
         max_mult_all=max_mult
         jet_max=jet
 
-plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all)+'-'+jet)
+plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all)+'-'+jet_max)
 plt.xlabel('Multiplicity')
 plt.legend()
 plt.savefig('plot_mul_all.png')
