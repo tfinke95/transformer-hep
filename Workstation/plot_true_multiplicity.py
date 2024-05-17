@@ -41,7 +41,7 @@ pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
 eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
-n_test_samples=1000000
+n_test_samples=10000
 
 
 
@@ -67,7 +67,7 @@ for j in range(len(list_of_jets)):
         max_mult_all=max_mult
         jet_max=jet
 
-plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all)+'-'+jet_max)
+plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all)+'-'+jet_max,linestyle='dashed')
 plt.xlabel('Multiplicity')
 plt.legend()
 plt.savefig('plot_mul_all.png')
