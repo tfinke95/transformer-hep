@@ -9,11 +9,11 @@ import matplotlib.colors as mcolors
 
 
 
-def PlotMultiplicity(jets,path_to_plots):
+def PlotMultiplicity(jets,color:
 
     mask = jets[:, :, 0] != 0
     print(np.shape(mask))
-    plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color='blue',histtype='step',density=True)
+    plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color=color,histtype='step',density=True)
 
     return
 
@@ -39,15 +39,16 @@ color_list=list(mcolors.TABLEAU_COLORS.values())
 
 for j in range(len(list_of_jets)):
 
-    jet=list_of_jets[i]
+    jet=list_of_jets[j]
 
     discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___10M_'+jet+'.h5'
     
     jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
     
-    PlotMultiplicity(jets_true)
+    PlotMultiplicity(jets_true,color_list[j])
 
 
 plt.xlabel('Multiplicity')
+plt.legend()
 plt.savefig('/plot_mul_all.png')
 plt.close()
