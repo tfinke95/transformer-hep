@@ -29,7 +29,7 @@ def TrueSamples(input_file,nJets):
     x = data[:, : 600 * 3]
     x = x.reshape(x.shape[0], -1, 3)
     print(x)
-    return data
+    return x
 
 discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_train___10M_TTBar.h5'
 
