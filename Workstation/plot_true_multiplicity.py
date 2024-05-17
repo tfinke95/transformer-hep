@@ -43,7 +43,7 @@ n_test_samples=1000000
 
 
 
-list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
+list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQQ','ZToQQ']
 color_list=list(mcolors.TABLEAU_COLORS.values())
 
 
