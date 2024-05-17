@@ -56,7 +56,7 @@ for j in range(len(list_of_jets)):
     jets=TrueSamples(input_file,n_test_samples)
     print(np.shape(jets))
  
-    PlotMultiplicity(jets_true,color_list[j])
+    PlotMultiplicity(jets,color_list[j])
     if j==1:
         break
 
