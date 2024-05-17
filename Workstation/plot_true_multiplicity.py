@@ -19,7 +19,7 @@ def PlotMultiplicity(jets,color):
 
 
 
-discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
+discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_train___10M_TTBar.h5'
 
 bins_path_prefix='../preprocessing_bins/'
 bin_tag='10M_TTBar'
@@ -27,7 +27,7 @@ pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
 eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
-n_test_samples=10000000
+n_test_samples=9000
 
 
 
@@ -40,8 +40,8 @@ color_list=list(mcolors.TABLEAU_COLORS.values())
 for j in range(len(list_of_jets)):
 
     jet=list_of_jets[j]
-
-    discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___10M_'+jet+'.h5'
+    print(jet)
+    discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
     
     jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
     
