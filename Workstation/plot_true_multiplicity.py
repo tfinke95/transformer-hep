@@ -17,7 +17,7 @@ def PlotMultiplicity(jets,color,jet):
     exit()
     plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color=color,histtype='step',density=True,label=jet)
 
-    return
+    return np.max(np.sum(mask, axis=1))
 
 def TrueSamples(input_file,nJets):
 
@@ -50,7 +50,7 @@ color_list=list(mcolors.TABLEAU_COLORS.values())
 
 
 
-
+max_mult=100
 for j in range(len(list_of_jets)):
 
     jet=list_of_jets[j]
@@ -60,10 +60,13 @@ for j in range(len(list_of_jets)):
     #jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
     jets=TrueSamples(input_file,n_test_samples)
     print(np.shape(jets))
- 
-    PlotMultiplicity(jets,color_list[j],jet)
+    
+    max_mult=PlotMultiplicity(jets,color_list[j],jet)
+    if max_mult>max_mult_all:
+        max_mult_all=max_mult
 
 
+plt.axvline(x=max_mult_all, color='black', label='max')
 plt.xlabel('Multiplicity')
 plt.legend()
 plt.savefig('plot_mul_all.png')
