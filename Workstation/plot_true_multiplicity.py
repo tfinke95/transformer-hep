@@ -14,6 +14,7 @@ def PlotMultiplicity(jets,color,jet):
     mask = jets[:, :, 0] != 0
     print(np.shape(mask))
     print(np.max(np.sum(mask, axis=1)))
+    print(np.shape(np.sum(mask, axis=1)))
     print(np.sum(mask, axis=1))
     exit()
  
