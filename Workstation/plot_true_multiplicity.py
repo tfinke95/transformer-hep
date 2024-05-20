@@ -16,7 +16,7 @@ def PlotMultiplicity(jets,color,jet):
     print(np.max(np.sum(mask, axis=1)))
     print(np.shape(np.sum(mask, axis=1)))
     print(np.sum(mask, axis=1))
-    print(np.sort(max))
+    print(np.sort(np.sum(mask, axis=1)))
     exit()
  
     plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color=color,histtype='step',density=True,label=jet)
