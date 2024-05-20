@@ -14,10 +14,24 @@ def PlotMultiplicity(jets,color,jet):
     mask = jets[:, :, 0] != 0
     print(np.shape(mask))
     print(np.max(np.sum(mask, axis=1)))
+    exit()
  
     plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color=color,histtype='step',density=True,label=jet)
     plt.axvline(x=np.max(np.sum(mask, axis=1)), color=color)
     return np.max(np.sum(mask, axis=1))
+
+
+def Plot99Multiplicity(jets,color,jet):
+
+    mask = jets[:, :, 0] != 0
+    
+    plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color=color,histtype='step',density=True,label=jet)
+    
+    plt.axvline(x=np.max(np.sum(mask, axis=1)), color=color)
+
+    return
+
+
 
 def TrueSamples(input_file,nJets):
 
@@ -41,7 +55,7 @@ pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
 eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
 phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
-n_test_samples=10000000
+n_test_samples=10000
 
 
 
@@ -70,5 +84,5 @@ for j in range(len(list_of_jets)):
 plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all)+'-'+jet_max,linestyle='dashed')
 plt.xlabel('Multiplicity')
 plt.legend()
-plt.savefig('plot_mul_all.png')
+plt.savefig('plot_mul_all_test.png')
 plt.close()
