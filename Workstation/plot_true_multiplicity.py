@@ -21,7 +21,7 @@ def PlotMultiplicity(jets,color,jet):
     sorted_multip=np.sort(np.sum(mask, axis=1))
     sigma_level=.997
     place=n_test_samples*sigma_level
-    print(sorted_multip[place:place])
+    print(sorted_multip[place:place+1])
     
     exit()
  
