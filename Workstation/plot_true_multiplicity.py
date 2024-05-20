@@ -14,14 +14,9 @@ def PlotMultiplicity(jets,color,jet):
     mask = jets[:, :, 0] != 0
 
     
-    sorted_multip=list(np.sort(np.sum(mask, axis=1)))
-    print(sorted_multip)
-    sigma_level=.997
-    sigma_level=.999937
-    place=int(n_test_samples*sigma_level)
-    print(sorted_multip[place])
+
     
-    exit()
+
  
     plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color=color,histtype='step',density=True,label=jet)
     plt.axvline(x=np.max(np.sum(mask, axis=1)), color=color)
