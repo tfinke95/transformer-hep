@@ -122,3 +122,29 @@ plt.xlabel('Multiplicity')
 plt.legend()
 plt.savefig('plot_mul_s3.png')
 plt.close()
+
+
+max_mult_all=10
+jet_max='none'
+sigma_level=.999937
+for j in range(len(list_of_jets)):
+
+    jet=list_of_jets[j]
+    print(jet)
+    #discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
+    input_file='/net/data_t2k/transformers-hep/JetClass/train/'+jet+'_train.h5'
+    #jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
+    jets=TrueSamples(input_file,n_test_samples)
+    print(np.shape(jets))
+    
+    max_mult=PlotS3Multiplicity(jets,color_list[j],jet,sigma_level,n_test_samples)
+    if max_mult>max_mult_all:
+        max_mult_all=max_mult
+        jet_max=jet
+
+plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all)+'-'+jet_max,linestyle='dashed')
+plt.title('4 sigma coverage')
+plt.xlabel('Multiplicity')
+plt.legend()
+plt.savefig('plot_mul_s4.png')
+plt.close()
