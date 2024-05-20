@@ -28,7 +28,7 @@ def PlotMultiplicity(jets,color,jet):
     return np.max(np.sum(mask, axis=1))
 
 
-def Plot3SMultiplicity(jets,color,jet,s3_level,n_test_samples):
+def PlotS3Multiplicity(jets,color,jet,s3_level,n_test_samples):
 
     mask = jets[:, :, 0] != 0
     
