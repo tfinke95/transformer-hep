@@ -74,7 +74,7 @@ list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q
 color_list=list(mcolors.TABLEAU_COLORS.values())
 
 
-'''
+
 max_mult_all=100
 jet_max='none'
 for j in range(len(list_of_jets)):
@@ -94,10 +94,11 @@ for j in range(len(list_of_jets)):
 
 plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all)+'-'+jet_max,linestyle='dashed')
 plt.xlabel('Multiplicity')
+plt.title('Total coverage')
 plt.legend()
 plt.savefig('plot_mul_all_test.png')
 plt.close()
-'''
+
 max_mult_all=10
 jet_max='none'
 sigma_level=.997
