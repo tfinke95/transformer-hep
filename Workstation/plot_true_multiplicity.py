@@ -12,11 +12,7 @@ import matplotlib.colors as mcolors
 def PlotMultiplicity(jets,color,jet):
 
     mask = jets[:, :, 0] != 0
-    print(np.shape(mask))
-    print(np.max(np.sum(mask, axis=1)))
-    print(np.shape(np.sum(mask, axis=1)))
-    print(np.sum(mask, axis=1))
-    print(np.sort(np.sum(mask, axis=1)))
+
     
     sorted_multip=list(np.sort(np.sum(mask, axis=1)))
     print(sorted_multip)
@@ -32,15 +28,19 @@ def PlotMultiplicity(jets,color,jet):
     return np.max(np.sum(mask, axis=1))
 
 
-def Plot99Multiplicity(jets,color,jet):
+def Plot3SMultiplicity(jets,color,jet,s3_level,n_test_samples):
 
     mask = jets[:, :, 0] != 0
     
+    sorted_multip=list(np.sort(np.sum(mask, axis=1)))
+    place=int(n_test_samples*sigma_level)
+    s3_level=sorted_multip[place]
+    
     plt.hist(np.sum(mask, axis=1), bins=np.linspace(-0.5, 200.5, 102),color=color,histtype='step',density=True,label=jet)
     
-    plt.axvline(x=np.max(np.sum(mask, axis=1)), color=color)
+    plt.axvline(x=s3_level, color=color)
 
-    return
+    return s3_level
 
 
 
@@ -74,7 +74,7 @@ list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q
 color_list=list(mcolors.TABLEAU_COLORS.values())
 
 
-
+'''
 max_mult_all=100
 jet_max='none'
 for j in range(len(list_of_jets)):
@@ -96,4 +96,28 @@ plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all)+'-'+je
 plt.xlabel('Multiplicity')
 plt.legend()
 plt.savefig('plot_mul_all_test.png')
+plt.close()
+'''
+max_mult_all=100
+jet_max='none'
+for j in range(len(list_of_jets)):
+
+    jet=list_of_jets[j]
+    print(jet)
+    #discrete_truedata_filename='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
+    input_file='/net/data_t2k/transformers-hep/JetClass/train/'+jet+'_train.h5'
+    #jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_test_samples,pt_bins,eta_bins,phi_bins)
+    jets=TrueSamples(input_file,n_test_samples)
+    print(np.shape(jets))
+    
+    max_mult=PlotS3Multiplicity(jets,color_list[j],jet,s3_level,n_test_samples)
+    if max_mult>max_mult_all:
+        max_mult_all=max_mult
+        jet_max=jet
+
+plt.axvline(x=max_mult_all, color='black', label='max='+str(max_mult_all)+'-'+jet_max,linestyle='dashed')
+plt.title('3 sigma coverage')
+plt.xlabel('Multiplicity')
+plt.legend()
+plt.savefig('plot_mul_s3.png')
 plt.close()
