@@ -28,7 +28,7 @@ def PlotMultiplicity(jets,color,jet):
     return np.max(np.sum(mask, axis=1))
 
 
-def PlotS3Multiplicity(jets,color,jet,s3_level,n_test_samples):
+def PlotS3Multiplicity(jets,color,jet,sigma_level,n_test_samples):
 
     mask = jets[:, :, 0] != 0
     
@@ -100,6 +100,7 @@ plt.close()
 '''
 max_mult_all=100
 jet_max='none'
+sigma_level=.997
 for j in range(len(list_of_jets)):
 
     jet=list_of_jets[j]
@@ -110,7 +111,7 @@ for j in range(len(list_of_jets)):
     jets=TrueSamples(input_file,n_test_samples)
     print(np.shape(jets))
     
-    max_mult=PlotS3Multiplicity(jets,color_list[j],jet,s3_level,n_test_samples)
+    max_mult=PlotS3Multiplicity(jets,color_list[j],jet,sigma_level,n_test_samples)
     if max_mult>max_mult_all:
         max_mult_all=max_mult
         jet_max=jet
