@@ -98,7 +98,7 @@ plt.legend()
 plt.savefig('plot_mul_all_test.png')
 plt.close()
 '''
-max_mult_all=100
+max_mult_all=10
 jet_max='none'
 sigma_level=.997
 for j in range(len(list_of_jets)):
