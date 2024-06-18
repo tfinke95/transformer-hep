@@ -52,7 +52,7 @@ data_path_2='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_tes
 
 mother_dir='/net/data_t2k/transformers-hep/JetClass/Classification/'
 #tag='top_vs_qcd_jetclass_classifier_test_1_'
-num_events=1000
+num_events=100000
 
 model_dirs=os.listdir(mother_dir)
 
