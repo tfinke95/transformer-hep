@@ -97,12 +97,13 @@ def LoadTrue(discrete_truedata_filename,n_samples):
     tmp = pd.read_hdf(discrete_truedata_filename, key="discretized", stop=None)
     print(tmp)
     print(tmp.shape)
-    
-    tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
+    tmp=tmp.sample(n_samples)
+    tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
     print(tmp)
     print(tmp.shape)
     print('hello')
-    tmp=tmp[:n_samples,:,:]
+    
+    tmp=tmp[:,:,:]
     print(tmp.shape)
     print('hello')
  
@@ -127,13 +128,13 @@ def random_string():
 ####Trainning parameters
 
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
-list_of_jets=['ZJetsToNuNu']
-num_const_list=[100]
+list_of_jets=['TTBar']
+num_const_list=[175]
 num_epochs_list=[30]
 lr_list=[.001]
 lr_decay_list=[.000001]
 num_events_list=[10000000]
-dropout_list=[0.0]
+dropout_list=[0]
 num_heads_list=[4]
 num_layers_list=[8]
 num_bins_list=["41 31 31"]
@@ -144,7 +145,7 @@ num_events_val=500000
 ###Sampling parameters
 num_samples_test_list=[200000]
 train_batch_size=100
-num_const_test=100
+num_const_test=175
 trunc_test_list=[5000]
 model_name='model_best.pt'
 
@@ -154,7 +155,7 @@ bins_path_prefix='preprocessing_bins/'
 for jet in list_of_jets:
 
     mother_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'
-    tag_oftrain=jet+'_run_scan_10M'
+    tag_oftrain=jet+'_run_ttbar_const175_403030'
     data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
     model_path=mother_dir+'/'+tag_oftrain
     log_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'+tag_oftrain
@@ -167,7 +168,7 @@ for jet in list_of_jets:
     
     
     ###for plotting samples
-    bin_tag='10M_'+str(jet)
+    bin_tag='40_30_30_TTBar_ZJetsToNuNu'
     pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
     eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
     phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')

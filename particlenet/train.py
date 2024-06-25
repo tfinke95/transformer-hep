@@ -8,6 +8,10 @@ import time
 start = time.time()
 tfk = tf.keras
 
+#torch.multiprocessing.set_sharing_strategy("file_system")
+
+#os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+
 gpu = tf.config.list_physical_devices("GPU")
 assert len(gpu) > 0, f"No GPU found, abort"
 

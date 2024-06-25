@@ -5,6 +5,10 @@ import os
 from tqdm import tqdm
 
 
+torch.multiprocessing.set_sharing_strategy("file_system")
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+
 def preprocess_dataframe(
     df,
     num_features,

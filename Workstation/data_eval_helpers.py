@@ -94,7 +94,7 @@ def LoadTrue(discrete_truedata_filename,n_samples,pt_bins,eta_bins,phi_bins):
 
 
     tmp = pd.read_hdf(discrete_truedata_filename, key="discretized", stop=None)
- 
+    print(tmp.shape) 
     tmp=tmp.sample(n_samples)
     tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
 

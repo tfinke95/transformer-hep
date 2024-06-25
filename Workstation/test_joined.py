@@ -202,5 +202,5 @@ for joined_result in joined_result_list:
 
     llr_2=LLR2(evalprob_qcd,evalprob_qcd_best)
     print(llr_2)
-    plot_probs(evalprob_qcd_best,evalprob_qcd,path,'QCD','QCD -- llr:'+str(llr_2)+' -- n_samples:'+str(num_samples))
+    plot_probs(evalprob_qcd_best,evalprob_qcd,path,'QCD','QCD -- LLR:'+str(llr_2)+' -- n_samples:'+str(num_samples))
     
