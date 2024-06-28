@@ -36,6 +36,8 @@ def parse_input():
     parser.add_argument("--num_bins", type=int, nargs=3, default=[41, 31, 31], help="Number of bins per feature")
     parser.add_argument("--reverse", action='store_true', help="Whether to reverse pt order")
 
+    parser.add_argument("--pred_name", type=str, default='predictions_test.npz', help="predicitons name")
+    
     args = parser.parse_args()
     return args
 
@@ -162,6 +164,6 @@ if __name__ == '__main__':
     plot_roc_curve(label_list, predictions,args.model_dir)
     saveAUCscore(args.model_dir,auc_score)
     
-    np.savez(os.path.join(args.model_dir, 'predictions_test.npz'),
+    np.savez(os.path.join(args.model_dir, args.pred_name),
             predictions=predictions,
             labels=label_list)
