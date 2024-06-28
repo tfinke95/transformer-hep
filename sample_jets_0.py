@@ -5,7 +5,7 @@ from tqdm import tqdm
 import time, os
 from argparse import ArgumentParser
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 torch.multiprocessing.set_sharing_strategy("file_system")
 
@@ -24,6 +24,7 @@ parser.add_argument("--batchsize", type=int, default=100)
 parser.add_argument("--num_const", type=int, default=50)
 parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--trunc", type=float, default=None)
+parser.add_argument("--num_bins", type=str, default="[41 31 31]")
 
 args = parser.parse_args()
 
@@ -34,6 +35,11 @@ assert device == "cuda", "Not running on GPU"
 
 n_batches = args.num_samples // args.batchsize
 rest = args.num_samples % args.batchsize
+
+
+num_bins_str=args.num_bins
+num_bins_str = num_bins_str.strip("[]")
+num_bins = num_bins_str.split(" ")
 
 # Load model for sampling
 model = torch.load(os.path.join(args.model_dir, args.model_name))
@@ -50,6 +56,7 @@ for i in tqdm(range(n_batches), total=n_batches, desc="Sampling batch"):
         device=device,
         len_seq=args.num_const + 1,
         trunc=args.trunc,
+        num_bins=num_bins
     )
     jets.append(_jets.cpu().numpy())
     bins.append(_bins.cpu().numpy())
@@ -60,6 +67,7 @@ if rest != 0:
         device=device,
         len_seq=51,
         trunc=args.trunc,
+        num_bins=num_bins
     )
     jets.append(_jets.cpu().numpy())
     bins.append(_bins.cpu().numpy())
