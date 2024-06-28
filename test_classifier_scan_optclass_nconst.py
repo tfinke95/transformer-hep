@@ -56,7 +56,8 @@ num_events=200000
 
 dict_auc={'num_const':[],'auc_score':[]}
 
-num_const_list:[100,80,60,40,20]
+num_const_list=[100,80,60,40,20]
+
 for num_const in num_const_list:
 
     try:
