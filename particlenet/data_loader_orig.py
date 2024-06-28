@@ -17,31 +17,26 @@ def transform_momenta(momenta, mask):
 
     pxj = np.sum(pxs, -1)
     pyj = np.sum(pys, 1)
-    ptj = np.sqrt(pxj**2 + pyj**2).reshape(-1, 1)
+    ptj = np.sqrt(pxj**2 + pyj**2)
     
     etas[~mask] = 0
     phis[~mask] = 0
-    pts[~mask] = 0
-    #logpts = np.log(pts+1e-90)
-    #logpt_ptj = np.log(pts / ptj.reshape(-1, 1))
+    #pts[~mask] = 0
+    logpts = np.log(pts)
+    logpt_ptj = np.log(pts / ptj.reshape(-1, 1))
     #print(np.count_nonzero(np.isinf(logpts)))
     #print('inf back')
-    #logpts[~mask] = 0
+    logpts[~mask] = 0
     #logpt_ptj = np.log(pts+1e-90)
     
     print(ptj)
     print(ptj.reshape(-1, 1))
-    #logpt_ptj[~mask] = 0
+    logpt_ptj[~mask] = 0
     
     drs[~mask] = 0
     #print(np.count_nonzero(np.isinf(logpt_ptj)))
-    #newVec = np.stack(
-    #    [etas, phis, logpts, logpt_ptj, drs],
-    #    -1,
-    #)
-
     newVec = np.stack(
-        [etas, phis, pts, pts/ptj, drs],
+        [etas, phis, logpts, logpt_ptj, drs],
         -1,
     )
 
@@ -73,20 +68,10 @@ def get_config(test=False):
     return config
 
 
-def make_continues(jets,jet_type, mask, noise=False):
-    if jet_type=='top':
-
-
-        pt_bins = np.load("../preprocessing_bins/pt_bins_10M_TTBar.npy")
-        eta_bins = np.load("../preprocessing_bins/eta_bins_10M_TTBar.npy")
-        phi_bins = np.load("../preprocessing_bins/phi_bins_10M_TTBar.npy")
-    if jet_type=='qcd':
-
-        pt_bins = np.load("../preprocessing_bins/pt_bins_10M_ZJetsToNuNu.npy")
-        eta_bins = np.load("../preprocessing_bins/eta_bins_10M_ZJetsToNuNu.npy")
-        phi_bins = np.load("../preprocessing_bins/phi_bins_10M_ZJetsToNuNu.npy")
-
-
+def make_continues(jets, mask, noise=False):
+    pt_bins = np.load("../preprocessing_bins/pt_bins_10M_TTBar.npy")
+    eta_bins = np.load("../preprocessing_bins/eta_bins_10M_TTBar.npy")
+    phi_bins = np.load("../preprocessing_bins/phi_bins_10M_TTBar.npy")
 
     pt_disc = jets[:, :, 0]
     eta_disc = jets[:, :, 1]
@@ -157,13 +142,13 @@ def load_data(params, test=False, plot_dists=None,):
 
     if params["bg_key"] == "discretized":
         print(f"BG made continuous, with noise {params['bg_noise']}\n")
-        bg = make_continues(bg,'qcd', mask=bg_mask, noise=params["bg_noise"],)
+        bg = make_continues(bg, mask=bg_mask, noise=params["bg_noise"],)
     else:
         bg[~bg_mask] = 0
 
     if params["sig_key"] == "discretized":
         print(f"Sig made continuous, with noise {params['bg_noise']}\n")
-        sig = make_continues(sig,'top', mask=sig_mask, noise=params["sig_noise"])
+        sig = make_continues(sig, mask=sig_mask, noise=params["sig_noise"])
     else:
         sig[~sig_mask] = 0
 

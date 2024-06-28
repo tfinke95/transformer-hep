@@ -28,10 +28,10 @@
     "static": false
   },
   "data": {
-    "sig_file": "/net/data_t2k/transformers-hep/JetClass/TTBar_models/TTBar_run_testwall_10M_9/samples_samples_nsamples200000_trunc_5000.h5",
-    "bg_file": "/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5",
-    "n_jets": 2000,
-    "n_const": 100,
+    "sig_file": "/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5",
+    "bg_file": "/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5",
+    "n_jets": 1000000,
+    "n_const": 175,
     "bg_key": "discretized",
     "sig_key": "discretized",
     "seed": 0,
@@ -40,13 +40,13 @@
   },
   "training": {
     "batch_size": 256,
-    "epochs": 2,
+    "epochs": 50 ,
     "validation_split": 0.1,
     "validation_freq": 1,
     "verbose": 1
   },
   "logging": {
-    "logfolder": "logs/working_test"
+    "logfolder": "logs/working_test_discrete_175const"
   },
   "mask": true
 }
