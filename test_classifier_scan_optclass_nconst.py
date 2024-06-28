@@ -61,7 +61,7 @@ num_const_list=[100,80,60,40,20]
 for num_const in num_const_list:
 
     try:
-        command='python test_classifier.py --data_path_1 '+data_path_1+' --data_path_2 '+data_path_2+' --model_dir '+model_dir+'  --num_events '+str(num_events)+'--num_const '+str(num_const)+' --pred_name predictions_test_'+str(num_const)+'.npz'
+        command='python test_classifier.py --data_path_1 '+data_path_1+' --data_path_2 '+data_path_2+' --model_dir '+model_dir+'  --num_events '+str(num_events)+' --num_const '+str(num_const)+' --pred_name predictions_test_'+str(num_const)+'.npz'
         os.system(command)
 
 
