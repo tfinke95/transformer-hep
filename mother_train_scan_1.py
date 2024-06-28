@@ -98,7 +98,7 @@ def LoadTrue(discrete_truedata_filename,n_samples):
     print(tmp)
     print(tmp.shape)
     tmp=tmp.sample(n_samples)
-    tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
+    tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
     print(tmp)
     print(tmp.shape)
     print('hello')

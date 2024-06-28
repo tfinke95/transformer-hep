@@ -136,3 +136,24 @@ def Wasserstein_distance(sample_1,sample_2):
     w_distance=stats.wasserstein_distance(sample_1,sample_2)
 
     return w_distance
+
+def read_file(file_name):
+
+    f = open(file_name, "r")
+    lines = f.readlines()
+
+    return lines
+
+
+def extract_value(var,lines):
+
+    for line in lines:
+        if 'lr_' in line:
+            continue
+        if var in line:
+            line=line.replace(' ','')
+            line=line.replace('\n','')
+
+            value=line.split(var)[-1]
+    
+    return value
