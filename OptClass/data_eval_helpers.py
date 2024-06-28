@@ -94,17 +94,17 @@ def LoadTrue(discrete_truedata_filename,n_samples,pt_bins,eta_bins,phi_bins):
 
 
     tmp = pd.read_hdf(discrete_truedata_filename, key="discretized", stop=None)
-    print(tmp.shape) 
+    print(tmp)
     tmp=tmp.sample(n_samples)
-    tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
-
+    tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
+    print(tmp)
     tmp=tmp[:,:,:]
 
 
     mask = tmp[:, :, 0] == -1
   
     jets_true,ptj_true,mj_true = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
-
+    
     return jets_true,ptj_true,mj_true
 
 
@@ -114,8 +114,8 @@ def LoadSGenamples(filename,pt_bins,eta_bins,phi_bins,n_samples):
     tmp = pd.read_hdf(filename, key="discretized", stop=None)
     tmp=tmp.sample(n_samples)
 
-    tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
-    
+    tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
+    print(tmp)
 
     mask = tmp[:, :, 0] == -1
     jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
@@ -136,6 +136,7 @@ def Wasserstein_distance(sample_1,sample_2):
     w_distance=stats.wasserstein_distance(sample_1,sample_2)
 
     return w_distance
+
 
 def read_file(file_name):
 

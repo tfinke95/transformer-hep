@@ -97,13 +97,12 @@ def LoadTrue(discrete_truedata_filename,n_samples):
     tmp = pd.read_hdf(discrete_truedata_filename, key="discretized", stop=None)
     print(tmp)
     print(tmp.shape)
-    tmp=tmp.sample(n_samples)
-    tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
+    
+    tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
     print(tmp)
     print(tmp.shape)
     print('hello')
-    
-    tmp=tmp[:,:,:]
+    tmp=tmp[:n_samples,:,:]
     print(tmp.shape)
     print('hello')
  
@@ -128,12 +127,12 @@ def random_string():
 ####Trainning parameters
 
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
-list_of_jets=['TTBar_ZJetsToNuNu']
-num_const_list=[100]
-num_epochs_list=[30]
+list_of_jets=['HToGG']
+num_const_list=[50]
+num_epochs_list=[2]
 lr_list=[.001]
 lr_decay_list=[.000001]
-num_events_list=[2000000,10000000]
+num_events_list=[10000000]
 dropout_list=[0]
 num_heads_list=[4]
 num_layers_list=[8]
@@ -143,7 +142,7 @@ hidden_dim_list=[256]
 batch_size_list=[100]
 num_events_val=500000
 ###Sampling parameters
-num_samples_test_list=[200000]
+num_samples_test_list=[200]
 train_batch_size=100
 num_const_test=100
 trunc_test_list=[5000]
@@ -155,8 +154,8 @@ bins_path_prefix='preprocessing_bins/'
 for jet in list_of_jets:
 
     mother_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'
-    tag_oftrain=jet+'_run_test_joined_403030'
-    data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___40_30_30_'+jet+'.h5'
+    tag_oftrain=jet+'_run_constspeedtest'
+    data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
     model_path=mother_dir+'/'+tag_oftrain
     log_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'+tag_oftrain
     output='linear'
@@ -164,17 +163,17 @@ for jet in list_of_jets:
     ###for sampling
     
 
-    test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___40_30_30_'+jet+'.h5'
+    test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___10M_'+jet+'.h5'
     
     
     ###for plotting samples
-    bin_tag='40_30_30_'+str(jet)
+    bin_tag='10M_'+str(jet)
     pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
     eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
     phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
     n_samples=200000
-    test_data_name='/discretized/'+jet+'_test___40_30_30_'+jet+'.h5'
+    test_data_name='/discretized/'+jet+'_test___10M_'+jet+'.h5'
     discrete_truedata_filename=main_dir+test_data_name
     jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_samples)
     print(mj_true)
@@ -213,7 +212,7 @@ for jet in list_of_jets:
                                                         for trunc in trunc_test_list:
                                                             
                                                             tag_forsample='_nsamples'+str(num_samples_test)+'_trunc_'+str(trunc)
-                                                            command_sample= 'python sample_jets_3.py --model_dir '+model_path_curr+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples_test)+' --num_const '+str(num_const_test)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
+                                                            command_sample= 'python sample_jets_0.py --model_dir '+model_path_curr+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples_test)+' --num_const '+str(num_const_test)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
                                                             print(command_sample)
                                                             os.system(command_sample)
                                                     

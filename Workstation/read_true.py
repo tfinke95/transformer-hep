@@ -22,14 +22,15 @@ def ReadJetClass(filename):
 
 
 
-filename_toptagg='/Users/humbertosmac/Documents/work/Transformers/Transformers_finke/datasets/toptag_data/val.h5'
-toptagdata=ReadTopTagData(filename_toptagg)
-print(toptagdata.head(10))
+#filename_toptagg='/Users/humbertosmac/Documents/work/Transformers/Transformers_finke/datasets/toptag_data/val.h5'
+#toptagdata=ReadTopTagData(filename_toptagg)
+#print(toptagdata.head(10))
 
-filename_jetclass='TTBar_test_2.h5'
+filename_jetclass='/net/data_t2k/transformers-hep/JetClass/test/TTBar_test.h5'
 topjetclass=ReadJetClass(filename_jetclass)
 print(topjetclass.shape)
 print( topjetclass.head(10))
+print( topjetclass.tail(10))
 exit()
 numpy_topjetclass = topjetclass.to_numpy()
 
