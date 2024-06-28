@@ -9,9 +9,9 @@ test_dataset_other='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models//
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/'
 model_type='model_best.pt'
 tag_oftrain='TTBar_run_testwall_10M'
-num_samples_list=[200000]
+num_samples_list=[200]
 train_batch_size=200
-num_const_list=[100,80]
+num_const_list=[100,80,60]
 trunc_list=[5000]
 ###For test samples
 bg=test_dataset
