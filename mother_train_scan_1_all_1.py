@@ -127,7 +127,7 @@ def random_string():
     return str(res)
 ####Trainning parameters
 
-list_of_jets=['HToWW2Q1L']
+list_of_jets=['ZToQQ']
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 #list_of_jets=['ZJetsToNuNu']
 num_const_list=[200]

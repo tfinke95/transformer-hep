@@ -127,8 +127,8 @@ def random_string():
     return str(res)
 ####Trainning parameters
 
-list_of_jets=['HToWW4Q']
-#list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
+list_of_jets=['WToQQ']
+#list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQQ','ZToQQ']
 #list_of_jets=['ZJetsToNuNu']
 num_const_list=[200]
 num_epochs_list=[30]
@@ -157,7 +157,7 @@ for jet in list_of_jets:
 
     mother_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'
     tag_oftrain=jet+'_run_test_const190_403030'
-    data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
+    data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___40_30_30_'+jet+'.h5'
     model_path=mother_dir+'/'+tag_oftrain
     log_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'+tag_oftrain
     output='linear'
@@ -165,7 +165,7 @@ for jet in list_of_jets:
     ###for sampling
     
 
-    test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___10M_'+jet+'.h5'
+    test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___40_30_30_'+jet+'.h5'
     
     
     ###for plotting samples
@@ -175,7 +175,7 @@ for jet in list_of_jets:
     phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
     n_samples=200000
-    test_data_name='/discretized/'+jet+'_test___10M_'+jet+'.h5'
+    test_data_name='/discretized/'+jet+'_test___40_30_30_'+jet+'.h5'
     discrete_truedata_filename=main_dir+test_data_name
     jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_samples)
     print(mj_true)
