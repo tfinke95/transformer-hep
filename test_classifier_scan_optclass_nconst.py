@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 def readauc(dir):
     
-    frame=pd.read_csv(dir+'/auc_optclass.txt')
+    frame=pd.read_csv(dir+'/auc.txt')
     
     auc_score=float(frame['auc_score'])
     
@@ -41,7 +41,7 @@ def PlotAUCwN(frame_all,model_dir):
     plt.xlabel('$N_{train}$')
     plt.ylabel('auc score')
     plt.xscale('log')
-    plt.savefig(mother_dir+'/auc_events_optclass_nconst.png')
+    plt.savefig(model_dir+'/auc_events_optclass_nconst.png')
     
 
     return
@@ -56,12 +56,12 @@ num_events=200000
 
 dict_auc={'num_const':[],'auc_score':[]}
 
-num_const_list=[100,80,60,40,20]
+num_const_list=[80,60,40,20]
 
 for num_const in num_const_list:
 
-    try:
-        command='python test_classifier.py --data_path_1 '+data_path_1+' --data_path_2 '+data_path_2+' --model_dir '+model_dir+'  --num_events '+str(num_events)+' --num_const '+str(num_const)+' --pred_name predictions_test_'+str(num_const)+'.npz'
+    
+        command='python test_classifier_2.py --data_path_1 '+data_path_1+' --data_path_2 '+data_path_2+' --model_dir '+model_dir+'  --num_events '+str(num_events)+' --num_const '+str(num_const)+' --pred_name predictions_test_'+str(num_const)+'.npz'
         os.system(command)
 
 
@@ -70,16 +70,15 @@ for num_const in num_const_list:
         dict_auc.get('num_const').append(num_const)
         dict_auc.get('auc_score').append(auc)
         print('done '+model_dir)
-    except:
-        continue
+        print(dict_auc)
 
 
 
 
 
 frame_all=pd.DataFrame(dict_auc)
-frame_all=frame_all.sort_values(by=['num_events'])
-frame_all.to_csv(mother_dir+'/frame_auc.txt',index=False)
-PlotAUCwN(frame_all,mother_dir)
+frame_all=frame_all.sort_values(by=['num_const'])
+frame_all.to_csv(model_dir+'/frame_auc.txt',index=False)
+PlotAUCwN(frame_all,model_dir)
 
 
