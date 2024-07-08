@@ -57,11 +57,11 @@ config_file_disc='config_disc_scan.json'
 config_file_cont='config_cont_scan.json'
 
 
-prefix_znunu='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___bins_tag_TTBar.h5'
-prefix_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___bins_tag_TTBar.h5'
+prefix_znunu='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_bins_tag_ZJetsToNuNu.h5'
+prefix_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_bins_tag_TTBar.h5'
 
-#bins_list=['40 30 30','80 60 60','20 15 15','15 7 7','5 3 3']
-bins_list=['40 30 30','20 15 15']
+bins_list=['80 60 60','20 15 15','15 7 7','5 3 3']
+#bins_list=['40 30 30','20 15 15']
 
 
 for bins in bins_list:
@@ -77,20 +77,20 @@ for bins in bins_list:
     
     ####continuous
     
-    config_dict=OpenConfig(config_file_cont)
-    out_dir='logs/cont_scan_'+bins_tag
-    UpdateConfig(config_dict,sig_file,bg_file,out_dir)
-    SaveNewConfig(config_dict,config_file_name)
-    train_cont(config_file_cont)
-    config_file_trained=out_dir+'/config.json'
-    evaluate(config_file_trained)
+    #config_dict=OpenConfig(config_file_cont)
+    #out_dir='logs/cont_scan_'+bins_tag
+    #UpdateConfig(config_dict,sig_file,bg_file,out_dir)
+    #SaveNewConfig(config_dict,config_file_name)
+    #train_cont(config_file_cont)
+    #config_file_trained=out_dir+'/config.json'
+    #evaluate(config_file_trained)
     
     ####discrete
     
     config_dict=OpenConfig(config_file_disc)
     out_dir='logs/disc_scan_'+bins_tag
     UpdateConfig(config_dict,sig_file,bg_file,out_dir)
-    SaveNewConfig(config_dict,config_file_name)
+    SaveNewConfig(config_dict,config_file_disc)
     config_file_trained=out_dir+'/config.json'
     train_disc(config_file_disc)
     
