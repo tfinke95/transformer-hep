@@ -28,8 +28,8 @@
             "static": false
       },
       "data": {
-            "sig_file": "/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_80_60_60_TTBar.h5",
-            "bg_file": "/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_80_60_60_ZJetsToNuNu.h5",
+            "sig_file": "/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_5_3_3_TTBar.h5",
+            "bg_file": "/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_5_3_3_ZJetsToNuNu.h5",
             "n_jets": 200000,
             "n_const": 100,
             "bg_key": "discretized",
@@ -46,7 +46,7 @@
             "verbose": 1
       },
       "logging": {
-            "logfolder": "logs/disc_scan_80_60_60"
+            "logfolder": "logs/disc_scan_test_b_5_3_3"
       },
       "mask": true
 }

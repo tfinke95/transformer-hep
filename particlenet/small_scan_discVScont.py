@@ -45,8 +45,8 @@ def train_cont(config_file_cont):
     return
     
 def evaluate(config_file_trained):
-
-    os.system('evaluate.py '+config_file_trained)
+    print('evaluating')
+    os.system('python evaluate.py '+config_file_trained)
     
     return
     
@@ -60,7 +60,7 @@ config_file_cont='config_cont_scan.json'
 prefix_znunu='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_bins_tag_ZJetsToNuNu.h5'
 prefix_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_bins_tag_TTBar.h5'
 
-bins_list=['80 60 60','20 15 15','15 7 7','5 3 3']
+bins_list=['80 60 60','20 15 15','10 7 7','5 3 3']
 #bins_list=['40 30 30','20 15 15']
 
 
@@ -71,7 +71,7 @@ for bins in bins_list:
     
 
     
-    
+    print(bins_tag)
     bg_file=prefix_znunu.replace('bins_tag',bins_tag)
     sig_file=prefix_top.replace('bins_tag',bins_tag)
     
@@ -88,10 +88,11 @@ for bins in bins_list:
     ####discrete
     
     config_dict=OpenConfig(config_file_disc)
-    out_dir='logs/disc_scan_'+bins_tag
+    out_dir='logs/disc_scan_test_b_'+bins_tag
     UpdateConfig(config_dict,sig_file,bg_file,out_dir)
     SaveNewConfig(config_dict,config_file_disc)
+
     config_file_trained=out_dir+'/config.json'
     train_disc(config_file_disc)
-    
+    evaluate(config_file_trained)
 
