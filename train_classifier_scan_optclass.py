@@ -21,15 +21,15 @@ def random_string():
     
 main_dir_discrete='/net/data_t2k/transformers-hep/JetClass/'
 
-sig_list=['/TTBar_models//TTBar_run_testwall_10M_11/samples_samples_nsamples1000000_trunc_5000.h5']
-bg_list=['/ZJetsToNuNu_models//ZJetsToNuNu_run_scan_10M_N1G96CW/samples_samples_nsamples1000000_trunc_5000.h5']
+sig_list=['/TTBar_models//TTBar_run_testwall_10M_11/samples_samples_train_optclass_nsamples10000000_trunc_5000.h5']
+bg_list=['/ZJetsToNuNu_models//ZJetsToNuNu_run_scan_10M_N1G96CW/samples_samples_nsamples_10M_trunc_5000.h5']
 num_epochs_list=[50]
 dropout_list=[0.0]
 num_heads_list=[4]
 num_layers_list=[8]
 hidden_dim_list=[256]
 batch_size_list=[100]
-num_events_list=[1000,10000,100000,1000000]
+num_events_list=[10000000]
 num_const_list=[100]
 lr_list=[.001]
 
