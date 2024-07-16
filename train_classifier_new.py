@@ -247,11 +247,9 @@ if __name__ == "__main__":
             train_loader, total=len(train_loader), desc=f"Training Epoch {epoch + 1}"
         ):
             opt.zero_grad()
-            print(x)
-            print(np.shape(x))
+
             x = x.to(device)
-            print(padding_mask)
-            print(np.shape(padding_mask))
+
             padding_mask = padding_mask.to(device)
         
             label = label.to(device)
