@@ -13,6 +13,10 @@ import os
 from sklearn.metrics import roc_auc_score, roc_curve
 import matplotlib.pyplot as plt
 
+torch.multiprocessing.set_sharing_strategy("file_system")
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+
 from helpers_train import (
     get_cos_scheduler,
     save_opt_states,
