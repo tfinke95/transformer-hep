@@ -88,11 +88,11 @@ for bins in bins_list:
     ####discrete
     
     config_dict=OpenConfig(config_file_disc)
-    out_dir='logs/disc_scan_test_b_'+bins_tag
-    UpdateConfig(config_dict,sig_file,bg_file,out_dir)
-    SaveNewConfig(config_dict,config_file_disc)
+    out_dir='logs/disc_scan_test_b_'+bins_tag+'_1'
+    #UpdateConfig(config_dict,sig_file,bg_file,out_dir)
+    #SaveNewConfig(config_dict,config_file_disc)
 
     config_file_trained=out_dir+'/config.json'
-    train_disc(config_file_disc)
+    #train_disc(config_file_disc)
     evaluate(config_file_trained)
 
