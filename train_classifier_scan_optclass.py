@@ -33,7 +33,7 @@ num_events_list=[10000000]
 num_const_list=[100]
 lr_list=[.001]
 
-tag_of_train='top_vs_qcd_transformerdata_classifier_test_2'
+tag_of_train='top_vs_qcd_transformerdata_classifier_test_3_10M'
 log_dir='/net/data_t2k/transformers-hep/JetClass/Classification_optclass/'+tag_of_train
 
 for sig in sig_list:
