@@ -23,17 +23,17 @@ main_dir_discrete='/net/data_t2k/transformers-hep/JetClass/'
 
 sig_list=['/TTBar_models//TTBar_run_testwall_10M_11/samples_samples_nsamples1000000_trunc_5000.h5']
 bg_list=['/ZJetsToNuNu_models//ZJetsToNuNu_run_scan_10M_N1G96CW/samples_samples_nsamples1000000_trunc_5000.h5']
-num_epochs_list=[2]
+num_epochs_list=[50]
 dropout_list=[0.0]
 num_heads_list=[4]
 num_layers_list=[8]
 hidden_dim_list=[256]
 batch_size_list=[100]
 num_events_list=[200000]
-num_const_list=[60,40]
+num_const_list=[80,60,40,20,10,5,100]
 lr_list=[.001]
 
-tag_of_train='top_vs_qcd_transformerdata_classifier_train_nconst_testing'
+tag_of_train='top_vs_qcd_transformerdata_classifier_train_nconst_take2'
 log_dir='/net/data_t2k/transformers-hep/JetClass/Classification_optclass/'+tag_of_train
 
 for sig in sig_list:
