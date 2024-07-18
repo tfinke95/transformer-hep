@@ -150,7 +150,7 @@ def LLM(filename):
 list_of_jets=['TTBar','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','ZToQQ']
 
 
-dir_of_test_data='/net/data_t2k/transformers-hep/JetClass/discretized'
+dir_of_test_data='/net/data_t2k/transformers-hep/JetClass/discretized/'
 main_dir='/net/data_t2k/transformers-hep/JetClass/All_models_for_OptClass/'
 bins_path_prefix='../preprocessing_bins/'
 n_samples=200000
@@ -167,7 +167,7 @@ for jet_name in list_of_jets:
     
     path_to_plots=test_data_dir
     
-    discrete_truedata_filename=dir_of_test_data+'/test_data/'+jet_name+'_test___10M_'+jet_name+'.h5'
+    discrete_truedata_filename=dir_of_test_data+jet_name+'_test___10M_'+jet_name+'.h5'
     #plot_title="$g/q $"
     plot_title=jet_name
     jets_gen,ptj_gen,mj_gen=LLM(test_data_gen)
