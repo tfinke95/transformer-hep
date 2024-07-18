@@ -152,7 +152,7 @@ list_of_jets=['TTBar','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','
 
 dir_of_test_data='/net/data_t2k/transformers-hep/JetClass/discretized'
 main_dir='/net/data_t2k/transformers-hep/JetClass/All_models_for_OptClass/'
-bins_path_prefix=test_results_dir+'/preprocessing_bins/'
+bins_path_prefix='../preprocessing_bins/'
 n_samples=200000
 for jet_name in list_of_jets:
 
