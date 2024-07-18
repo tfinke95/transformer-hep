@@ -167,7 +167,7 @@ for jet_name in list_of_jets:
     
     path_to_plots=test_data_dir
     
-    discrete_truedata_filename=dir_of_test_data+'/test_data/'+jet_name+'_test_top_10M_'+jet_name+'.h5'
+    discrete_truedata_filename=dir_of_test_data+'/test_data/'+jet_name+'_test___10M_'+jet_name+'.h5'
     #plot_title="$g/q $"
     plot_title=jet_name
     jets_gen,ptj_gen,mj_gen=LLM(test_data_gen)
