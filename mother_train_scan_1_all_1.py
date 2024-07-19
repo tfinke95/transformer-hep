@@ -142,6 +142,7 @@ num_bins_list=["41 31 31"]
 weight_decay_list=[0.00001]
 hidden_dim_list=[256]
 batch_size_list=[100]
+
 num_events_val=500000
 ###Sampling parameters
 num_samples_test_list=[200000]
@@ -154,6 +155,8 @@ main_dir='/net/data_t2k/transformers-hep/JetClass/'
 bins_path_prefix='preprocessing_bins/'
 ###Training stage
 for jet in list_of_jets:
+
+    
 
     mother_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'
     tag_oftrain=jet+'_run_test_const190_403030_nsamples'
@@ -182,6 +185,13 @@ for jet in list_of_jets:
 
 
     for num_events  in num_events_list:
+    
+        if num_events < 500000:
+            num_events_val=num_events
+        else:
+            num_events_val=500000
+            
+    
         for num_const in num_const_list:
             for batch_size in batch_size_list:
                 for num_bins in num_bins_list:
