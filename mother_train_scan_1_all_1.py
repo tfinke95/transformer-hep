@@ -127,14 +127,14 @@ def random_string():
     return str(res)
 ####Trainning parameters
 
-list_of_jets=['ZToQQ']
+list_of_jets=['TTBar']
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 #list_of_jets=['ZJetsToNuNu']
-num_const_list=[200]
+num_const_list=[190]
 num_epochs_list=[30]
 lr_list=[.001]
 lr_decay_list=[.000001]
-num_events_list=[10000000]
+num_events_list=[100,1000,10000,100000,1000000]
 dropout_list=[0]
 num_heads_list=[4]
 num_layers_list=[8]
@@ -156,7 +156,7 @@ bins_path_prefix='preprocessing_bins/'
 for jet in list_of_jets:
 
     mother_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'
-    tag_oftrain=jet+'_run_test_const190_403030'
+    tag_oftrain=jet+'_run_test_const190_403030_nsamples'
     data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
     model_path=mother_dir+'/'+tag_oftrain
     log_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'+tag_oftrain
@@ -200,7 +200,7 @@ for jet in list_of_jets:
                                                     os.system('python train_1.py --data_path '+str(data_path)+' --model_path '+str(model_path)+' --log_dir '+str(log_dir)+'  --output '+str(output)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --lr_decay '+str(lr_decay)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --dropout '+str(dropout)+' --num_heads '+str(num_heads)+' --num_layers '+str(num_layers)+' --num_bins '+str(num_bins)+' --weight_decay '+str(weight_decay)+' --hidden_dim '+str(hidden_dim)+' --end_token --start_token '+' --name_sufix '+str(name_sufix)+' --num_events_val '+str(num_events_val)+' --checkpoint_steps 1200000')
                                                     
                                                     
-
+                                                    '''
 
                                                     model_path_curr=model_path+'_'+name_sufix
                                                     for num_samples_test in num_samples_test_list:
@@ -235,3 +235,4 @@ for jet in list_of_jets:
                                                             jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
 
                                                             Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
+                                                    '''
