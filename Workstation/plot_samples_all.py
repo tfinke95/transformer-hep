@@ -147,7 +147,7 @@ def LLM(filename):
 
     return jets,ptj,mj
 
-list_of_jets=['TTBar','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','ZToQQ']
+list_of_jets=['TTBar','HToBB','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','ZToQQ']
 
 
 dir_of_test_data='/net/data_t2k/transformers-hep/JetClass/discretized/'
