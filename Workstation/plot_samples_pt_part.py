@@ -63,9 +63,12 @@ def Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_t
     plt.savefig(path_to_plots+'plot_pt_trans_all.png')
     plt.close()
 
-
-    plt.hist(jets_gen[:,:,1].flatten(), bins=eta_bins, color='black',histtype='step',density=True,label="Gen")
-    plt.hist(jets_true[:,:,1].flatten(), bins=eta_bins, color='red',histtype='step',density=True,label="True")
+    mask_eta_true = jets_true[:,:,1][:, :, 0] != 0
+    mask_eta_gen = jets_gen[:,:,1][:, :, 0] != 0
+    
+    
+    plt.hist(mask_eta_gen.flatten(), bins=eta_bins, color='black',histtype='step',density=True,label="Gen")
+    plt.hist(mask_eta_true.flatten(), bins=eta_bins, color='red',histtype='step',density=True,label="True")
     plt.xlabel('$\Delta\eta$')
     plt.legend()
     plt.title(plot_title,loc='left')
