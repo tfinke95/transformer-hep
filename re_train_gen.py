@@ -118,7 +118,9 @@ parser.add_argument(
 parser.add_argument(
         "--checkpoint_steps", type=int, default=100000, help="Model directory"
     )
-
+parser.add_argument(
+        "--logging_steps", type=int, default=10, help="Training steps between logging"
+    )
 parser.add_argument(
         "--contin",      action="store_true",
         help="continue training",
