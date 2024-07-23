@@ -137,6 +137,8 @@ train_loader = load_data(
 #rest = args.num_samples % args.batchsize
 
 # Load model for sampling
+print('model path in')
+print(args.model_path_in)
 model = torch.load(os.path.join(args.model_path_in, args.model_name))
 model.classifier = False
 model.to(device)
