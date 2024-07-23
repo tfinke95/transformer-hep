@@ -161,7 +161,7 @@ dir_of_test_data='/net/data_t2k/transformers-hep/JetClass/discretized/'
 main_dir='/net/data_t2k/transformers-hep/JetClass/'
 bins_path_prefix='../preprocessing_bins/'
 n_samples=100000
-
+trunc_list=[5000,0]
 for jet_name in list_of_jets:
 
     bin_tag='40_30_30_pt_part_'+str(jet_name)
