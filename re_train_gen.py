@@ -12,7 +12,7 @@ import numpy as np
 from model import JetTransformer
 
 from tqdm import tqdm
-from helpers_train import load_data
+#from helpers_train import load_data
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
