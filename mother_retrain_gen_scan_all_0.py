@@ -111,7 +111,7 @@ def Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_t
     plt.close()
     
     
-    mj_bins = np.linspace(0, 1, 100)
+    mj_bins = np.linspace(0, 1, 450)
     
 
     plt.hist(np.clip(mj_gen, mj_bins[0], mj_bins[-1]), bins=mj_bins,color='black',histtype='step',density=True,label="Gen")
@@ -161,7 +161,7 @@ def random_string():
     print("The generated random string : " + str(res))
     return str(res)
 ####Trainning parameters
-model_path_in='/net/data_t2k/transformers-hep/JetClass/All_models_for_OptClass//all_const_403030_ZJetsToNuNu/'
+model_path_in='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models/ZJetsToNuNu_run_test__part_pt_const128_403030_3_UL6IC3V/'
 list_of_jets=['TTBar']
 
 
@@ -196,8 +196,8 @@ bins_path_prefix='preprocessing_bins/'
 for jet in list_of_jets:
 
     mother_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'
-    tag_oftrain=jet+'_finetunefromQCD_const190_403030'
-    data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___10M_'+jet+'.h5'
+    tag_oftrain=jet+'_finetunefromQCD_const128_part_pt_403030'
+    data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___40_30_30_pt_part_'+jet+'.h5'
     model_path=mother_dir+'/'+tag_oftrain
     log_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'+tag_oftrain
     output='linear'
@@ -205,18 +205,18 @@ for jet in list_of_jets:
     ###for sampling
     
 
-    test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___10M_'+jet+'.h5'
+    test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___40_30_30_pt_part_'+jet+'.h5'
     
     
     ###for plotting samples
 
-    bin_tag='10M_'+jet
+    bin_tag='40_30_30_pt_part_'+jet
     pt_bins = np.load(bins_path_prefix+'pt_bins_'+bin_tag+'.npy')
     eta_bins = np.load(bins_path_prefix+'eta_bins_'+bin_tag+'.npy')
     phi_bins = np.load(bins_path_prefix+'phi_bins_'+bin_tag+'.npy')
 
     
-    test_data_name='/discretized/'+jet+'_test___10M_'+jet+'.h5'
+    test_data_name='/discretized/'+jet+'_test___40_30_30_pt_part_'+jet+'.h5'
     discrete_truedata_filename=main_dir+test_data_name
     
     
