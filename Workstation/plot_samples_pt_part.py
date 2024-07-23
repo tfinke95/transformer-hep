@@ -69,8 +69,8 @@ def Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_t
     mask_eta_gen = jets_gen[mask_gen, 1]= 0
     
     
-    plt.hist(mask_eta_gen.flatten(), bins=eta_bins, color='black',histtype='step',density=True,label="Gen")
-    plt.hist(mask_eta_true.flatten(), bins=eta_bins, color='red',histtype='step',density=True,label="True")
+    plt.hist(mask_eta_gen, bins=eta_bins, color='black',histtype='step',density=True,label="Gen")
+    plt.hist(mask_eta_true, bins=eta_bins, color='red',histtype='step',density=True,label="True")
     plt.xlabel('$\Delta\eta$')
     plt.legend()
     plt.title(plot_title,loc='left')
