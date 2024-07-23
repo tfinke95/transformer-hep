@@ -162,7 +162,7 @@ def random_string():
     return str(res)
 ####Trainning parameters
 model_path_in='/net/data_t2k/transformers-hep/JetClass/All_models_for_OptClass//all_const_403030_ZJetsToNuNu/'
-list_of_jets=['HToCC']
+list_of_jets=['TTBar']
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 #list_of_jets=['ZJetsToNuNu']
 num_const_list=[200]
