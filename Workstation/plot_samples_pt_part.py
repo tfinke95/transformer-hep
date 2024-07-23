@@ -63,7 +63,7 @@ def Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_t
     plt.savefig(path_to_plots+'plot_pt_trans_all.png')
     plt.close()
 
-    mask_tr = jets_tr[:, :, 0] != 0
+    mask_tr = jets_true[:, :, 0] != 0
     mask_eta_true = jets_true[mask_tr, 1]
     mask_gen = jets_gen[:, :, 0] != 0
     mask_eta_gen = jets_gen[mask_gen, 1]= 0
