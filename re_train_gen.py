@@ -29,7 +29,7 @@ parser.add_argument("--model_path_in", type=str, default="models/test")
 parser.add_argument("--model_name", type=str, default="model_best.pt")
 
 #parser.add_argument("--num_samples", type=int, default=1000)
-parser.add_argument("--batchsize", type=int, default=100)
+parser.add_argument("--batch_size", type=int, default=100)
 parser.add_argument("--num_const", type=int, default=50)
 parser.add_argument("--seed", type=int, default=0)
 #parser.add_argument("--trunc", type=float, default=None)
