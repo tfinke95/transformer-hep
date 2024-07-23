@@ -172,7 +172,7 @@ for jet_name in list_of_jets:
     
     test_data_dir=main_dir+jet_name+'_models/'
     
-    gen_dirs=os.listdirs(test_data_dir)
+    gen_dirs=os.listdir(test_data_dir)
     
     for gen_dir in gen_dirs:
     
