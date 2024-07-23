@@ -179,8 +179,8 @@ hidden_dim_list=[256]
 batch_size_list=[100]
 num_events_val=500000
 ###Sampling parameters
-#num_samples_test_list=[200]
-num_samples_test=200
+num_samples_test_list=[200]
+#num_samples_test=200
 train_batch_size=100
 num_const_test=200
 trunc_test_list=[5000]
@@ -216,10 +216,7 @@ for jet in list_of_jets:
     test_data_name='/discretized/'+jet+'_test___10M_'+jet+'.h5'
     discrete_truedata_filename=main_dir+test_data_name
     
-    for n_samples in num_samples_test_list:
     
-        jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_samples)
-        print(mj_true)
 
 
         for num_events  in num_events_list:
@@ -240,29 +237,35 @@ for jet in list_of_jets:
                                                     
                                                     
                                                     model_path_curr=model_path+'_'+name_sufix
-                                                    for trunc in trunc_test_list:
+                                                    
+                                                        for n_samples_test in num_samples_test_list:
+    
+                                                            jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_samples_test)
+                                                            print(mj_true)
+                                                    
+                                                            for trunc in trunc_test_list:
                                                             
-                                                            tag_forsample='_nsamples'+str(num_samples_test)+'_trunc_'+str(trunc)
-                                                            command_sample= 'python sample_jets_2.py --model_dir '+model_path_curr+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples_test)+' --num_const '+str(num_const_test)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
-                                                            print(command_sample)
-                                                            os.system(command_sample)
+                                                                tag_forsample='_nsamples'+str(num_samples_test)+'_trunc_'+str(trunc)
+                                                                command_sample= 'python sample_jets_2.py --model_dir '+model_path_curr+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples_test)+' --num_const '+str(num_const_test)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
+                                                                print(command_sample)
+                                                                os.system(command_sample)
                                                     
                                                     
                                                     
-                                                            ####plotting
-                                                            filename=model_path_curr+'/samples_'+tag_forsample+'.h5'
+                                                                ####plotting
+                                                                filename=model_path_curr+'/samples_'+tag_forsample+'.h5'
 
-                                                            path_to_plots=model_path_curr+'/'+tag_forsample
-                                                            os.makedirs(path_to_plots,exist_ok=True)
+                                                                path_to_plots=model_path_curr+'/'+tag_forsample
+                                                                os.makedirs(path_to_plots,exist_ok=True)
 
-                                                            #filename = test_results_dir+"/ttbar_run_b_2_6/samples_test_sample_200k.h5"
-                                                            tmp = pd.read_hdf(filename, key="discretized", stop=None)
-                                                            tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
-                                                            print(tmp.shape)
+                                                                #filename = test_results_dir+"/ttbar_run_b_2_6/samples_test_sample_200k.h5"
+                                                                tmp = pd.read_hdf(filename, key="discretized", stop=None)
+                                                                tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
+                                                                print(tmp.shape)
 
-                                                            mask = tmp[:, :, 0] == -1
-                                                            jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
+                                                                mask = tmp[:, :, 0] == -1
+                                                                jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
 
-                                                            Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
+                                                                Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
 
                                           
