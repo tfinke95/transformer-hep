@@ -171,6 +171,7 @@ model.to(device)
 opt = torch.optim.Adam(
         model.parameters(), lr=args.lr, weight_decay=args.weight_decay)
 print(opt)
+print(len(train_loader))
 scheduler = get_cos_scheduler(args.num_epochs, len(train_loader), opt)
 scaler = torch.cuda.amp.GradScaler()
 
