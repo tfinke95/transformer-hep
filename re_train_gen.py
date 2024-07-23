@@ -161,7 +161,7 @@ args=save_arguments(args)
 # Load model for sampling
 print('model path in')
 print(args.model_path_in)
-exit()
+
 model = torch.load(os.path.join(args.model_path_in, args.model_name))
 model.classifier = False
 model.to(device)
