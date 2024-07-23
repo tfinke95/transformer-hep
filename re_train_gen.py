@@ -55,7 +55,7 @@ parser.add_argument("--seed", type=int, default=0)
 parser.add_argument("--lr", type=float, default=.001)
 
 parser.add_argument("--weight_decay", type=float, default=.00001)
-parser.add_argument("--num_epochs", type=float, default=30)
+parser.add_argument("--num_epochs", type=int, default=30)
 parser.add_argument("--output", type=str, default='linear')
 
 
@@ -133,7 +133,8 @@ set_seeds(args.seed)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 assert device == "cuda", "Not running on GPU"
-
+print('num_epochs')
+print(num_epochs)
 print('limit_const')
 print(args.limit_const)
 num_features = 3
