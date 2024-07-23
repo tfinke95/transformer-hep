@@ -111,7 +111,7 @@ def Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_t
     plt.close()
     
     
-    mj_bins = np.linspace(0, 450, 100)
+    mj_bins = np.linspace(0, 1, 100)
     
 
     plt.hist(np.clip(mj_gen, mj_bins[0], mj_bins[-1]), bins=mj_bins,color='black',histtype='step',density=True,label="Gen")
@@ -182,7 +182,7 @@ hidden_dim_list=[256]
 batch_size_list=[100]
 num_events_val_max=500000
 ###Sampling parameters
-num_samples_test_list=[200]
+num_samples_test_list=[2000]
 #num_samples_test=200
 train_batch_size=100
 num_const_test=200
@@ -270,7 +270,7 @@ for jet in list_of_jets:
                                                                 ####plotting
                                                                 filename=model_path_curr+'/samples_'+tag_forsample+'.h5'
 
-                                                                path_to_plots=model_path_curr+'/'+tag_forsample
+                                                                path_to_plots=model_path_curr+'/'+tag_forsample+'/'
                                                                 os.makedirs(path_to_plots,exist_ok=True)
 
                                                                 #filename = test_results_dir+"/ttbar_run_b_2_6/samples_test_sample_200k.h5"
