@@ -192,7 +192,7 @@ for jet_name in list_of_jets:
         for trunc in trunc_list:
         
             path_to_plots=test_data_dir+gen_dir+'/'+'log_mj_trunc'+str(trunc)+str(n_samples)+'/'
-            test_data_gen =test_data_dir+'/samples_samples_nsamples'+str(n_samples)+'_trunc_'+str(trunc)+'.h5'
+            test_data_gen =test_data_dir+gen_dir+'/samples_samples_nsamples'+str(n_samples)+'_trunc_'+str(trunc)+'.h5'
             jets_gen,ptj_gen,mj_gen=LLM(test_data_gen)
             Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_true,path_to_plots,plot_title)
         
