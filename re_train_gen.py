@@ -144,6 +144,7 @@ num_bins = tuple(args.num_bins)
 print('model path in')
 print(args.model_path_in)
 
+print("Loading training set")
 train_loader = load_data(
         path=args.data_path,
         n_events=args.num_events,
@@ -159,7 +160,20 @@ train_loader = load_data(
     )
 
 
-
+print("Loading validation set")
+val_loader = load_data(
+        path=args.data_path.replace("train", "val"),
+        n_events=args.num_events_val,
+        num_features=num_features,
+        num_bins=num_bins,
+        num_const=args.num_const,
+        reverse=args.reverse,
+        start_token=args.start_token,
+        end_token=args.end_token,
+        limit_const=args.limit_const,
+        batch_size=args.batch_size,
+        num_workers=args.num_workers,
+    )
 
 #n_batches = args.num_samples // args.batchsize
 #rest = args.num_samples % args.batchsize
