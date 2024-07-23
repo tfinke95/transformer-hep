@@ -97,7 +97,7 @@ def LoadTrue(discrete_truedata_filename,n_samples):
     print(tmp)
     print(tmp.shape)
     
-    tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
+    tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
     print(tmp)
     print(tmp.shape)
     print('hello')
@@ -151,7 +151,7 @@ for j in range(4,n_trains):
     tmp = pd.read_hdf(filename, key="discretized", stop=None)
     
     
-    tmp = tmp.to_numpy()[:, :300].reshape(len(tmp), -1, 3)
+    tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
     print(tmp.shape)
 
     mask = tmp[:, :, 0] == -1

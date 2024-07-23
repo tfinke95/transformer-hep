@@ -15,9 +15,10 @@ num_epochs_test=5
 #WtoQQ has different bin tag check that
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 #list_of_jets=['TTBar','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','ZToQQ']
+
 list_of_jets_probs_other=['TTBar','HToBB','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','ZToQQ']
 
-list_of_jets=['ZToQQ']
+list_of_jets=['ZJetsToNuNu']
 for jet in list_of_jets:
 
     bin_tag='10M_'+jet
@@ -51,7 +52,7 @@ for jet in list_of_jets:
                 
                 for jet_other in list_of_jets_probs_other:
                 
-                    test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet_other_test+'___10M_'+jet_other_test+'.h5'
+                    test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet_other+'_test___10M_'+jet_other+'.h5'
                     tag_foreval_other='test_eval_other_nsamples'+str(num_samples)+'_jet_'+str(jet_other)
 
 
