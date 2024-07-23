@@ -65,8 +65,9 @@ def Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_t
 
     mask_tr = jets_true[:, :, 0] != 0
     mask_eta_true = jets_true[mask_tr, 1]
+    
     mask_gen = jets_gen[:, :, 0] != 0
-    mask_eta_gen = jets_gen[mask_gen, 1]= 0
+    mask_eta_gen = jets_gen[mask_gen, 1]
     
     
     plt.hist(mask_eta_gen, bins=eta_bins, color='black',histtype='step',density=True,label="Gen")
