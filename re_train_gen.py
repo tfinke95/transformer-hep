@@ -24,6 +24,24 @@ def set_seeds(seed):
     np.random.seed(seed)
 
 
+def save_arguments(args):
+    '''
+    tmp = args.log_dir
+    i = 0
+    while os.path.isdir(tmp):
+        i += 1
+        #tmp = args.log_dir + f"_{i}"
+        tmp = args.log_dir+"_"+ args.name_sufix
+    '''
+    tmp = args.log_dir+"_"+ args.name_sufix
+    args.log_dir = tmp
+    os.makedirs(args.log_dir)
+    with open(os.path.join(args.log_dir, "arguments.txt"), "w") as f:
+        arg_dict = vars(args)
+        for k, v in arg_dict.items():
+            f.write(f"{k:20s} {v}\n")
+    return args
+
 parser = ArgumentParser()
 parser.add_argument("--model_path_in", type=str, default="models/test")
 parser.add_argument("--model_name", type=str, default="model_best.pt")
@@ -135,10 +153,11 @@ train_loader = load_data(
 
 #n_batches = args.num_samples // args.batchsize
 #rest = args.num_samples % args.batchsize
-
+args=save_arguments(args)
 # Load model for sampling
 print('model path in')
 print(args.model_path_in)
+exit()
 model = torch.load(os.path.join(args.model_path_in, args.model_name))
 model.classifier = False
 model.to(device)
@@ -159,9 +178,10 @@ global_step = args.global_step
 loss_list = []
 perplexity_list = []
 mean_val_loss=9999999
+print('training...')
 for epoch in range(args.num_epochs):
     model.train()
-
+    print('epoch'+str(epoch))
     for x, padding_mask, true_bin in tqdm(
         train_loader, total=len(train_loader), desc=f"Training Epoch {epoch + 1}"
     ):
