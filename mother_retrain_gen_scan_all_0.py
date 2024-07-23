@@ -111,7 +111,7 @@ def Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_t
     plt.close()
     
     
-    mj_bins = np.linspace(0, 1, 450)
+    mj_bins = np.linspace(0, 450, 100)
     
 
     plt.hist(np.clip(mj_gen, mj_bins[0], mj_bins[-1]), bins=mj_bins,color='black',histtype='step',density=True,label="Gen")
