@@ -169,10 +169,10 @@ dict_of_names={'TTBar':r"$t \rightarrow bqq^{\prime} $",'ZJetsToNuNu':"$g/q$",'H
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 #list_of_jets=['ZJetsToNuNu']
 num_const_list=[128]
-num_epochs_list=[3]
+num_epochs_list=[30]
 lr_list=[.001]
 lr_decay_list=[.000001]
-num_events_list=[1000]
+num_events_list=[1000,100,100000,500000]
 dropout_list=[0]
 num_heads_list=[4]
 num_layers_list=[8]
@@ -182,7 +182,7 @@ hidden_dim_list=[256]
 batch_size_list=[100]
 num_events_val_max=500000
 ###Sampling parameters
-num_samples_test_list=[2000]
+num_samples_test_list=[50000]
 #num_samples_test=200
 train_batch_size=100
 num_const_test=200
@@ -196,7 +196,7 @@ bins_path_prefix='preprocessing_bins/'
 for jet in list_of_jets:
 
     mother_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'
-    tag_oftrain=jet+'_finetunefromQCD_const128_part_pt_403030'
+    tag_oftrain=jet+'_finetunefromQCD_const128_part_pt_403030_2'
     data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___40_30_30_pt_part_'+jet+'.h5'
     model_path=mother_dir+'/'+tag_oftrain
     log_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'+tag_oftrain
