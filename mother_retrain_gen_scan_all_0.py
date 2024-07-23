@@ -238,7 +238,7 @@ for jet in list_of_jets:
                                                     
                                                     model_path_curr=model_path+'_'+name_sufix
                                                     
-                                                        for n_samples_test in num_samples_test_list:
+                                                    for n_samples_test in num_samples_test_list:
     
                                                             jets_true,ptj_true,mj_true=LoadTrue(discrete_truedata_filename,n_samples_test)
                                                             print(mj_true)
