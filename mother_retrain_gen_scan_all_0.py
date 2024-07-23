@@ -163,6 +163,9 @@ def random_string():
 ####Trainning parameters
 model_path_in='/net/data_t2k/transformers-hep/JetClass/All_models_for_OptClass//all_const_403030_ZJetsToNuNu/'
 list_of_jets=['TTBar']
+
+
+dict_of_names={'TTBar':r"$t \rightarrow bqq^{\prime} $",'ZJetsToNuNu':"$g/q$",'HToBB':"$H\rightarrow b\bar b $",'HToCC':"$H \rightarrow c \bar c$",'HToGG':"$H \rightarrow gg$",'HToWW2Q1L':"$H \rightarrow lvqq^{\prime}$",'HToWW4Q':"$H \rightarrow 4q$",'TTBarLep':"$H \rightarrow blv$",'WToQQ':"$W \rightarrow  qq^{\prime}$",'ZToQQ':"$Z \rightarrow q \bar q$"}
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 #list_of_jets=['ZJetsToNuNu']
 num_const_list=[128]
@@ -276,8 +279,9 @@ for jet in list_of_jets:
                                                                 print(tmp.shape)
 
                                                                 mask = tmp[:, :, 0] == -1
-                                                                jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
-
-                                                                Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
+                                                                jets_gen,ptj_gen,mj_gen = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
+                                                                plot_title=dict_of_names.get(jet)
+                                                                #Make_Plots(jets,pt_bins,eta_bins,phi_bins,mj,jets_true,ptj_true,mj_true,path_to_plots)
+                                                                Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_true,path_to_plots,plot_title)
 
                                           
