@@ -134,7 +134,7 @@ set_seeds(args.seed)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 assert device == "cuda", "Not running on GPU"
 print('num_epochs')
-print(num_epochs)
+print(args.num_epochs)
 print('limit_const')
 print(args.limit_const)
 num_features = 3
