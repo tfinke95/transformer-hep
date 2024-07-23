@@ -219,7 +219,7 @@ for jet in list_of_jets:
     
 
 
-        for num_events  in num_events_list:
+    for num_events  in num_events_list:
             for num_const in num_const_list:
                 for batch_size in batch_size_list:
                     for num_bins in num_bins_list:
