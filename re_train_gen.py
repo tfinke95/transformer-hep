@@ -12,7 +12,7 @@ import numpy as np
 from model import JetTransformer
 
 from tqdm import tqdm
-#from helpers_train import load_data
+from helpers_train import *
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
@@ -45,6 +45,7 @@ def save_arguments(args):
 parser = ArgumentParser()
 parser.add_argument("--model_path_in", type=str, default="models/test")
 parser.add_argument("--model_name", type=str, default="model_best.pt")
+parser.add_argument("--model_path", type=str, default="models/test_2")
 
 #parser.add_argument("--num_samples", type=int, default=1000)
 parser.add_argument("--batch_size", type=int, default=100)
