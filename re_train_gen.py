@@ -115,11 +115,12 @@ assert device == "cuda", "Not running on GPU"
 print('limit_const')
 print(args.limit_const)
 num_features = 3
+num_bins = tuple(args.num_bins)
 train_loader = load_data(
         path=args.data_path,
         n_events=args.num_events,
         num_features=num_features,
-        num_bins=args.num_bins,
+        num_bins=num_bins,
         num_const=args.num_const,
         reverse=args.reverse,
         start_token=args.start_token,
