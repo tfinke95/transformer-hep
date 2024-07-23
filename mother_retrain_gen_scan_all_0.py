@@ -165,7 +165,7 @@ model_path_in='/net/data_t2k/transformers-hep/JetClass/All_models_for_OptClass//
 list_of_jets=['TTBar']
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 #list_of_jets=['ZJetsToNuNu']
-num_const_list=[200]
+num_const_list=[128]
 num_epochs_list=[3]
 lr_list=[.001]
 lr_decay_list=[.000001]
@@ -177,7 +177,7 @@ num_bins_list=["41 31 31"]
 weight_decay_list=[0.00001]
 hidden_dim_list=[256]
 batch_size_list=[100]
-num_events_val=500000
+num_events_val_max=500000
 ###Sampling parameters
 num_samples_test_list=[200]
 #num_samples_test=200
@@ -220,6 +220,12 @@ for jet in list_of_jets:
 
 
     for num_events  in num_events_list:
+    
+            if num_events<num_events_val_max:
+                num_events_val=num_events
+            else:
+                num_events_val=num_events_val_max
+    
             for num_const in num_const_list:
                 for batch_size in batch_size_list:
                     for num_bins in num_bins_list:
