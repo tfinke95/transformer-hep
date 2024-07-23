@@ -123,7 +123,7 @@ parser.add_argument(
         "--contin",      action="store_true",
         help="continue training",
     )
-    parser.add_argument(
+parser.add_argument(
         "--global_step", type=int, default=0, help="Starting point of step counter"
     )
 
