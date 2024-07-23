@@ -37,6 +37,8 @@ parser.add_argument("--lr", type=float, default=.001)
 
 parser.add_argument("--weight_decay", type=float, default=.00001)
 parser.add_argument("--num_epochs", type=float, default=30)
+parser.add_argument("--output", type=str, default='linear')
+
 
 parser.add_argument(
         "--name_sufix", type=str, default="A1B2C3D", help="name of train dir"
