@@ -12,7 +12,7 @@ import numpy as np
 from model import JetTransformer
 
 from tqdm import tqdm
-from helpers_train import *
+from helpers_train import load_data
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
@@ -134,6 +134,9 @@ print('limit_const')
 print(args.limit_const)
 num_features = 3
 num_bins = tuple(args.num_bins)
+print('model path in')
+print(args.model_path_in)
+
 train_loader = load_data(
         path=args.data_path,
         n_events=args.num_events,
