@@ -155,7 +155,7 @@ def LLM(filename):
 
 list_of_jets=['TTBar']
 
-dict_of_names={'TTBar':"$t \rightarrow bqq'$",'ZJetsToNuNu':"$g/q$",'HToBB':"H\rightarrow b\bar b ",'HToCC':"H \rightarrow c \bar c",'HToGG':"H \rightarrow gg",'HToWW2Q1L':"H \rightarrow lvqq'",'HToWW4Q':"H \rightarrow 4q",'TTBarLep':"H \rightarrow blv",'WToQQ':"W \rightarrow  qq'",'ZToQQ':"Z \rightarrow q \bar q"}
+dict_of_names={'TTBar':"$t \rightarrow bqq'$",'ZJetsToNuNu':"$g/q$",'HToBB':"$H\rightarrow b\bar b "$,'HToCC':"$H \rightarrow c \bar c$",'HToGG':"$H \rightarrow gg$",'HToWW2Q1L':"$H \rightarrow lvqq'$",'HToWW4Q':"$H \rightarrow 4q$",'TTBarLep':"$H \rightarrow blv$",'WToQQ':"$W \rightarrow  qq'$",'ZToQQ':"$Z \rightarrow q \bar q$"}
 
 dir_of_test_data='/net/data_t2k/transformers-hep/JetClass/discretized/'
 main_dir='/net/data_t2k/transformers-hep/JetClass/'
