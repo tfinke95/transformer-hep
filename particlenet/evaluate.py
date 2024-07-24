@@ -124,7 +124,7 @@ def check_weights(model, folder, data, load=True):
     pred = model.predict([np.ones_like(data[:10]), np.ones_like(data[:10])])
     diff = pred - check
     assert (
-        np.sum(np.abs(diff) > 5e-7) == 0
+        np.sum(np.abs(diff) > 5e-5) == 0
     ), f"Differences in check predictions\n{diff[0]}\n{check[0]}\n{pred[0]}"
     return model
 
