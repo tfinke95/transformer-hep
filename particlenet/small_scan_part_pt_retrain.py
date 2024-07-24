@@ -64,7 +64,7 @@ sig_dirs=os.listdir(sig_dirs_path)
 
 for sig_dir in sig_dirs:
 
-    file_sig=sig_dirs+sig_dir+'samples__nsamples50000_trunc_5000.h5'
+    file_sig=sig_dirs_path+sig_dir+'samples__nsamples50000_trunc_5000.h5'
 
 
 
