@@ -157,7 +157,7 @@ def load_data(params, test=False, plot_dists=None,):
 
     if params["bg_key"] == "discretized":
         print(f"BG made continuous, with noise {params['bg_noise']}\n")
-        bg = make_continues(bg,'bg', mask=bg_mask,bins_tag=params["bins_tag_bg"] noise=params["bg_noise"],)
+        bg = make_continues(bg,'bg', mask=bg_mask,bins_tag=params["bins_tag_bg"], noise=params["bg_noise"],)
         
     else:
         bg[~bg_mask] = 0
