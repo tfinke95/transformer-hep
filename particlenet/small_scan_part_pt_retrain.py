@@ -72,7 +72,7 @@ for sig_dir in sig_dirs:
     config_dict=OpenConfig(config_file)
     out_dir='logs/retrain_gen_ttbar_50k_test_'+str(sig_dir)
     UpdateConfig(config_dict,sig_file,bg_file,out_dir)
-    SaveNewConfig(config_dict,config_file_disc)
+    SaveNewConfig(config_dict,config_file)
     train(config_file)
     config_file_trained=out_dir+'/config.json'
     
