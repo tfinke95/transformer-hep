@@ -73,18 +73,18 @@ def get_config(test=False):
     return config
 
 
-def make_continues(jets,jet_type, mask, noise=False):
-    if jet_type=='top':
+def make_continues(jets,jet_type, mask,bins_tag, noise=False):
+    if jet_type=='sig':
 
 
-        pt_bins = np.load("../preprocessing_bins/pt_bins_10M_TTBar.npy")
-        eta_bins = np.load("../preprocessing_bins/eta_bins_10M_TTBar.npy")
-        phi_bins = np.load("../preprocessing_bins/phi_bins_10M_TTBar.npy")
-    if jet_type=='qcd':
+        pt_bins = np.load("../preprocessing_bins/pt_bins_"+bins_tag+".npy")
+        eta_bins = np.load("../preprocessing_bins/eta_bins_"+bins_tag+".npy")
+        phi_bins = np.load("../preprocessing_bins/phi_bins_"+bins_tag+".npy")
+    if jet_type=='bg':
 
-        pt_bins = np.load("../preprocessing_bins/pt_bins_10M_ZJetsToNuNu.npy")
-        eta_bins = np.load("../preprocessing_bins/eta_bins_10M_ZJetsToNuNu.npy")
-        phi_bins = np.load("../preprocessing_bins/phi_bins_10M_ZJetsToNuNu.npy")
+        pt_bins = np.load("../preprocessing_bins/pt_bins_"+bins_tag+".npy")
+        eta_bins = np.load("../preprocessing_bins/eta_bins_"+bins_tag+".npy")
+        phi_bins = np.load("../preprocessing_bins/phi_bins_"+bins_tag+".npy")
 
 
 
@@ -157,13 +157,14 @@ def load_data(params, test=False, plot_dists=None,):
 
     if params["bg_key"] == "discretized":
         print(f"BG made continuous, with noise {params['bg_noise']}\n")
-        bg = make_continues(bg,'qcd', mask=bg_mask, noise=params["bg_noise"],)
+        bg = make_continues(bg,'bg', mask=bg_mask,bins_tag=params["bins_tag_bg"] noise=params["bg_noise"],)
+        
     else:
         bg[~bg_mask] = 0
 
     if params["sig_key"] == "discretized":
         print(f"Sig made continuous, with noise {params['bg_noise']}\n")
-        sig = make_continues(sig,'top', mask=sig_mask, noise=params["sig_noise"])
+        sig = make_continues(sig,'sig', mask=sig_mask,bins_tag=params["bins_tag_sig"] ,noise=params["sig_noise"])
     else:
         sig[~sig_mask] = 0
 
