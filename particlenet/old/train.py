@@ -8,6 +8,10 @@ import time
 start = time.time()
 tfk = tf.keras
 
+#torch.multiprocessing.set_sharing_strategy("file_system")
+
+#os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+
 gpu = tf.config.list_physical_devices("GPU")
 assert len(gpu) > 0, f"No GPU found, abort"
 
@@ -46,7 +50,7 @@ def train_model(model, data, labels, train_params, logfolder, mask):
                 monitor="val_loss", patience=12, verbose=1, restore_best_weights=True
             ),
             tfk.callbacks.ModelCheckpoint(
-                os.path.join(logfolder, "checkpoint_{epoch:02d}_.weights.h5"),
+                os.path.join(logfolder, "checkpoint_{epoch:02d}"),
                 save_best_only=False,
                 save_freq=data.shape[0] // train_params["batch_size"] * 5,
                 save_weights_only=True,

@@ -1,6 +1,6 @@
 import numpy as np
 from graphnet import GraphNet
-from data_loader import get_config, load_data
+from data_loader_orig import get_config, load_data
 import os
 import tensorflow as tf
 import time
