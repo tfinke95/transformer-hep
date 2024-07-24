@@ -70,7 +70,7 @@ for sig_dir in sig_dirs:
 
     
     config_dict=OpenConfig(config_file)
-    out_dir='logs/retrain_gen_ttbar_50k_test_'+str(sig_dir)
+    out_dir='logs/retrain_gen_ttbar_50k_test2_'+str(sig_dir)
     UpdateConfig(config_dict,sig_file,bg_file,out_dir)
     SaveNewConfig(config_dict,config_file)
     train(config_file)
