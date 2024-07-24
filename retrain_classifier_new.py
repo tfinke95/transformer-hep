@@ -244,9 +244,9 @@ if __name__ == "__main__":
 
 
     state_dicts = torch.load(os.path.join(args.model_path_in, "opt_state_dict.pt"))
-    opt.load_state_dict(state_dicts["opt_state_dict_best"])
-    scheduler.load_state_dict(state_dicts["sched_state_dict_best"])
-    scaler.load_state_dict(state_dicts["scaler_state_dict_best"])
+    opt.load_state_dict(state_dicts["opt_state_dict"])
+    scheduler.load_state_dict(state_dicts["sched_state_dict"])
+    scaler.load_state_dict(state_dicts["scaler_state_dict"])
 
 
 
