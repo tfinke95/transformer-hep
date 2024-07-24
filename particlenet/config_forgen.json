@@ -28,7 +28,7 @@
             "static": false
       },
       "data": {
-            "sig_file": "/net/data_t2k/transformers-hep/JetClass/TTBar_models/fine_tunning_pt_part/TTBar_finetunefromQCD_const128_part_pt_403030_2_4KRL7ZF /samples__nsamples50000_trunc_5000.h5",
+            "sig_file": "/net/data_t2k/transformers-hep/JetClass/TTBar_models/fine_tunning_pt_part/TTBar_finetunefromQCD_const128_part_pt_403030_2_4KRL7ZF/samples__nsamples50000_trunc_5000.h5",
             "bg_file": "/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/TTBar_test.h5",
             "n_jets": 50000,
             "n_const": 100,
