@@ -23,7 +23,7 @@ main_dir_discrete='/net/data_t2k/transformers-hep/JetClass/discretized/'
 
 sig_list=['ZToQQ_train___10M_ZToQQ.h5']
 bg_list=['ZJetsToNuNu_train___10M_ZJetsToNuNu.h5']
-num_epochs_list=[3]
+num_epochs_list=[30]
 dropout_list=[0.0]
 num_heads_list=[4]
 num_layers_list=[8]
@@ -33,7 +33,7 @@ num_events_list=[1000,10000,100000,1000000,10000000]
 num_const_list=[100]
 lr_list=[.001]
 
-tag_of_train='z_vs_qcd_jetclass_retrain_classifier_30epochs_1'
+tag_of_train='z_vs_qcd_jetclass_retrain_classifier_30epochs_2'
 log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/'+tag_of_train
 model_name='model_best.pt'
 model_path_in='/net/data_t2k/transformers-hep/JetClass/Classification/top_vs_qcd_jetclass_classifier_test_1_IEN4QHG/'
