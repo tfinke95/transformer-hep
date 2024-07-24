@@ -58,7 +58,7 @@ prefix_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M
 file_bg='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/TTBar_test.h5'
 sig_dirs_path='/net/data_t2k/transformers-hep/JetClass/TTBar_models/fine_tunning_pt_part/'
 
-sig_dirs=os.listfir(sig_dirs_path)
+sig_dirs=os.listdir(sig_dirs_path)
 
 
 
