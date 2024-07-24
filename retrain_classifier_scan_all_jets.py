@@ -29,11 +29,11 @@ num_heads_list=[4]
 num_layers_list=[8]
 hidden_dim_list=[256]
 batch_size_list=[100]
-num_events_list=[1000]
+num_events_list=[1000,10000,100000,1000000,10000000]
 num_const_list=[100]
 lr_list=[.001]
 
-tag_of_train='z_vs_qcd_jetclass_retrain_classifier_test_1'
+tag_of_train='z_vs_qcd_jetclass_retrain_classifier_30epochs_1'
 log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/'+tag_of_train
 model_name='model_best.pt'
 model_path_in='/net/data_t2k/transformers-hep/JetClass/Classification/top_vs_qcd_jetclass_classifier_test_1_IEN4QHG/'
