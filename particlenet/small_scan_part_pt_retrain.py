@@ -55,7 +55,7 @@ prefix_znunu='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_te
 prefix_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_bins_tag_TTBar.h5'
 
 
-file_bg='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/TTBar_test.h5'
+bg_file='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/TTBar_test.h5'
 sig_dirs_path='/net/data_t2k/transformers-hep/JetClass/TTBar_models/fine_tunning_pt_part/'
 
 sig_dirs=os.listdir(sig_dirs_path)
@@ -64,7 +64,7 @@ sig_dirs=os.listdir(sig_dirs_path)
 
 for sig_dir in sig_dirs:
 
-    file_sig=sig_dirs_path+sig_dir+'samples__nsamples50000_trunc_5000.h5'
+    sig_file=sig_dirs_path+sig_dir+'samples__nsamples50000_trunc_5000.h5'
 
 
 
