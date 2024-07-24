@@ -7,9 +7,9 @@ from pprint import pprint
 def OpenConfig(config_file_name):
     f=open(config_file_name)
     d = json.load(f)
-    print(d)
+
     data=d.get('data')
-    print(data)
+
     return d
 
 def UpdateConfig(config_dict,sig_file,bg_file,out_dir):
