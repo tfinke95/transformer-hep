@@ -35,7 +35,7 @@
             "bg_key": "discretized",
             "sig_key":"discretized",
             "bins_tag_sig": "40_30_30_pt_part_TTBar",
-            "bins_tag_bg": "none",
+            "bins_tag_bg": "40_30_30_pt_part_TTBar",
             "seed": 0,
             "bg_noise": false,
             "sig_noise": false
