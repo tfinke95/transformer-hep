@@ -52,7 +52,7 @@ config_file='config_forgen_part_pt.json'
 
 
 
-bg_file='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/TTBar_test.h5'
+bg_file='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___40_30_30_pt_part_TTBar.h5'
 sig_dirs_path='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/'
 
 sig_dirs=os.listdir(sig_dirs_path)
@@ -67,7 +67,7 @@ for sig_dir in sig_dirs:
 
     
     config_dict=OpenConfig(config_file)
-    out_dir='logs/part_pt_gen_ttbar_50k_30epochs_'+str(sig_dir)
+    out_dir='logs/part_pt_gen_ttbar_50k_30epochs_alldisc_'+str(sig_dir)
     UpdateConfig(config_dict,sig_file,bg_file,out_dir)
     SaveNewConfig(config_dict,config_file)
     train(config_file)
