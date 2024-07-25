@@ -51,11 +51,9 @@ def evaluate(config_file_trained):
 config_file='config_forgen.json'
 
 
-prefix_znunu='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_bins_tag_ZJetsToNuNu.h5'
-prefix_top='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_bins_tag_TTBar.h5'
 
 
-bg_file='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/TTBar_test.h5'
+bg_file='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___40_30_30_pt_part_TTBar.h5'
 sig_dirs_path='/net/data_t2k/transformers-hep/JetClass/TTBar_models/fine_tunning_pt_part/'
 
 sig_dirs=os.listdir(sig_dirs_path)
