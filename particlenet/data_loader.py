@@ -29,6 +29,11 @@ def transform_momenta(momenta, mask):
     #logpts[~mask] = 0
     #logpt_ptj = np.log(pts+1e-90)
     
+    logpts = np.log(pts)
+    logpt_ptj = np.log(pts / ptj.reshape(-1, 1))
+    #print(np.count_nonzero(np.isinf(logpts)))
+    #print('inf back')
+    logpts[~mask] = 0
  
     #logpt_ptj[~mask] = 0
     
@@ -40,7 +45,7 @@ def transform_momenta(momenta, mask):
     #)
 
     newVec = np.stack(
-        [etas, phis, pts, pts/ptj, drs],
+        [etas, phis, logpts, logpt_ptj, drs],
         -1,
     )
 
