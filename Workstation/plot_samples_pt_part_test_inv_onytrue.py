@@ -66,7 +66,7 @@ def make_continues(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
 
     return continues_jets, ptj, mj
 
-def make_continues(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
+def make_continues_rot(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
 
 
     pt_disc = jets[:, :, 0]
