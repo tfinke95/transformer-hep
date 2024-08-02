@@ -308,7 +308,7 @@ for jet_name in list_of_jets:
             test_data_gen =test_data_dir+gen_dir+'/samples__nsamples'+str(n_samples)+'_trunc_'+str(trunc)+'.h5'
             
             jets_gen,ptj_gen,mj_gen=LLM(test_data_gen)
-            Make_Plots(jets_rot,mj_rot,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_true,path_to_plots,plot_title)
+            Make_Plots(jets_true_rot,mj_true_rot,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_true,path_to_plots,plot_title)
         
 
 
