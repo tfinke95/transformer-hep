@@ -119,10 +119,10 @@ def make_continues_rot(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
     pzj = np.sum(pzs, -1)
     ej = np.sum(es, -1)
     
-    ptj = np.sqrt(pxj**2 + pyj**2)
-    mj = (ej ** 2 - pxj ** 2 - pyj ** 2 - pzj ** 2) ** (1. / 2)
+    ptj_rot = np.sqrt(pxj**2 + pyj**2)
+    mj_rot = (ej ** 2 - pxj ** 2 - pyj ** 2 - pzj ** 2) ** (1. / 2)
 
-    continues_jets = np.stack((pt_con, eta_con, phi_con), -1)
+    continues_jets_rot = np.stack((pt_con, eta_con, phi_con), -1)
 
     return continues_jets_rot, ptj_rot, mj_rot
 
