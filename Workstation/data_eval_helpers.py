@@ -30,6 +30,8 @@ def make_continues(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
 
 
     pt_con = np.exp(pt_con)
+    
+    
     pt_con[mask] = 0.0
     eta_con[mask] = 0.0
     phi_con[mask] = 0.0
@@ -46,7 +48,8 @@ def make_continues(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
     
     ptj = np.sqrt(pxj**2 + pyj**2)
     mj = (ej ** 2 - pxj ** 2 - pyj ** 2 - pzj ** 2) ** (1. / 2)
-
+    
+    
     continues_jets = np.stack((pt_con, eta_con, phi_con), -1)
 
     return continues_jets, ptj, mj

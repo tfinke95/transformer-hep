@@ -103,6 +103,7 @@ def Make_Plots(jets_gen,mj_gen,pt_bins,eta_bins,phi_bins,jets_true,ptj_true,mj_t
     
     
     plt.hist(np.clip(mj_true, mj_bins[0], mj_bins[-1]), bins=mj_bins,color='red',histtype='step',density=True,label="True")
+    
     plt.legend()
     plt.title(plot_title,loc='left')
     plt.xlabel('$m_{jet}$')

@@ -94,6 +94,8 @@ def parse_input():
         default="/hpcwork/bn227573/top_benchmark/train_qcd_30_bins.h5",
         help="Path to training data file",
     )
+    
+
     parser.add_argument(
         "--model_path",
         type=str,

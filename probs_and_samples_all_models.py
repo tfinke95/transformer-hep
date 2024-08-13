@@ -15,18 +15,18 @@ num_epochs_test=5
 #WtoQQ has different bin tag check that
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 #list_of_jets=['TTBar','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','ZToQQ']
-list_of_jets=['TTBar','HToBB','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','ZToQQ']
+list_of_jets=['TTBar']
 for jet in list_of_jets:
 
-    bin_tag='10M_'+jet
+    bin_tag='40_30_30_pt_part_'+jet
     
-    test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___10M_'+jet+'.h5'
-    test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
-    mother_dir='/net/data_t2k/transformers-hep/JetClass/All_models_for_OptClass/'
+    test_dataset='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_test___40_30_30_pt_part_'+jet+'.h5'
+    test_dataset_other='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___40_30_30_pt_part_ZJetsToNuNu.h5'
+    mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/'
     #tag_oftrain=''+jet+'_run_testwall_10M'
 
 
-
+    
     for num_samples in num_samples_list:
         for trunc in trunc_list:
 
