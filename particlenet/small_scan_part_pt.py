@@ -60,6 +60,10 @@ sig_dirs=os.listdir(sig_dirs_path)
 
 
 for sig_dir in sig_dirs:
+    if 'O0KHIRP' not in sig_dir:
+        continue
+
+    print(sig_dir)
 
     sig_file=sig_dirs_path+sig_dir+'/samples__nsamples100000_trunc_5000.h5'
 
@@ -67,7 +71,7 @@ for sig_dir in sig_dirs:
 
     
     config_dict=OpenConfig(config_file)
-    out_dir='logs/part_pt_gen_ttbar_50k_30epochs_alldisc_'+str(sig_dir)
+    out_dir='logs/part_pt_gen_ttbar_50k_30epochs_10M_alldisc_'+str(sig_dir)
     UpdateConfig(config_dict,sig_file,bg_file,out_dir)
     SaveNewConfig(config_dict,config_file)
     train(config_file)

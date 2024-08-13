@@ -127,14 +127,14 @@ def random_string():
     return str(res)
 ####Trainning parameters
 
-list_of_jets=['ZJetsToNuNu']
+list_of_jets=['HToBB','HToCC']
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 #list_of_jets=['ZJetsToNuNu']
 num_const_list=[128]
 num_epochs_list=[30]
 lr_list=[.001]
 lr_decay_list=[.000001]
-num_events_list=[500000,10000000,100000,10000]
+num_events_list=[10000000]
 dropout_list=[0]
 num_heads_list=[4]
 num_layers_list=[8]
@@ -144,10 +144,10 @@ hidden_dim_list=[256]
 batch_size_list=[100]
 num_events_val_max=500000
 ###Sampling parameters
-num_samples_test_list=[100000]
+num_samples_test_list=[200000,1000000]
 train_batch_size=100
 num_const_test=128
-trunc_test_list=[5000,0]
+trunc_test_list=[5000]
 model_name='model_best.pt'
 
 main_dir='/net/data_t2k/transformers-hep/JetClass/'

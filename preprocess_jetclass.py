@@ -7,7 +7,7 @@ from tqdm import tqdm
 
 torch.multiprocessing.set_sharing_strategy("file_system")
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 def preprocess_dataframe(
     df,

@@ -3,7 +3,7 @@ import os
 
 
 
-num_samples_list=[100000]
+num_samples_list=[200000]
 train_batch_size=100
 num_const=128
 trunc_list=[5000]
@@ -29,6 +29,9 @@ for jet in list_of_jets:
 
     models_dirs=os.listdir(mother_dir)
     for model_dir in models_dirs:
+        if 'O0KHIRP' not in model_dir:
+            continue
+
         for num_samples in num_samples_list:
             for trunc in trunc_list:
 
@@ -51,9 +54,9 @@ for jet in list_of_jets:
                 os.system(command_eval_other)
 
 
-                #command_sample= 'python sample_jets_1.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
-                #print(command_sample)
-                #os.system(command_sample)
+                command_sample= 'python sample_jets_1.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
+                print(command_sample)
+                os.system(command_sample)
         
                 #bg=test_dataset
                 #sg=model_path+'samples_'+tag_forsample+'.h5'

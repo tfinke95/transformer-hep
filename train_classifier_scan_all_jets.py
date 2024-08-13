@@ -21,7 +21,8 @@ def random_string():
     
 main_dir_discrete='/net/data_t2k/transformers-hep/JetClass/discretized/'
 
-sig_list=['ZToQQ_train___10M_ZToQQ.h5']
+#list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
+sig_list=['HToBB_train___10M_HToBB.h5','HToCC_train___10M_HToCC.h5','HToGG_train___10M_HToGG.h5','HToWW2Q1L_train___10M_HToWW2Q1L.h5','HToWW4Q_train___10M_HToWW4Q.h5','TTBarLep_train___10M_TTBarLep.h5','WToQQ_train___10M_WToQQ.h5']
 bg_list=['ZJetsToNuNu_train___10M_ZJetsToNuNu.h5']
 num_epochs_list=[30]
 dropout_list=[0.0]
@@ -29,11 +30,11 @@ num_heads_list=[4]
 num_layers_list=[8]
 hidden_dim_list=[256]
 batch_size_list=[100]
-num_events_list=[10000,100000,1000000,1000,10000000]
+num_events_list=[1000000]
 num_const_list=[100]
 lr_list=[.001]
 
-tag_of_train='z_vs_qcd_jetclass_classifier_test_1'
+tag_of_train='z_vs_qcd_jetclass_classifier_1M_1'
 log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/'+tag_of_train
 
 for sig in sig_list:

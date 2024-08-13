@@ -166,15 +166,15 @@ def LLM(filename):
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQQ','ZToQQ']
 
 
-list_of_jets=['TTBar']
+list_of_jets=['HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQQ','ZToQQ']
 
-dict_of_names={'TTBar':r"$t \rightarrow bqq^{\prime} $",'ZJetsToNuNu':"$g/q$",'HToBB':"$H\rightarrow b\bar b $",'HToCC':"$H \rightarrow c \bar c$",'HToGG':"$H \rightarrow gg$",'HToWW2Q1L':"$H \rightarrow lvqq^{\prime}$",'HToWW4Q':"$H \rightarrow 4q$",'TTBarLep':"$H \rightarrow blv$",'WToQQ':"$W \rightarrow  qq^{\prime}$",'ZToQQ':"$Z \rightarrow q \bar q$"}
+dict_of_names={'TTBar':r"$t \rightarrow bqq^{\prime} $",'ZJetsToNuNu':r"$g/q$",'HToBB':r"$H\rightarrow b\bar b $",'HToCC':r"$H \rightarrow c \bar c$",'HToGG':r"$H \rightarrow gg$",'HToWW2Q1L':r"$H \rightarrow lvqq^{\prime}$",'HToWW4Q':r"$H \rightarrow 4q$",'TTBarLep':r"$H \rightarrow blv$",'WToQQ':r"$W \rightarrow  qq^{\prime}$",'ZToQQ':r"$Z \rightarrow q \bar q$"}
 
 dir_of_test_data='/net/data_t2k/transformers-hep/JetClass/discretized/'
 main_dir='/net/data_t2k/transformers-hep/JetClass/'
 bins_path_prefix='../preprocessing_bins/'
 n_samples=100000
-trunc_list=[5000,0]
+trunc_list=[5000]
 for jet_name in list_of_jets:
 
     bin_tag='40_30_30_pt_part_'+str(jet_name)
@@ -189,7 +189,7 @@ for jet_name in list_of_jets:
     
     for gen_dir in gen_dirs:
     
-        if '3_Z2HKIU0' not in gen_dir:
+        if '_run_test__part_pt_const128_403030_3' not in gen_dir:
             continue
     
     

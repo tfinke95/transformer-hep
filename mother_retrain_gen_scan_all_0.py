@@ -161,7 +161,7 @@ def random_string():
     print("The generated random string : " + str(res))
     return str(res)
 ####Trainning parameters
-model_path_in='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models/ZJetsToNuNu_run_test__part_pt_const128_403030_3_UL6IC3V/'
+model_path_in='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models/Part_pt_1_zjetnunu/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/'
 list_of_jets=['TTBar']
 
 
@@ -172,7 +172,7 @@ num_const_list=[128]
 num_epochs_list=[30]
 lr_list=[.001]
 lr_decay_list=[.000001]
-num_events_list=[1000,100,100000,500000]
+num_events_list=[1000,100,100000,10000,500000]
 dropout_list=[0]
 num_heads_list=[4]
 num_layers_list=[8]
@@ -185,7 +185,7 @@ num_events_val_max=500000
 num_samples_test_list=[50000]
 #num_samples_test=200
 train_batch_size=100
-num_const_test=200
+num_const_test=128
 trunc_test_list=[5000]
 model_name='model_best.pt'
 
@@ -196,7 +196,7 @@ bins_path_prefix='preprocessing_bins/'
 for jet in list_of_jets:
 
     mother_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'
-    tag_oftrain=jet+'_finetunefromQCD_const128_part_pt_403030_2'
+    tag_oftrain=jet+'_finetunefromQCD10M_const128_part_pt_403030_2'
     data_path='/net/data_t2k/transformers-hep/JetClass/discretized/'+jet+'_train___40_30_30_pt_part_'+jet+'.h5'
     model_path=mother_dir+'/'+tag_oftrain
     log_dir='/net/data_t2k/transformers-hep/JetClass/'+jet+'_models/'+tag_oftrain

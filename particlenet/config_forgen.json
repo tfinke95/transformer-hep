@@ -28,12 +28,12 @@
             "static": false
       },
       "data": {
-            "sig_file": "/net/data_t2k/transformers-hep/JetClass/TTBar_models/fine_tunning_pt_part/TTBar_finetunefromQCD_const128_part_pt_403030_2_4KRL7ZF/samples__nsamples50000_trunc_5000.h5",
+            "sig_file": "/net/data_t2k/transformers-hep/JetClass/TTBar_models/fine_tunning_pt_part/TTBar_finetunefromQCD_const128_part_pt_403030_2_WF9TWJR/samples__nsamples50000_trunc_5000.h5",
             "bg_file": "/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___40_30_30_pt_part_TTBar.h5",
             "n_jets": 50000,
             "n_const": 100,
             "bg_key": "discretized",
-            "sig_key":"discretized",
+            "sig_key": "discretized",
             "bins_tag_sig": "40_30_30_pt_part_TTBar",
             "bins_tag_bg": "40_30_30_pt_part_TTBar",
             "seed": 0,
@@ -48,7 +48,7 @@
             "verbose": 1
       },
       "logging": {
-            "logfolder": "logs/part_pt_gen_test"
+            "logfolder": "logs/retrain_gen_ttbar_50k_30epochs_alldisc_1_TTBar_finetunefromQCD_const128_part_pt_403030_2_WF9TWJR"
       },
       "mask": true
 }
