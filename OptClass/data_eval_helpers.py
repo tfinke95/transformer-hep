@@ -111,12 +111,13 @@ def LoadTrue(discrete_truedata_filename,n_samples,pt_bins,eta_bins,phi_bins):
 
 def LoadSGenamples(filename,pt_bins,eta_bins,phi_bins,n_samples):
 
-    tmp = pd.read_hdf(filename, key="discretized", stop=None)
-    tmp=tmp.sample(n_samples)
+    tmp = pd.read_hdf(filename, key="discretized", start=0, stop=n_samples)
+   
 
-    tmp = tmp.to_numpy()[:, :600].reshape(len(tmp), -1, 3)
+    tmp = tmp.to_numpy()[:n_samples, :600].reshape(len(tmp), -1, 3)
     print(tmp)
-
+    print(np.shape(tmp))
+ 
     mask = tmp[:, :, 0] == -1
     jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
 
