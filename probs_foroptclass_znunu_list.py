@@ -4,14 +4,14 @@ import os
 
 
 
-test_dataset='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models//ZJetsToNuNu_run_scan_10M_N1G96CW/samples__nsamples200000_trunc_5000.h5'
-test_dataset_other='/net/data_t2k/transformers-hep/JetClass/TTBar_models//TTBar_run_testwall_10M_11/samples_samples_nsamples200000_trunc_5000.h5'
-mother_dir='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models/'
+test_dataset='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models//Part_pt_1_zjetnunu/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/samples_samples_nsamples1000000_trunc_5000.h5'
+test_dataset_other='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/samples_samples_nsamples1000000_trunc_5000.h5'
+mother_dir='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models/Part_pt_1_zjetnunu/'
 model_type='model_best.pt'
-tag_oftrain='ZJetsToNuNu_run_scan_10M'
-num_samples_list=[200000]
+tag_oftrain='ZJetsToNuNu_run_test__part_pt_const128_403030_3_N'
+num_samples_list=[1000000]
 train_batch_size=100
-num_const=100
+num_const_list=[100,128]
 trunc_list=[5000]
 ###For test samples
 bg=test_dataset
@@ -21,13 +21,13 @@ num_epochs_test=5
 
 models_list=os.listdir(mother_dir)
 
-for result in list_of_results:
-        model=tag_oftrain+'_'+str(result)
-    #if tag_oftrain in model:
+for model in models_list:
+    #model=tag_oftrain+'_'+str(result)
+    if tag_oftrain not in model:
     #    if ('_6' not in model) and ('_10' not in model):
-     #       continue
+        continue
 
-
+    for num_const in num_const_list:
         for num_samples in num_samples_list:
             for trunc in trunc_list:
 
