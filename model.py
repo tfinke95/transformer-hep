@@ -47,6 +47,7 @@ class JetTransformerClassifier(Module):
         num_features=3,
         num_bins=(41, 31, 31),
         dropout=0.1,
+        num_const=100
     ):
         super(JetTransformerClassifier, self).__init__()
         self.num_features = num_features
@@ -80,7 +81,7 @@ class JetTransformerClassifier(Module):
 
         # output projection and loss criterion
         self.flat = torch.nn.Flatten()
-        self.out = Linear(hidden_dim * 100, 1)
+        self.out = Linear(hidden_dim * self.num_const, 1)
         self.criterion = torch.nn.functional.binary_cross_entropy_with_logits
 
     def forward(self, x, padding_mask):

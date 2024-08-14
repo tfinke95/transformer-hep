@@ -58,6 +58,11 @@ def parse_input():
     parser.add_argument(
         "--num_events", type=int, default=10000, help="Number of events for training"
     )
+    
+    parser.add_argument(
+        "--num_const", type=int, default=100, help="Max Number of constituents"
+    )
+    
     parser.add_argument(
         "--num_bins",
         type=int,
@@ -216,6 +221,7 @@ if __name__ == "__main__":
         num_heads=args.num_heads,
         num_features=num_features,
         dropout=args.dropout,
+        num_const=args.num_const
     )
     model.to(device)
 

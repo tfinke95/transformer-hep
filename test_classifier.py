@@ -87,8 +87,8 @@ def plot_roc_curve(y_true, y_score,model_dir):
     # Plot ROC curve
     plt.figure()
     lw = 2
-    plt.plot(fpr, tpr, color='darkorange', lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
-    plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
+    plt.plot(tpr,1/fpr, color='darkorange', lw=lw, label='ROC curve (area = %0.2f)' % roc_auc)
+    #plt.plot([0, 1], [0, 1], color='navy', lw=lw, linestyle='--')
 
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
