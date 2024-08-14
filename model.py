@@ -52,7 +52,7 @@ class JetTransformerClassifier(Module):
         super(JetTransformerClassifier, self).__init__()
         self.num_features = num_features
         self.dropout = dropout
-
+        self.num_const=num_const
         # learn embedding for each bin of each feature dim
         self.feature_embeddings = ModuleList(
             [
