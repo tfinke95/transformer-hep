@@ -47,12 +47,12 @@ def PlotAUCwN(frame_all,model_dir):
     return
     
 
-data_path_1='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___10M_TTBar.h5'
-data_path_2='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___10M_ZJetsToNuNu.h5'
+data_path_1='/net/data_t2k/transformers-hep/JetClass/discretized/TTBar_test___40_30_30_pt_part_TTBar.h5'
+data_path_2='/net/data_t2k/transformers-hep/JetClass/discretized/ZJetsToNuNu_test___40_30_30_pt_part_ZJetsToNuNu.h5'
 
 mother_dir='/net/data_t2k/transformers-hep/JetClass/Classification/'
 #tag='top_vs_qcd_jetclass_classifier_test_1_'
-num_events=100000
+num_events=200000
 
 model_dirs=os.listdir(mother_dir)
 
