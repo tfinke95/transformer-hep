@@ -35,7 +35,7 @@ num_const_list=[100]
 lr_list=[.001]
 
 tag_of_train='top_vs_qcd_jetclass_classifier_part_pt_test_1'
-log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/'+tag_of_train
+log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/classification_topvsqcd_part_pt/'+tag_of_train
 
 for sig in sig_list:
     for bg in bg_list:
