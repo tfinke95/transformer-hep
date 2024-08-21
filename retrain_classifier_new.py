@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 torch.multiprocessing.set_sharing_strategy("file_system")
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "2"
+os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 from helpers_train import (
     get_cos_scheduler,
@@ -183,7 +183,8 @@ def plot_rocs(model, val_loader, tag):
     labels = np.concatenate(labels, 0)
     fpr, tpr, _ = roc_curve(labels, preds)
     auc = roc_auc_score(labels, preds)
-
+    print('auc')
+    print(auc)
     fig, ax = plt.subplots(constrained_layout=True)
     ax.plot(tpr, 1.0 / fpr, label=f"AUC {auc}")
     ax.set_yscale("log")

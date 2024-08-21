@@ -4,14 +4,14 @@ import os
 
 
 
-test_dataset='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models//Part_pt_1_zjetnunu/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/samples_samples_nsamples1000000_trunc_5000.h5'
-test_dataset_other='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/samples_samples_nsamples1000000_trunc_5000.h5'
+test_dataset='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models//Part_pt_1_zjetnunu/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/samples_samples_nsamples200000_trunc_5000.h5'
+test_dataset_other='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/samples_samples_nsamples200000_trunc_5000.h5'
 mother_dir='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models/Part_pt_1_zjetnunu/'
 model_type='model_best.pt'
 tag_oftrain='ZJetsToNuNu_run_test__part_pt_const128_403030_3_N'
-num_samples_list=[1000000]
+num_samples_list=[200000]
 train_batch_size=100
-num_const_list=[100,128]
+num_const_list=[20]
 trunc_list=[5000]
 ###For test samples
 bg=test_dataset
@@ -31,10 +31,10 @@ for model in models_list:
         for num_samples in num_samples_list:
             for trunc in trunc_list:
 
-                tag_foreval='test_eval_optclass_testset_nsamples'+str(num_samples)
-                tag_foreval_other='test_eval_optclass_testset_other_nsamples'+str(num_samples)
-                tag_forsample='samples_nsamples'+str(num_samples)+'_trunc_'+str(trunc)
-                save_dir_tag='some_results_nsamples'+str(num_samples)+'_trunc_'+str(trunc)
+                tag_foreval='test_eval_optclass_testset_nsamples'+str(num_samples)+'_numconst_'+str(num_const)
+                tag_foreval_other='test_eval_optclass_testset_other_nsamples'+str(num_samples)+'_numconst_'+str(num_const)
+                tag_forsample='samples_nsamples'+str(num_samples)+'_trunc_'+str(trunc)+'_numconst_'+str(num_const)
+                save_dir_tag='some_results_nsamples'+str(num_samples)+'_trunc_'+str(trunc)+'_numconst_'+str(num_const)
 
                 model_path=mother_dir+'/'+model+'/'
                 print(model)

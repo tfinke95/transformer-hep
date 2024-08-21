@@ -52,7 +52,7 @@ data_path_2='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models/Part_pt_
 mother_dir='/net/data_t2k/transformers-hep/JetClass/Classification_optclass/'
 #tag='top_vs_qcd_jetclass_classifier_test_1_'
 num_events=200000
-
+num_const=128
 model_dirs=os.listdir(mother_dir)
 
 dict_auc={'num_events':[],'auc_score':[]}
@@ -60,10 +60,10 @@ dict_auc={'num_events':[],'auc_score':[]}
 
 
 for model_dir in model_dirs:
-    if 'test_1_1M' not in model_dir:
+    if 'DWHJZZJ' not in model_dir:
         continue
     try:
-        command='python test_classifier.py --data_path_1 '+data_path_1+' --data_path_2 '+data_path_2+' --model_dir '+ mother_dir+model_dir+'  --num_events '+str(num_events)
+        command='python test_classifier.py --data_path_1 '+data_path_1+' --data_path_2 '+data_path_2+' --model_dir '+ mother_dir+model_dir+'  --num_events '+str(num_events)+' --num_const '+str(num_const)
         os.system(command)
         print('hello')
         arguments_file=read_file(mother_dir+model_dir+'/arguments.txt')

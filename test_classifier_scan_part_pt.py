@@ -61,21 +61,22 @@ dict_auc={'num_events':[],'auc_score':[]}
 
 
 for model_dir in model_dirs:
-    
-    try:
-        command='python test_classifier.py --data_path_1 '+data_path_1+' --data_path_2 '+data_path_2+' --model_dir '+ mother_dir+model_dir+'  --num_events '+str(num_events)
-        os.system(command)
-        print('hello')
-        arguments_file=read_file(mother_dir+model_dir+'/arguments.txt')
-        num_events_train=extract_value('num_events',arguments_file)
-        print(num_events_train)
-        auc=readauc(mother_dir+model_dir)
-        print(auc)
-        dict_auc.get('num_events').append(num_events_train)
-        dict_auc.get('auc_score').append(auc)
-        print('done '+model_dir)
-    except:
+    if 'test_2' not in model_dir:
         continue
+    try:    
+            command='python test_classifier.py --data_path_1 '+data_path_1+' --data_path_2 '+data_path_2+' --model_dir '+ mother_dir+model_dir+'  --num_events '+str(num_events)
+            os.system(command)
+            print('hello')
+            arguments_file=read_file(mother_dir+model_dir+'/arguments.txt')
+            num_events_train=extract_value('num_events',arguments_file)
+            print(num_events_train)
+            auc=readauc(mother_dir+model_dir)
+            print(auc)
+            dict_auc.get('num_events').append(num_events_train)
+            dict_auc.get('auc_score').append(auc)
+            print('done '+model_dir)
+    except:
+            continue
 
 
 

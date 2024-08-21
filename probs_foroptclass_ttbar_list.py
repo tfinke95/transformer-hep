@@ -4,14 +4,14 @@ import os
 
 
 
-test_dataset='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/samples_samples_nsamples1000000_trunc_5000.h5'
-test_dataset_other='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models//Part_pt_1_zjetnunu/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/samples_samples_nsamples1000000_trunc_5000.h5'
+test_dataset='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/samples_samples_nsamples200000_trunc_5000.h5'
+test_dataset_other='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models//Part_pt_1_zjetnunu/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/samples_samples_nsamples200000_trunc_5000.h5'
 mother_dir='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/'
 model_type='model_best.pt'
 tag_oftrain='TTBar_run_test__part_pt_const128_403030_3_O'
-num_samples_list=[999900]
+num_samples_list=[200000]
 train_batch_size=200
-num_const_list=[100,128]
+num_const_list=[20]
 trunc_list=[5000]
 ###For test samples
 bg=test_dataset
