@@ -14,6 +14,7 @@ def make_continues(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
     phi_disc = jets[:, :, 2]
 
     if noise:
+        print('hello noise')
         pt_con = (pt_disc - np.random.uniform(0.0, 1.0, size=pt_disc.shape)) * (
             pt_bins[1] - pt_bins[0]
         ) + pt_bins[0]
@@ -109,7 +110,7 @@ def LoadTrue(discrete_truedata_filename,n_samples,pt_bins,eta_bins,phi_bins):
 
 
 
-def LoadSGenamples(filename,pt_bins,eta_bins,phi_bins,n_samples):
+def LoadSGenamples(filename,pt_bins,eta_bins,phi_bins,n_samples,noise):
 
     tmp = pd.read_hdf(filename, key="discretized", start=0, stop=n_samples)
    
@@ -119,7 +120,7 @@ def LoadSGenamples(filename,pt_bins,eta_bins,phi_bins,n_samples):
     print(np.shape(tmp))
  
     mask = tmp[:, :, 0] == -1
-    jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=False)
+    jets,ptj,mj = make_continues(tmp, mask,pt_bins,eta_bins,phi_bins, noise=noise)
 
     return jets,ptj,mj
 

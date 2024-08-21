@@ -11,9 +11,9 @@ from data_eval_helpers import make_continues,LoadSGenamples, LoadTrue
 
 def LoadBins():
     bins_path_prefix='/Users/humbertosmac/Documents/work/Transformers/Optimal_Classifier/LLRModels/preprocessing_bins/'
-    pt_bins = np.load(bins_path_prefix+'pt_bins_40_30_30_pt_part_TTBar.npy')
-    eta_bins = np.load(bins_path_prefix+'eta_bins_40_30_30_pt_part_TTBar.npy')
-    phi_bins = np.load(bins_path_prefix+'phi_bins_40_30_30_pt_part_TTBar.npy')
+    pt_bins = np.load(bins_path_prefix+'pt_bins_40_30_30_pt_part_ZJetsToNuNu.npy')
+    eta_bins = np.load(bins_path_prefix+'eta_bins_40_30_30_pt_part_ZJetsToNuNu.npy')
+    phi_bins = np.load(bins_path_prefix+'phi_bins_40_30_30_pt_part_ZJetsToNuNu.npy')
     print('pt_bins')
 
     return pt_bins,eta_bins,phi_bins
