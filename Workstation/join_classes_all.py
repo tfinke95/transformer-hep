@@ -46,7 +46,7 @@ list_of_frames=[]
 for type in types:
     for jet in list_of_jets:
         print(jet)
-        input_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/'+jet+'_'+type+'.h5'
+        input_file='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/'+jet+'_'+type+'.h5'
         data_1,df_1=read_input(input_file)
     
         if n_per_jet != 'all':
@@ -54,7 +54,7 @@ for type in types:
     
         list_of_frames.append(df_1)
 
-    out_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/ALL_1M_'+type+'.h5'
+    out_file='/net/data_t2k/transformers-hep/JetClass/'+type+'/ALL_1Mfromeach_'+type+'.h5'
     concat_and_save(list_of_frames,out_file)
 
 
