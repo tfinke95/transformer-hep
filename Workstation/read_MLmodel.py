@@ -11,7 +11,7 @@ print(model)
 transformer_layers = []
 
 
-exit()
+
 for name, module in model.named_children():
     if isinstance(module, torch.nn.TransformerEncoderLayer):
         transformer_layers.append((name, module))
