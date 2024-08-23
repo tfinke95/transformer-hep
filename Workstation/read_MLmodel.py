@@ -2,7 +2,7 @@ import torch
 
 
 
-model_path='../../test_results/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/model_best.pt'
+model_path='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/model_best.pt'
 # Load the saved model
 model = torch.load(model_path,map_location=torch.device('cpu'))
 
