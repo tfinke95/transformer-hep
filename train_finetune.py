@@ -340,7 +340,7 @@ def UpdateOpt(filtered_opt_state_dict,opt,model):
         }
 
     # Add the missing params to the param_groups in the filtered_opt_state_dict
-    for param_group in opt.param_groups:
+    for param_group in opt.param_groups[0]:
         filtered_group = {'params': [], 'lr': param_group['lr'], 'weight_decay': param_group['weight_decay']}
         for param in param_group['params']:
             print(param)
