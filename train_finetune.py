@@ -343,6 +343,7 @@ def UpdateOpt(filtered_opt_state_dict,opt,model):
     for param_group in opt.param_groups:
         filtered_group = {'params': [], 'lr': param_group['lr'], 'weight_decay': param_group['weight_decay']}
         for param in param_group['params']:
+            print(param)
             if param in filtered_opt_state_dict['state']:
                 filtered_group['params'].append(param)
         if filtered_group['params']:
