@@ -357,7 +357,7 @@ def UpdateOpt(filtered_opt_state_dict,opt,model):
 
 
 def GetLast2Layers(state_dict):
-
+    print(state_dict.get('param_groups'))
     state_keys = list(state_dict.get('param_groups')[0])
     print(state_keys)
     # Identify the last key
