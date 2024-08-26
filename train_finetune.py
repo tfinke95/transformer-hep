@@ -389,9 +389,9 @@ def AddLayersToDict(filtered_sate_dict,last2state,last2paramgroups,last_keys):
     filtered_sate_dict.get('param_groups')[0].get('params').append(last2paramgroups[1])
     #filtered_sate_dict['state'][last_keys[0]]=last2state[0]
     #filtered_sate_dict['state'][last_keys[1]]=last2state[1]
-    print(last2state[1])
-    print(filtered_sate_dict['state'])
-    print(filtered_sate_dict['param_groups'])
+    #print(last2state[1])
+    #print(filtered_sate_dict['state'])
+    #print(filtered_sate_dict['param_groups'])
     
     return filtered_sate_dict
 
