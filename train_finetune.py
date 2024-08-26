@@ -289,7 +289,7 @@ if __name__ == "__main__":
         model.parameters(), lr=args.lr, weight_decay=args.weight_decay
     )
     
-    opt.load_state_dict(filtered_opt_state_dict)
+    #opt.load_state_dict(filtered_opt_state_dict)
     scheduler = get_cos_scheduler(
         num_epochs=args.num_epochs,
         num_batches=len(train_loader),
