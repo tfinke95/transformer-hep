@@ -332,12 +332,12 @@ def UpdateOpt(filtered_opt_state_dict,opt,model):
     
     
     for param_id, param in missing_params.items():
-    # Assuming Adam optimizer which tracks exp_avg and exp_avg_sq
-    filtered_opt_state_dict['state'][param_id] = {
-        'step': 0,
-        'exp_avg': torch.zeros_like(param.data),  # Initialize with zeros
-        'exp_avg_sq': torch.zeros_like(param.data)  # Initialize with zeros
-    }
+        # Assuming Adam optimizer which tracks exp_avg and exp_avg_sq
+        filtered_opt_state_dict['state'][param_id] = {
+            'step': 0,
+            'exp_avg': torch.zeros_like(param.data),  # Initialize with zeros
+            'exp_avg_sq': torch.zeros_like(param.data)  # Initialize with zeros
+        }
 
     # Add the missing params to the param_groups in the filtered_opt_state_dict
     for param_group in new_optimizer.param_groups:
