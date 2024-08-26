@@ -4,7 +4,7 @@ from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 from argparse import ArgumentParser
 
-from model import JetTransformerClassifier
+from model_finetune import JetTransformerClassifierFine
 
 from tqdm import tqdm
 import pandas as pd
@@ -24,7 +24,7 @@ from helpers_train import (
 )
 
 torch.multiprocessing.set_sharing_strategy("file_system")
-
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 def parse_input():
     parser = ArgumentParser()
