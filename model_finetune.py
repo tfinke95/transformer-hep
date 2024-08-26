@@ -117,14 +117,15 @@ class JetTransformerClassifier(Module):
 class JetTransformerClassifierFine(Module):
     def __init__(
         self,
+        original_model,
         hidden_dim=256,
         num_layers=10,
         num_heads=4,
         num_features=3,
         num_bins=(41, 31, 31),
         dropout=0.1,
-        num_const=100,
-        original_model
+        num_const=100
+        
     ):
         super(JetTransformerClassifierFine, self).__init__()
         self.num_features = num_features
