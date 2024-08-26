@@ -213,8 +213,8 @@ def orig_load_opt_dict(model_path_in,path_to_sate_dict):
 
 
     #path_to_sate_dict='../../test_results/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/opt_state_dict_best.pt'
-
-    checkpoint = torch.load(path_to_sate_dict,map_location=torch.device('cpu'))
+    print(path_to_sate_dict)
+    checkpoint = torch.load(path_to_sate_dict)
 
     state_dict=checkpoint['opt_state_dict_best']
     state_keys = list(state_dict['state'].keys())
