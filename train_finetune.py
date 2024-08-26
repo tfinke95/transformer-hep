@@ -349,6 +349,7 @@ def UpdateOpt(filtered_opt_state_dict,opt,model):
         if filtered_group['params']:
             filtered_opt_state_dict['param_groups'].append(filtered_group)
     
+    print(filtered_opt_state_dict['param_groups'])
     return filtered_opt_state_dict
 
 if __name__ == "__main__":
