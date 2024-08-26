@@ -372,7 +372,7 @@ def GetLast2Layers(state_dict):
     print(last2state)
     
     
-    last2paramgroups.append(state_dict.get('param_groups')[0].get('params')[last_keys[0]])
+    last2paramgroups.append(state_dict.get('param_groups').get('params')[last_keys[0]])
     last2paramgroups.append(state_dict.get('param_groups')[0].get('params')[last_keys[1]])
     
     print(last2paramgroups)
