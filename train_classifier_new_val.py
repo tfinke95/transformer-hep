@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 
 torch.multiprocessing.set_sharing_strategy("file_system")
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "2"
 
 from helpers_train import (
     get_cos_scheduler,
@@ -125,7 +125,7 @@ def load_data(file):
     elif file_val.endswith("h5"):
         dat_val = pd.read_hdf(file_val, key="discretized", stop=args.num_events_val)
         dat_val = dat_val.to_numpy(dtype=np.int64)[:, : args.num_const * 3]
-        dat_val = dat_val.reshape(dat.shape[0], -1, 3)
+        dat_val = dat_val.reshape(dat_val.shape[0], -1, 3)
     else:
         assert False, "Filetype for bg not supported"
     dat_val = np.delete(dat_val, np.where(dat_val[:, 0, 0] == 0)[0], axis=0)
@@ -133,7 +133,7 @@ def load_data(file):
     
 
     
-    return dat_val
+    return dat,dat_val
 
 
 def get_dataloader(
@@ -164,7 +164,7 @@ def get_dataloader(
     lab_val = torch.tensor(lab_val[idx_val])
     padding_mask_val = torch.tensor(padding_mask_val[idx_val])
 
-
+    
 
     train_set = TensorDataset(
         dat[: int(1 * len(dat))],
@@ -172,10 +172,16 @@ def get_dataloader(
         lab[: int(1 * len(dat))],
     )
     val_set = TensorDataset(
-        dat_val[int(1 * len(dat_val)) :],
-        padding_mask_val[int(1 * len(dat_val)) :],
-        lab_val[int(1 * len(dat_val)) :],
+        dat_val[int(0 * len(dat_val)) :],
+        padding_mask_val[int(0 * len(dat_val)) :],
+        lab_val[int(0 * len(dat_val)) :],
     )
+
+    print('val_set')
+
+    print(val_set)
+    
+
     train_loader = DataLoader(
         train_set,
         batch_size=args.batch_size,
@@ -211,7 +217,7 @@ def plot_rocs(model, val_loader, tag):
     labels = np.concatenate(labels, 0)
     fpr, tpr, _ = roc_curve(labels, preds)
     auc = roc_auc_score(labels, preds)
-
+    print(auc)
     fig, ax = plt.subplots(constrained_layout=True)
     ax.plot(tpr, 1.0 / fpr, label=f"AUC {auc}")
     ax.set_yscale("log")

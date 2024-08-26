@@ -35,8 +35,8 @@ num_const_list=[128]
 lr_list=[.001]
 num_events_val_max=500000
 
-tag_of_train='top_vs_qcd_jetclass_classifier_part_pt_onebinning_test_3'
-log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/classification_topvsqcd_part_pt_one_binning/'+tag_of_train
+tag_of_train='top_vs_qcd_jetclass_classifier_part_pt_onebinning_val_test_3'
+log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/classification_topvsqcd_part_pt_one_binning_val/'+tag_of_train
 
 for sig in sig_list:
     for bg in bg_list:
@@ -61,6 +61,6 @@ for sig in sig_list:
                                                 
                                                 
                                                     name_sufix=random_string()
-                                                    train_command='python train_classifier_new.py   --log_dir '+str(log_dir)+' --bg '+str(bg_path)+' --sig '+str(sig_path)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --dropout '+str(dropout)+' --num_heads '+str(num_heads)+' --num_layers '+str(num_layers)+' --hidden_dim '+str(hidden_dim)+' --name_sufix '+str(name_sufix)+' --num_events_val '+str(num_events_val)
+                                                    train_command='python train_classifier_new_val.py   --log_dir '+str(log_dir)+' --bg '+str(bg_path)+' --sig '+str(sig_path)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --dropout '+str(dropout)+' --num_heads '+str(num_heads)+' --num_layers '+str(num_layers)+' --hidden_dim '+str(hidden_dim)+' --name_sufix '+str(name_sufix)+' --num_events_val '+str(num_events_val)
                                                     os.system(train_command)
 
