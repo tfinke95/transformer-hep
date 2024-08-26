@@ -25,6 +25,7 @@ def make_continues(jets, mask,pt_bins,eta_bins,phi_bins, noise=False):
             phi_bins[1] - phi_bins[0]
         ) + phi_bins[0]
     else:
+        print(' discrete discrete ')
         pt_con = (pt_disc - 0.5) * (pt_bins[1] - pt_bins[0]) + pt_bins[0]
         eta_con = (eta_disc - 0.5) * (eta_bins[1] - eta_bins[0]) + eta_bins[0]
         phi_con = (phi_disc - 0.5) * (phi_bins[1] - phi_bins[0]) + phi_bins[0]

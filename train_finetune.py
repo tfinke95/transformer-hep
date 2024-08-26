@@ -4,7 +4,7 @@ from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 from argparse import ArgumentParser
 
-from model_new import JetTransformerClassifier
+from model import JetTransformerClassifier
 
 from tqdm import tqdm
 import pandas as pd
@@ -12,10 +12,6 @@ import os
 
 from sklearn.metrics import roc_auc_score, roc_curve
 import matplotlib.pyplot as plt
-
-torch.multiprocessing.set_sharing_strategy("file_system")
-
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 from helpers_train import (
     get_cos_scheduler,
@@ -62,6 +58,11 @@ def parse_input():
     parser.add_argument(
         "--num_events", type=int, default=10000, help="Number of events for training"
     )
+    
+    #parser.add_argument(
+    #    "--num_const", type=int, default=100, help="Max Number of constituents"
+    #)
+    
     parser.add_argument(
         "--num_bins",
         type=int,
@@ -82,26 +83,22 @@ def parse_input():
     )
 
     parser.add_argument(
+        "--hidden_dim", type=int, default=256, help="Hidden dim of the model"
+    )
+    parser.add_argument(
+        "--num_layers", type=int, default=8, help="Number of transformer layers"
+    )
+    parser.add_argument(
+        "--num_heads", type=int, default=4, help="Number of attention heads"
+    )
+    parser.add_argument("--dropout", type=float, default=0.1, help="dropout rate")
+    parser.add_argument(
         "--output",
         type=str,
         default="linear",
         choices=["linear", "embprod"],
         help="Output function",
     )
-    parser.add_argument(
-        "--model_path_in",
-        type=str,
-        default="model/test_in",
-        help="Pretrained model",
-    )
-    
-    parser.add_argument(
-        "--model_name",
-        type=str,
-        default="model_best.pt",
-        help="Pretrained model choice",
-    )
-    
     args = parser.parse_args()
     return args
 
@@ -183,8 +180,7 @@ def plot_rocs(model, val_loader, tag):
     labels = np.concatenate(labels, 0)
     fpr, tpr, _ = roc_curve(labels, preds)
     auc = roc_auc_score(labels, preds)
-    print('auc')
-    print(auc)
+
     fig, ax = plt.subplots(constrained_layout=True)
     ax.plot(tpr, 1.0 / fpr, label=f"AUC {auc}")
     ax.set_yscale("log")
@@ -202,6 +198,49 @@ def plot_rocs(model, val_loader, tag):
     np.savez(os.path.join(args.log_dir, f"preds_{tag}.npz"), preds=preds, labels=labels)
 
 
+def orig_load_opt_dict(args.model_path_in,path_to_sate_dict):
+
+
+    #path_to_sate_dict='../../test_results/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/opt_state_dict_best.pt'
+
+    checkpoint = torch.load(path_to_sate_dict,map_location=torch.device('cpu'))
+
+    state_dict=checkpoint['opt_state_dict_best']
+    state_keys = list(state_dict['state'].keys())
+    print(state_keys)
+    # Identify the last key
+    last_keys = state_keys[-2:]
+    print(last_keys)
+    # Remove the last entry
+    for last_key in reversed(last_keys):
+        print(last_key)
+        del state_dict['state'][last_key]
+
+        state_dict.get('param_groups')[0].get('params').pop(last_key)
+
+    
+    
+    #print(state_keys)
+
+    #state_dict['state'].pop(102, None)
+
+    print(state_dict['state'].keys())
+
+
+    print(state_dict.get('param_groups')[0].get('params'))
+
+    new_path=os.path.join(args.model_path_in, 'modified_opt_state_dict.pt')
+    torch.save(state_dict, new_path)
+
+
+    checkpoint_mod = torch.load('modified_opt_state_dict.pt',map_location=torch.device('cpu'))
+
+    print(checkpoint_mod.keys())
+
+    return checkpoint_mod
+
+
+
 if __name__ == "__main__":
     args = parse_input()
     save_arguments(args)
@@ -217,41 +256,39 @@ if __name__ == "__main__":
     print(f"Using bins: {num_bins}")
 
     train_loader, val_loader = get_dataloader(args.bg, args.sig)
-    '''
+######################################################################
+
+    original_model = torch.load(os.path.join(args.model_path_in, args.model_name))
     # construct model
-    model = JetTransformerClassifier(
+    model = JetTransformerClassifierFine(
         hidden_dim=args.hidden_dim,
         num_layers=args.num_layers,
         num_heads=args.num_heads,
         num_features=num_features,
         dropout=args.dropout,
-        num_const=args.num_const
+        num_const=args.num_const,
+                ,
+        original_model
     )
     model.to(device)
-    '''
-    
-    model = torch.load(os.path.join(args.model_path_in, args.model_name))
-    
+    path_to_sate_dict = torch.load(os.path.join(args.model_path_in, 'opt_state_dict_best.pt'))
+    filtered_opt_state_dict=orig_load_opt_dict(args.model_path_in,path_to_sate_dict)
     # construct optimizer and auto-caster
     opt = torch.optim.Adam(
         model.parameters(), lr=args.lr, weight_decay=args.weight_decay
     )
+    
+    opt.load_state_dict(filtered_opt_state_dict)
     scheduler = get_cos_scheduler(
         num_epochs=args.num_epochs,
         num_batches=len(train_loader),
         optimizer=opt,
     )
-    scaler = torch.cuda.amp.GradScaler()
-
-    new_optimizer.load_state_dict(filtered_state_dict)
     
-    state_dicts = torch.load(os.path.join(args.model_path_in, "opt_state_dict.pt"))
-    opt.load_state_dict(state_dicts["opt_state_dict"])
-    scheduler.load_state_dict(state_dicts["sched_state_dict"])
-    scaler.load_state_dict(state_dicts["scaler_state_dict"])
-
-
-
+    scaler = torch.cuda.amp.GradScaler()
+    
+    
+######################################################################
     logger = SummaryWriter(args.log_dir)
     global_step = 0
     loss_list = []
@@ -264,11 +301,8 @@ if __name__ == "__main__":
             train_loader, total=len(train_loader), desc=f"Training Epoch {epoch + 1}"
         ):
             opt.zero_grad()
-
             x = x.to(device)
-
             padding_mask = padding_mask.to(device)
-        
             label = label.to(device)
 
             with torch.cuda.amp.autocast():
@@ -322,3 +356,4 @@ if __name__ == "__main__":
     plot_rocs(model, val_loader, tag="last")
     model = load_model(os.path.join(args.log_dir, "model_best.pt"))
     plot_rocs(model, val_loader, tag="best")
+
