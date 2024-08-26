@@ -61,6 +61,9 @@ def parse_input():
         default="model_best.pt",
         help="Pretrained model choice",
     )
+    parser.add_argument(
+        "--num_events_val", type=int, default=10000, help="Number of val events for training"
+    )
     parser.add_argument("--num_workers", type=int, default=4, help="Number of workers")
 
     parser.add_argument(
@@ -125,7 +128,24 @@ def load_data(file):
         assert False, "Filetype for bg not supported"
     dat = np.delete(dat, np.where(dat[:, 0, 0] == 0)[0], axis=0)
     dat[dat == -1] = 0
-    return dat
+    
+    file_val=file.replace("_train_","_val_")
+    
+    if file.endswith("npz"):
+        dat_val = np.load(file_val)["jets"][: args.num_events_val, : args.num_const]
+    elif file_val.endswith("h5"):
+        dat_val = pd.read_hdf(file_val, key="discretized", stop=args.num_events_val)
+        dat_val = dat_val.to_numpy(dtype=np.int64)[:, : args.num_const * 3]
+        dat_val = dat_val.reshape(dat_val.shape[0], -1, 3)
+    else:
+        assert False, "Filetype for bg not supported"
+    dat_val = np.delete(dat_val, np.where(dat_val[:, 0, 0] == 0)[0], axis=0)
+    dat_val[dat_val == -1] = 0
+    
+
+    
+    return dat,dat_val
+
 
 
 def get_dataloader(
@@ -167,7 +187,61 @@ def get_dataloader(
     )
     return train_loader, val_loader
 
+def get_dataloader(
+    bgf,
+    sigf,
+):
+    bg,bg_val = load_data(bgf)
+    sig,sig_val = load_data(sigf)
 
+    print(f"Using bg {bg.shape} from {bgf} and sig {sig.shape} from {sigf}")
+
+    dat = np.concatenate((bg, sig), 0)
+    lab = np.append(np.zeros(len(bg)), np.ones(len(sig)))
+    padding_mask = dat[:, :, 0] != 0
+
+    idx = np.random.permutation(len(dat))
+    dat = torch.tensor(dat[idx])
+    lab = torch.tensor(lab[idx])
+    padding_mask = torch.tensor(padding_mask[idx])
+
+
+    dat_val = np.concatenate((bg_val, sig_val), 0)
+    lab_val = np.append(np.zeros(len(bg_val)), np.ones(len(sig_val)))
+    padding_mask_val = dat_val[:, :, 0] != 0
+
+    idx_val = np.random.permutation(len(dat_val))
+    dat_val = torch.tensor(dat_val[idx_val])
+    lab_val = torch.tensor(lab_val[idx_val])
+    padding_mask_val = torch.tensor(padding_mask_val[idx_val])
+
+    
+
+    train_set = TensorDataset(
+        dat[: int(1 * len(dat))],
+        padding_mask[: int(1 * len(dat))],
+        lab[: int(1 * len(dat))],
+    )
+    val_set = TensorDataset(
+        dat_val[int(0 * len(dat_val)) :],
+        padding_mask_val[int(0 * len(dat_val)) :],
+        lab_val[int(0 * len(dat_val)) :],
+    )
+
+
+    
+
+    train_loader = DataLoader(
+        train_set,
+        batch_size=args.batch_size,
+        shuffle=True,
+    )
+    val_loader = DataLoader(
+        val_set,
+        batch_size=args.batch_size,
+    )
+    return train_loader, val_loader
+    
 def plot_rocs(model, val_loader, tag):
     labels = []
     preds = []

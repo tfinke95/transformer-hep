@@ -32,6 +32,7 @@ batch_size_list=[100]
 num_events_list=[1000]
 num_const_list=[100]
 lr_list=[.001]
+num_events_val_max=500000
 
 tag_of_train='top_vs_qcd_old_jetclass_retrain_classifier_3epochs_test_1'
 log_dir='/net/data_t2k/transformers-hep/JetClass/Classification_finetune/'+tag_of_train
@@ -43,6 +44,11 @@ for sig in sig_list:
         bg_path=main_dir_discrete+bg
 
         for num_events in num_events_list:
+        
+            if num_events<num_events_val_max:
+                num_events_val=num_events
+            else:
+                num_events_val=num_events_val_max
             for num_const in num_const_list:
                 for batch_size in batch_size_list:
                     for num_epochs in num_epochs_list:
@@ -54,6 +60,6 @@ for sig in sig_list:
                                                 
                                                 
                                                     name_sufix=random_string()
-                                                    train_command='python train_finetune.py   --log_dir '+str(log_dir)+' --bg '+str(bg_path)+' --sig '+str(sig_path)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --name_sufix '+str(name_sufix)+' --model_name '+str(model_name)+' --model_path_in '+str(model_path_in)
+                                                    train_command='python train_finetune.py   --log_dir '+str(log_dir)+' --bg '+str(bg_path)+' --sig '+str(sig_path)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --name_sufix '+str(name_sufix)+' --model_name '+str(model_name)+' --model_path_in '+str(model_path_in)+' --num_events_val '+str(num_events_val)
                                                     os.system(train_command)
 
