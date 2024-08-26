@@ -281,7 +281,8 @@ if __name__ == "__main__":
         
         )
     model.to(device)
-    path_to_sate_dict = torch.load(os.path.join(args.model_path_in, 'opt_state_dict_best.pt'))
+    path_to_sate_dict = os.path.join(args.model_path_in, 'opt_state_dict_best.pt')
+
     filtered_opt_state_dict=orig_load_opt_dict(args.model_path_in,path_to_sate_dict)
     # construct optimizer and auto-caster
     opt = torch.optim.Adam(
