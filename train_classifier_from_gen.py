@@ -37,7 +37,7 @@ num_events_val_max=500000
 tag_of_train='top_vs_qcd_old_jetclass_retrain_classifier_3epochs_test_1'
 log_dir='/net/data_t2k/transformers-hep/JetClass/Classification_finetune/'+tag_of_train
 model_name='model_best.pt'
-model_path_in='/net/data_t2k/transformers-hep/JetClass/TTBar_models/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/'
+model_path_in='/net/data_t2k/transformers-hep/JetClass/ZJetsToNuNu_models/Part_pt_1_zjetnunu/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/'
 for sig in sig_list:
     for bg in bg_list:
         sig_path=main_dir_discrete+sig
