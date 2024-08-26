@@ -324,6 +324,7 @@ def orig_load_opt_dict(model_path_in,path_to_sate_dict):
 
     return checkpoint_mod
 
+'''
 def UpdateOpt(filtered_opt_state_dict,opt,model):
 
     new_params = {id(param): param for param in model.parameters()}
@@ -352,6 +353,49 @@ def UpdateOpt(filtered_opt_state_dict,opt,model):
     
     print(filtered_opt_state_dict['param_groups'])
     return filtered_opt_state_dict
+'''
+
+
+def GetLast2Layers(state_dict):
+
+    state_keys = list(state_dict['state'].keys())
+    print(state_keys)
+    # Identify the last key
+    last_keys = state_keys[-2:]
+
+    last2paramgroups=[]
+    last2state=[]
+    
+    last2state.append(state_dict['state'][last_keys[0]])
+    last2state.append(state_dict['state'][last_keys[1]])
+    
+    print(last2state)
+    
+    
+    last2paramgroups.append(state_dict.get('param_groups')[0].get('params')[last_keys[0]])
+    last2paramgroups.append(state_dict.get('param_groups')[0].get('params')[last_keys[1]])
+    
+    print(last2paramgroups)
+    
+    
+
+    return last2paramgroups, last2state
+
+
+
+def AddLayersToDict(filtered_sate_dict,last2state,last2paramgroups,last_keys):
+
+    filtered_sate_dict.get('param_groups')[0].get('params').append(last2paramgroups[0])
+    filtered_sate_dict.get('param_groups')[0].get('params').append(last2paramgroups[1])
+    filtered_sate_dict['state'][last_keys[0]]=last2state[0]
+    filtered_sate_dict['state'][last_keys[1]]=last2state[1]
+    print(last2state[1])
+    print(filtered_sate_dict['state'])
+    print(filtered_sate_dict['param_groups'])
+    
+    return filtered_sate_dict
+
+
 
 if __name__ == "__main__":
     args = parse_input()
@@ -389,8 +433,9 @@ if __name__ == "__main__":
     opt = torch.optim.Adam(
         model.parameters(), lr=args.lr, weight_decay=args.weight_decay
     )
-    filtered_opt_state_dict=UpdateOpt(filtered_opt_state_dict,opt,model)
-    
+    #filtered_opt_state_dict=UpdateOpt(filtered_opt_state_dict,opt,model)
+    last2paramgroups, last2state=GetLast2Layers(opt)
+    filtered_sate_dict= AddLayersToDict((filtered_sate_dict,last2state,last2paramgroups,last_keys))
     opt.load_state_dict(filtered_opt_state_dict)
     scheduler = get_cos_scheduler(
         num_epochs=args.num_epochs,
