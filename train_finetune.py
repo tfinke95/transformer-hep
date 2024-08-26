@@ -324,7 +324,31 @@ def orig_load_opt_dict(model_path_in,path_to_sate_dict):
 
     return checkpoint_mod
 
+def UpdateOpt(filtered_opt_state_dict,opt,model):
 
+    new_params = {id(param): param for param in model.parameters()}
+    print(new_params)
+    missing_params = {param_id: param for param_id, param in new_params.items() if param_id not in filtered_opt_state_dict['state']}
+    
+    
+    for param_id, param in missing_params.items():
+    # Assuming Adam optimizer which tracks exp_avg and exp_avg_sq
+    filtered_opt_state_dict['state'][param_id] = {
+        'step': 0,
+        'exp_avg': torch.zeros_like(param.data),  # Initialize with zeros
+        'exp_avg_sq': torch.zeros_like(param.data)  # Initialize with zeros
+    }
+
+    # Add the missing params to the param_groups in the filtered_opt_state_dict
+    for param_group in new_optimizer.param_groups:
+        filtered_group = {'params': [], 'lr': param_group['lr'], 'weight_decay': param_group['weight_decay']}
+        for param in param_group['params']:
+            if param in filtered_opt_state_dict['state']:
+                filtered_group['params'].append(param)
+        if filtered_group['params']:
+            filtered_opt_state_dict['param_groups'].append(filtered_group)
+    
+    return filtered_opt_state_dict
 
 if __name__ == "__main__":
     args = parse_input()
@@ -362,8 +386,9 @@ if __name__ == "__main__":
     opt = torch.optim.Adam(
         model.parameters(), lr=args.lr, weight_decay=args.weight_decay
     )
+    filtered_opt_state_dict=UpdateOpt(filtered_opt_state_dict,opt,model)
     
-    #opt.load_state_dict(filtered_opt_state_dict)
+    opt.load_state_dict(filtered_opt_state_dict)
     scheduler = get_cos_scheduler(
         num_epochs=args.num_epochs,
         num_batches=len(train_loader),
