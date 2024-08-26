@@ -329,8 +329,8 @@ def UpdateOpt(filtered_opt_state_dict,opt,model):
     new_params = {id(param): param for param in model.parameters()}
     print(new_params)
     missing_params = {param_id: param for param_id, param in new_params.items() if param_id not in filtered_opt_state_dict['state']}
-    
-    
+    print('missing params')
+    print(missing_params)
     for param_id, param in missing_params.items():
         # Assuming Adam optimizer which tracks exp_avg and exp_avg_sq
         filtered_opt_state_dict['state'][param_id] = {
@@ -344,6 +344,7 @@ def UpdateOpt(filtered_opt_state_dict,opt,model):
         filtered_group = {'params': [], 'lr': param_group['lr'], 'weight_decay': param_group['weight_decay']}
         for param in param_group['params'][0]:
             print(param)
+            print('hello')
             if param in filtered_opt_state_dict['state']:
                 filtered_group['params'].append(param)
         if filtered_group['params']:
