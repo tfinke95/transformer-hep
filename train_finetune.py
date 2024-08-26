@@ -244,7 +244,7 @@ def orig_load_opt_dict(model_path_in,path_to_sate_dict):
     torch.save(state_dict, new_path)
 
 
-    checkpoint_mod = torch.load('modified_opt_state_dict.pt',map_location=torch.device('cpu'))
+    checkpoint_mod = torch.load(new_path)
 
     print(checkpoint_mod.keys())
 
