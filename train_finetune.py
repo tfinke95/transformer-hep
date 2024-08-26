@@ -442,7 +442,7 @@ if __name__ == "__main__":
     last2paramgroups, last2state,last_keys=GetLast2Layers(opt.state_dict())
     filtered_opt_state_dict= AddLayersToDict(filtered_opt_state_dict,last2state,last2paramgroups,last_keys)
     opt.load_state_dict(filtered_opt_state_dict)
-    print(opt.load_state_dict(filtered_opt_state_dict))
+    print(opt.load_state_dict(filtered_opt_state_dict).state_dict())
     scheduler = get_cos_scheduler(
         num_epochs=args.num_epochs,
         num_batches=len(train_loader),
