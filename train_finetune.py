@@ -434,6 +434,7 @@ if __name__ == "__main__":
         model.parameters(), lr=args.lr, weight_decay=args.weight_decay
     )
     #filtered_opt_state_dict=UpdateOpt(filtered_opt_state_dict,opt,model)
+    print('model paramaters')
     print(model.parameters())
     last2paramgroups, last2state=GetLast2Layers(model.parameters)
     filtered_sate_dict= AddLayersToDict((filtered_sate_dict,last2state,last2paramgroups,last_keys))
