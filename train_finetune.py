@@ -436,9 +436,10 @@ if __name__ == "__main__":
     #filtered_opt_state_dict=UpdateOpt(filtered_opt_state_dict,opt,model)
     print('model paramaters')
     print(model.parameters())
-    print('opt')
-    print(opt)
-    last2paramgroups, last2state=GetLast2Layers(model.parameters)
+    print('opt state dict')
+    print(opt.state_dict)
+    
+    last2paramgroups, last2state=GetLast2Layers(opt.state_dict())
     filtered_sate_dict= AddLayersToDict((filtered_sate_dict,last2state,last2paramgroups,last_keys))
     opt.load_state_dict(filtered_opt_state_dict)
     scheduler = get_cos_scheduler(
