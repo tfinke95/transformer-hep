@@ -198,7 +198,7 @@ def plot_rocs(model, val_loader, tag):
     np.savez(os.path.join(args.log_dir, f"preds_{tag}.npz"), preds=preds, labels=labels)
 
 
-def orig_load_opt_dict(args.model_path_in,path_to_sate_dict):
+def orig_load_opt_dict(model_path_in,path_to_sate_dict):
 
 
     #path_to_sate_dict='../../test_results/Part_pt_1/TTBar_run_test__part_pt_const128_403030_3_O0KHIRP/opt_state_dict_best.pt'
@@ -229,7 +229,7 @@ def orig_load_opt_dict(args.model_path_in,path_to_sate_dict):
 
     print(state_dict.get('param_groups')[0].get('params'))
 
-    new_path=os.path.join(args.model_path_in, 'modified_opt_state_dict.pt')
+    new_path=os.path.join(model_path_in, 'modified_opt_state_dict.pt')
     torch.save(state_dict, new_path)
 
 
