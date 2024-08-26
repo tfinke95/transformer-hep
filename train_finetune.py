@@ -49,7 +49,18 @@ def parse_input():
     parser.add_argument(
         "--logging_steps", type=int, default=10, help="Training steps between logging"
     )
-
+    parser.add_argument(
+        "--model_path_in",
+        type=str,
+        default="model/test_in",
+        help="Pretrained model",
+    )
+    parser.add_argument(
+        "--model_name",
+        type=str,
+        default="model_best.pt",
+        help="Pretrained model choice",
+    )
     parser.add_argument("--num_workers", type=int, default=4, help="Number of workers")
 
     parser.add_argument(
