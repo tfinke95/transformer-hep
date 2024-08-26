@@ -260,16 +260,15 @@ if __name__ == "__main__":
 
     original_model = torch.load(os.path.join(args.model_path_in, args.model_name))
     # construct model
-    model = JetTransformerClassifierFine(
+    model = JetTransformerClassifierFine(original_model,
         hidden_dim=args.hidden_dim,
         num_layers=args.num_layers,
         num_heads=args.num_heads,
         num_features=num_features,
         dropout=args.dropout,
-        num_const=args.num_const,
-                
-        original_model
-    )
+        num_const=args.num_const
+        
+        )
     model.to(device)
     path_to_sate_dict = torch.load(os.path.join(args.model_path_in, 'opt_state_dict_best.pt'))
     filtered_opt_state_dict=orig_load_opt_dict(args.model_path_in,path_to_sate_dict)
