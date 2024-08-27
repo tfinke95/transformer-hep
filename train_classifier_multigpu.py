@@ -168,12 +168,12 @@ def get_dataloader(
         train_set,
         batch_size=args.batch_size,
         shuffle=True,
-        sample=train_sampler
+        sampler=train_sampler
     )
     val_loader = DataLoader(
         val_set,
         batch_size=args.batch_size,
-        sample=train_sampler
+        sampler=train_sampler
     )
     return train_loader, val_loader
 
