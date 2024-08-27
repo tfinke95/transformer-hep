@@ -167,7 +167,7 @@ def get_dataloader(
     train_loader = DataLoader(
         train_set,
         batch_size=args.batch_size,
-        shuffle=True,
+        #shuffle=True,
         sampler=train_sampler
     )
     val_loader = DataLoader(
