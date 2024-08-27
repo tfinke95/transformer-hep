@@ -214,7 +214,7 @@ def save_arguments(args):
     '''
     tmp = args.log_dir+"_"+ args.name_sufix
     args.log_dir = tmp
-    os.makedirs(args.log_dir)
+    os.makedirs(args.log_dir,exist=ok=True)
     with open(os.path.join(args.log_dir, "arguments.txt"), "w") as f:
         arg_dict = vars(args)
         for k, v in arg_dict.items():
