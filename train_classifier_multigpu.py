@@ -16,7 +16,7 @@ from sklearn.metrics import roc_auc_score, roc_curve
 import matplotlib.pyplot as plt
 
 torch.multiprocessing.set_sharing_strategy("file_system")
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+#os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 
 local_rank = int(os.environ['LOCAL_RANK'])  # or passed as an argument
 world_size = int(os.environ['WORLD_SIZE'])
