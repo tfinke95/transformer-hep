@@ -158,14 +158,22 @@ def get_dataloader(
         padding_mask[int(0.9 * len(dat)) :],
         lab[int(0.9 * len(dat)) :],
     )
+    
+    
+    train_sampler = DistributedSampler(train_set, num_replicas=world_size, rank=local_rank)
+    val_sampler = DistributedSampler(val_set, num_replicas=world_size, rank=local_rank)
+    
+    
     train_loader = DataLoader(
         train_set,
         batch_size=args.batch_size,
         shuffle=True,
+        sample=train_sampler
     )
     val_loader = DataLoader(
         val_set,
         batch_size=args.batch_size,
+        sample=train_sampler
     )
     return train_loader, val_loader
 
