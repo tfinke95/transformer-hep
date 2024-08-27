@@ -22,8 +22,9 @@ local_rank = int(os.environ['LOCAL_RANK'])  # or passed as an argument
 world_size = int(os.environ['WORLD_SIZE'])
 dist.init_process_group(backend='nccl', world_size=world_size)
 device = torch.device(f'cuda:{local_rank}')
-
+print('local rank')
 print(local_rank)
+print('world size')
 print(world_size)
 exit()
 
