@@ -304,7 +304,7 @@ if __name__ == "__main__":
                     x,
                     padding_mask,
                 )
-                loss = model.loss(logits, label.view(-1, 1))
+                loss = model.module.loss(logits, label.view(-1, 1))
                 val_loss.append(loss.cpu().detach().numpy())
 
             val_loss = np.mean(val_loss)
