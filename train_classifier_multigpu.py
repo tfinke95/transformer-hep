@@ -26,7 +26,7 @@ print('local rank')
 print(local_rank)
 print('world size')
 print(world_size)
-exit()
+#exit()
 
 from helpers_train import (
     get_cos_scheduler,
