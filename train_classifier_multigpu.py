@@ -1,5 +1,5 @@
 import torch
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, TensorDataset,DistributedSampler
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 from argparse import ArgumentParser
