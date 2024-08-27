@@ -6,6 +6,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import random
 import string
+import time
+
+
 
 def random_string():
     # initializing size of string
@@ -24,13 +27,13 @@ main_dir_discrete='/net/data_t2k/transformers-hep/JetClass/discretized/'
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 sig_list=['TTBar_train___1Mfromeach_403030.h5']
 bg_list=['ZJetsToNuNu_train___1Mfromeach_403030.h5']
-num_epochs_list=[50]
+num_epochs_list=[30]
 dropout_list=[0.0]
 num_heads_list=[4]
 num_layers_list=[8]
 hidden_dim_list=[256]
 batch_size_list=[100]
-num_events_list=[1000]
+num_events_list=[100000]
 num_const_list=[128]
 lr_list=[.001]
 
@@ -52,8 +55,13 @@ for sig in sig_list:
                                             for lr in lr_list:
                                                 for hidden_dim in hidden_dim_list:
                                                 
-                                                
+                                                    start_time = time.time()
                                                     name_sufix=random_string()
                                                     train_command='torchrun --nproc_per_node=4 --nnodes=1 --node_rank=0 --master_addr="localhost" --master_port=12355 train_classifier_multigpu.py   --log_dir '+str(log_dir)+' --bg '+str(bg_path)+' --sig '+str(sig_path)+' --num_const '+str(num_const)+' --num_epochs '+str(num_epochs)+'  --lr '+str(lr)+' --batch_size '+str(batch_size)+' --num_events '+str(num_events)+' --dropout '+str(dropout)+' --num_heads '+str(num_heads)+' --num_layers '+str(num_layers)+' --hidden_dim '+str(hidden_dim)+' --name_sufix '+str(name_sufix)
                                                     os.system(train_command)
+                                                    end_time = time.time()
 
+
+
+elapsed_time = end_time - start_time
+print(f"Time taken: {elapsed_time} seconds")
