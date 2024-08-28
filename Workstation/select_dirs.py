@@ -42,6 +42,7 @@ for dir in dirs:
     
     if value==50:
         os.system('mv '+main_dir+'/'+dir+' '+main_dir+'/'+new_subdir+'/')
+        print(dir)
     else:
         continue
     
