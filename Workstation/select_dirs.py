@@ -28,7 +28,7 @@ def extract_value(var,lines):
 
 
 main_dir='/net/data_t2k/transformers-hep/JetClass/Classification_finetune/'
-dirs=os.listdirs(main_dir)
+dirs=os.listdir(main_dir)
 val='epochs'
 new_subdir='/test_dropout1/'
 for dir in dirs:
