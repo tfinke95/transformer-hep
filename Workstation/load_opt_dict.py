@@ -60,6 +60,44 @@ checkpoint = torch.load(path_to_sate_dict,map_location=torch.device('cpu'))
 
 state_dict=checkpoint['opt_state_dict_best']
 
+
+def GetLast2Layers(state_dict,last_keys):
+
+    
+
+    last2paramgroups=[]
+    last2state=[]
+    
+    last2state.append(state_dict['state'][last_keys[0]])
+    last2state.append(state_dict['state'][last_keys[1]])
+    
+    print(last2state)
+    
+    
+    last2paramgroups.append(state_dict.get('param_groups')[0].get('params')[last_keys[0]])
+    last2paramgroups.append(state_dict.get('param_groups')[0].get('params')[last_keys[1]])
+    
+    print(last2paramgroups)
+    
+    
+
+    return last2paramgroups, last2state
+
+def AddLayersToDict(filtered_sate_dict,last2state,last2paramgroups,last_keys):
+
+    filtered_sate_dict.get('param_groups')[0].get('params').append(last2paramgroups[0])
+    filtered_sate_dict.get('param_groups')[0].get('params').append(last2paramgroups[1])
+    filtered_sate_dict['state'][last_keys[0]]=last2state[0]
+    filtered_sate_dict['state'][last_keys[1]]=last2state[1]
+    print(last2state[1])
+    print(filtered_sate_dict['state'])
+    print(filtered_sate_dict['param_groups'])
+    
+    return filtered_sate_dict
+    
+    
+    
+
 for key in state_dict:
     print('hello')
     print(key, state_dict.keys())
@@ -86,9 +124,14 @@ print(state_keys)
 # Identify the last key
 last_keys = state_keys[-2:]
 print(last_keys)
+
+last2paramgroups, last2state=GetLast2Layers(state_dict,last_keys)
+
 # Remove the last entry
 for last_key in reversed(last_keys):
     print(last_key)
+    print(state_dict['state'][last_key])
+    
     del state_dict['state'][last_key]
 
     state_dict.get('param_groups')[0].get('params').pop(last_key)
@@ -111,6 +154,10 @@ checkpoint_mod = torch.load('modified_opt_state_dict.pt',map_location=torch.devi
 
 print(checkpoint_mod.keys())
 
+filtered_sate_dict=checkpoint_mod
 
 
 
+all_again=AddLayersToDict(filtered_sate_dict,last2state,last2paramgroups,last_keys)
+print('goodbye')
+    
