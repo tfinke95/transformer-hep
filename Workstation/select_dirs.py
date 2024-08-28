@@ -38,7 +38,7 @@ for dir in dirs:
     
     file_name=main_dir+'/'+dir+'/arguments.txt'
     lines=read_file(file_name)
-    value=int(extract_value(var,lines))
+    value=int(extract_value(val,lines))
     
     if value==50:
         os.system('mv '+main_dir+'/'+dir+' '+main_dir+'/'+new_subdir+'/')
