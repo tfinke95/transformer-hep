@@ -36,7 +36,7 @@ for dir in dirs:
     if 'optyes_3epochs_test_1' not in dir:
         continue
     
-    main_dir+'/'+dir+'/arguments.txt'
+    file_name=main_dir+'/'+dir+'/arguments.txt'
     lines=read_file(file_name)
     value=int(extract_value(var,lines))
     
