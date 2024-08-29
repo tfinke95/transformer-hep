@@ -493,7 +493,7 @@ if __name__ == "__main__":
 
         model.eval()
         with torch.no_grad():
-            val_loss = []
+            val_loss_list = []
             val_perplexity = []
             for x, padding_mask, label in tqdm(
                 val_loader, total=len(val_loader), desc=f"Validation Epoch {epoch + 1}"
@@ -507,7 +507,7 @@ if __name__ == "__main__":
                     padding_mask,
                 )
                 loss = model.loss(logits, label.view(-1, 1))
-                val_loss.append(loss.cpu().detach().numpy())
+                val_loss_list.append(loss.cpu().detach().numpy())
 
             val_loss = np.mean(val_loss)
             if val_loss < min_val_loss:
@@ -523,11 +523,11 @@ if __name__ == "__main__":
     
     print(loss_list)
     print(len(loss_list))
-    print(val_loss)
-    print(len(val_loss))
+    print(val_loss_list)
+    print(len(val_loss_list))
     
     
-    history={'loss':loss_list,'val_loss':val_loss}
+    history={'loss':loss_list,'val_loss':val_loss_list}
     
     history_frame=pd.DataFrame(history)
     history_frame.to_csv(os.path.join(args.log_dir, "history.txt"),index=False)
