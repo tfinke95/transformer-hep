@@ -113,10 +113,10 @@ def load_data(file):
     
     
     
-        dat = pd.read_hdf(file, key="discretized", stop=args.num_events)
+        #dat = pd.read_hdf(file, key="discretized", stop=args.num_events)
         
-        #start_value=random.randint(0,1000000-args.num_events)
-        #dat = pd.read_hdf(file, key="discretized", start=start_value, stop=start_value+args.num_events)
+        start_value=random.randint(0,1000000-args.num_events)
+        dat = pd.read_hdf(file, key="discretized", start=start_value, stop=start_value+args.num_events)
         
         dat = dat.to_numpy(dtype=np.int64)[:, : args.num_const * 3]
         print('dat')
