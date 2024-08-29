@@ -520,6 +520,13 @@ if __name__ == "__main__":
             optimizer=opt, scheduler=scheduler, scaler=scaler, log_dir=args.log_dir
         )
 
+    
+    print(loss_list)
+    print(len(loss_list))
+    print(val_loss)
+    print(len(val_loss))
+    
+    
     history={'loss':loss_list,'val_loss':val_loss}
     
     history_frame=pd.DataFrame(history)
