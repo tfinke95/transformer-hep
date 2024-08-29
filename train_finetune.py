@@ -478,7 +478,9 @@ if __name__ == "__main__":
             scaler.step(opt)
             scaler.update()
             scheduler.step()
-
+            print('losss')
+            print(loss.cpu().detach().numpy())
+            print(float(loss.cpu().detach().numpy()))
             loss_list.append(loss.cpu().detach().numpy())
 
             if (global_step + 1) % args.logging_steps == 0:
