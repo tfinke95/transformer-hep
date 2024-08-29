@@ -525,8 +525,8 @@ if __name__ == "__main__":
         )
         mean_loss=np.mean(loss_list)
         mean_val=val_loss
-        loss_list_epoch.append(loss_list)
-        val_list_epoch.append(val_loss_here)
+        loss_list_epoch.extend(loss_list)
+        val_list_epoch.extend(val_loss_here)
     print(loss_list_epoch)
     print(len(loss_list_epoch))
     print(val_list_epoch)
