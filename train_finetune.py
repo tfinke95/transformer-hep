@@ -457,6 +457,10 @@ if __name__ == "__main__":
     logger = SummaryWriter(args.log_dir)
     global_step = 0
     loss_list = []
+    loss_list_epoch=[]
+    val_list_epoch=[]
+    
+    
     perplexity_list = []
     min_val_loss = np.inf
     for epoch in range(args.num_epochs):
@@ -493,7 +497,7 @@ if __name__ == "__main__":
 
         model.eval()
         with torch.no_grad():
-            val_loss_list = []
+            val_loss = []
             val_perplexity = []
             for x, padding_mask, label in tqdm(
                 val_loader, total=len(val_loader), desc=f"Validation Epoch {epoch + 1}"
@@ -507,30 +511,33 @@ if __name__ == "__main__":
                     padding_mask,
                 )
                 loss = model.loss(logits, label.view(-1, 1))
-                val_loss_list.append(loss.cpu().detach().numpy())
+                val_loss.append(loss.cpu().detach().numpy())
 
             val_loss = np.mean(val_loss)
             if val_loss < min_val_loss:
                 min_val_loss = val_loss
                 save_model(model, args.log_dir, "best")
             logger.add_scalar("Val/Loss", np.mean(val_loss), global_step)
-
+        
         save_model(model, args.log_dir, "last")
         save_opt_states(
             optimizer=opt, scheduler=scheduler, scaler=scaler, log_dir=args.log_dir
         )
-
-    
+        mean_loss=np.mean(loss_list)
+        loss_list_epoch.append(mean_loss)
+        val_list_epoch.append(mean_val)
     print(loss_list)
     print(len(loss_list))
     print(val_loss_list)
     print(len(val_loss_list))
     
     
-    history={'loss':loss_list,'val_loss':val_loss_list}
+    history={'loss':loss_list_epoch,'val_loss':val_loss_list_epoch}
     
     history_frame=pd.DataFrame(history)
     history_frame.to_csv(os.path.join(args.log_dir, "history.txt"),index=False)
+    
+    
     
     plot_rocs(model, val_loader, tag="last")
     model = load_model(os.path.join(args.log_dir, "model_best.pt"))
