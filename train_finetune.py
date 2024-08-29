@@ -527,10 +527,10 @@ if __name__ == "__main__":
         mean_val=val_loss
         loss_list_epoch.append(mean_loss)
         val_list_epoch.append(mean_val)
-    print(loss_list)
-    print(len(loss_list))
-    print(val_loss_list)
-    print(len(val_loss_list))
+    print(loss_list_epoch)
+    print(len(loss_list_epoch))
+    print(val_loss_list_epoch)
+    print(len(val_loss_list_epoch))
     
     
     history={'loss':loss_list_epoch,'val_loss':val_loss_list_epoch}
