@@ -3,7 +3,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 from argparse import ArgumentParser
-
+import random
 from model_new import JetTransformerClassifier
 
 from tqdm import tqdm
