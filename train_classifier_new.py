@@ -104,7 +104,10 @@ def parse_input():
 
 def load_data(file):
     if file.endswith("npz"):
-        dat = np.load(file)["jets"][: args.num_events, : args.num_const]
+        random_indices = np.random.choice(9000000, size=args.num_events, replace=False)
+        #dat = np.load(file)["jets"][: args.num_events, : args.num_const]
+        dat = np.load(file)["jets"][random_indices, : args.num_const]
+        
     elif file.endswith("h5"):
         dat = pd.read_hdf(file, key="discretized", stop=args.num_events)
         dat = dat.to_numpy(dtype=np.int64)[:, : args.num_const * 3]
