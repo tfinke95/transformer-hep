@@ -533,7 +533,7 @@ if __name__ == "__main__":
     print(len(val_list_epoch))
     
     
-    history={'loss':loss_list_epoch,'val_loss':val_loss_list_epoch}
+    history={'loss':loss_list_epoch,'val_loss':val_list_epoch}
     
     history_frame=pd.DataFrame(history)
     history_frame.to_csv(os.path.join(args.log_dir, "history.txt"),index=False)
