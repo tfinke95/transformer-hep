@@ -465,7 +465,7 @@ if __name__ == "__main__":
     min_val_loss = np.inf
     for epoch in range(args.num_epochs):
         model.train()
-
+        loss_list_here=[]
         for x, padding_mask, label in tqdm(
             train_loader, total=len(train_loader), desc=f"Training Epoch {epoch + 1}"
         ):
@@ -486,7 +486,7 @@ if __name__ == "__main__":
             #print(loss.cpu().detach().numpy())
             #print(float(loss.cpu().detach().numpy()))
             loss_list.append(loss.cpu().detach().numpy())
-
+            loss_list_here.append(loss.cpu().detach().numpy())
             if (global_step + 1) % args.logging_steps == 0:
                 logger.add_scalar("Train/Loss", np.mean(loss_list), global_step)
                 logger.add_scalar("Train/LR", scheduler.get_last_lr()[0], global_step)
