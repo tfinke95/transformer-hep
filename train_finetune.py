@@ -524,6 +524,7 @@ if __name__ == "__main__":
             optimizer=opt, scheduler=scheduler, scaler=scaler, log_dir=args.log_dir
         )
         mean_loss=np.mean(loss_list)
+        mean_val=val_loss
         loss_list_epoch.append(mean_loss)
         val_list_epoch.append(mean_val)
     print(loss_list)
