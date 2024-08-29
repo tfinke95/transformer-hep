@@ -281,7 +281,7 @@ def plot_rocs(model, val_loader, tag):
     fig.savefig(os.path.join(args.log_dir, f"preds_{tag}.png"))
 
     np.savez(os.path.join(args.log_dir, f"preds_{tag}.npz"), preds=preds, labels=labels)
-
+    plt.close(fig)
 
 def orig_load_opt_dict(model_path_in,path_to_sate_dict):
 
@@ -544,6 +544,7 @@ if __name__ == "__main__":
     model = load_model(os.path.join(args.log_dir, "model_best.pt"))
     plot_rocs(model, val_loader, tag="best")
 
+plt.close()
 plt.close()
 import matplotlib.pyplot as plt
 plt.plot(history_frame['loss'], label='Train Loss')
