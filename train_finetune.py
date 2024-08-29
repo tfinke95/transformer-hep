@@ -544,3 +544,11 @@ if __name__ == "__main__":
     model = load_model(os.path.join(args.log_dir, "model_best.pt"))
     plot_rocs(model, val_loader, tag="best")
 
+
+import matplotlib.pyplot as plt
+plt.plot(history_frame['loss'], label='Train Loss')
+plt.plot(history_frame['val_loss'], label='Val Loss')
+plt.xlabel('iter')
+plt.ylabel('Loss')
+plt.legend()
+plt.savefig(os.path.join(args.log_dir, "history.pdf"))
