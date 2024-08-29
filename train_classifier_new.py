@@ -119,8 +119,8 @@ def load_data(file):
         dat = pd.read_hdf(file, key="discretized", start=start_value, stop=start_value+args.num_events)
         
         dat = dat.to_numpy(dtype=np.int64)[:, : args.num_const * 3]
-        
-        
+        print('dat')
+        print(dat)
         
         
         dat = dat.reshape(dat.shape[0], -1, 3)
