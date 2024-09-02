@@ -341,8 +341,8 @@ if __name__ == "__main__":
         
         mean_loss=np.mean(loss_list_here)
         mean_val=val_loss
-        loss_list_epoch.extend(mean_loss)
-        val_list_epoch.extend(mean_val)
+        loss_list_epoch.append(mean_loss)
+        val_list_epoch.append(mean_val)
     
     
     
