@@ -323,7 +323,7 @@ if __name__ == "__main__":
                 )
                 loss = model.loss(logits, label.view(-1, 1))
                 val_loss.append(loss.cpu().detach().numpy())
-                val_loss_here=val_loss
+            val_loss_here=val_loss
             val_loss = np.mean(val_loss)
             if val_loss < min_val_loss:
                 min_val_loss = val_loss
@@ -337,7 +337,7 @@ if __name__ == "__main__":
         
         
         print(len(loss_list_here))
-        print(len(val_list_here))
+        print(len(val_loss_here))
         
         mean_loss=np.mean(loss_list)
         mean_val=val_loss
