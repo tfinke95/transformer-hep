@@ -274,7 +274,7 @@ if __name__ == "__main__":
     min_val_loss = np.inf
     for epoch in range(args.num_epochs):
         model.train()
-
+        loss_list_here=[]
         for x, padding_mask, label in tqdm(
             train_loader, total=len(train_loader), desc=f"Training Epoch {epoch + 1}"
         ):
