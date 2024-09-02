@@ -335,6 +335,10 @@ if __name__ == "__main__":
             optimizer=opt, scheduler=scheduler, scaler=scaler, log_dir=args.log_dir
         )
         
+        
+        print(len(loss_list_here))
+        print(len(val_list_here))
+        
         mean_loss=np.mean(loss_list)
         mean_val=val_loss
         loss_list_epoch.extend(loss_list_here)
