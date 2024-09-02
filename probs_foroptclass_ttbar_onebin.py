@@ -30,8 +30,8 @@ for model in models_list:
     for num_const in num_const_list:
         for num_samples in num_samples_list:
         
-                test_dataset='/net/data_t2k/transformers-hep/JetClass/OptClass/TTBar_models//TTBar_run_test__part_pt_1Mfromeach_403030_test_2_343QU3V/samples_samples_nsamples'+str(num_samples)+'_trunc_5000.h5'
-                test_dataset_other='/net/data_t2k/transformers-hep/JetClass/OptClass/ZJetsToNuNu_models/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/samples_samples_nsamples'+str(num_samples)+'_trunc_5000.h5'
+                test_dataset='/net/data_t2k/transformers-hep/JetClass/OptClass/TTBar_models//TTBar_run_test__part_pt_1Mfromeach_403030_test_2_343QU3V/samples__nsamples'+str(num_samples)+'_trunc_5000.h5'
+                test_dataset_other='/net/data_t2k/transformers-hep/JetClass/OptClass/ZJetsToNuNu_models/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/samples__nsamples'+str(num_samples)+'_trunc_5000.h5'
 
                 
                 tag_foreval='test_eval_optclass_testset_nsamples'+str(num_samples)+'_numconst_'+str(num_const)
