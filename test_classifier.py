@@ -43,7 +43,14 @@ def parse_input():
 
 
 def load_data(path1,path2, n_events):
+    
+            
+    
     df = pd.read_hdf(path1, 'discretized', stop=n_events)
+    
+    #start_value=random.randint(0,1000000-args.num_events)
+    #df = pd.read_hdf(path1, key="discretized", start=start_value, stop=start_value+args.num_events)
+    
     x, padding_mask, _ = preprocess_dataframe(df, num_features=num_features,
                                 num_bins=num_bins,
                                 to_tensor=True,
