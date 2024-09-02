@@ -36,8 +36,7 @@ for model in models_list:
                 
                 tag_foreval='test_eval_optclass_testset_nsamples'+str(num_samples)+'_numconst_'+str(num_const)
                 tag_foreval_other='test_eval_optclass_testset_other_nsamples'+str(num_samples)+'_numconst_'+str(num_const)
-                tag_forsample='samples_nsamples'+str(num_samples)+'_trunc_'+str(trunc)+'_numconst_'+str(num_const)
-                save_dir_tag='some_results_nsamples'+str(num_samples)+'_trunc_'+str(trunc)+'_numconst_'+str(num_const)
+
 
                 model_path=mother_dir+'/'+model+'/'
                 print(model)
