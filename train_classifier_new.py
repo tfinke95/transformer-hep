@@ -223,8 +223,7 @@ def plot_rocs(model, val_loader, tag):
     fig.savefig(os.path.join(args.log_dir, f"preds_{tag}.png"))
 
     np.savez(os.path.join(args.log_dir, f"preds_{tag}.npz"), preds=preds, labels=labels)
-
-
+    plt.close(fig)
 if __name__ == "__main__":
     args = parse_input()
     save_arguments(args)
@@ -266,6 +265,11 @@ if __name__ == "__main__":
     logger = SummaryWriter(args.log_dir)
     global_step = 0
     loss_list = []
+    
+        
+    loss_list_epoch=[]
+    val_list_epoch=[]
+    
     perplexity_list = []
     min_val_loss = np.inf
     for epoch in range(args.num_epochs):
@@ -292,7 +296,8 @@ if __name__ == "__main__":
             scheduler.step()
 
             loss_list.append(loss.cpu().detach().numpy())
-
+            loss_list_here.append(loss.cpu().detach().numpy())
+            
             if (global_step + 1) % args.logging_steps == 0:
                 logger.add_scalar("Train/Loss", np.mean(loss_list), global_step)
                 logger.add_scalar("Train/LR", scheduler.get_last_lr()[0], global_step)
@@ -318,7 +323,7 @@ if __name__ == "__main__":
                 )
                 loss = model.loss(logits, label.view(-1, 1))
                 val_loss.append(loss.cpu().detach().numpy())
-
+                val_loss_here=val_loss
             val_loss = np.mean(val_loss)
             if val_loss < min_val_loss:
                 min_val_loss = val_loss
@@ -329,6 +334,11 @@ if __name__ == "__main__":
         save_opt_states(
             optimizer=opt, scheduler=scheduler, scaler=scaler, log_dir=args.log_dir
         )
+        
+        mean_loss=np.mean(loss_list)
+        mean_val=val_loss
+        loss_list_epoch.extend(loss_list_here)
+        val_list_epoch.extend(val_loss_here)
 
     history={'loss':loss_list,'val_loss':val_loss}
     
@@ -337,3 +347,17 @@ if __name__ == "__main__":
     plot_rocs(model, val_loader, tag="last")
     model = load_model(os.path.join(args.log_dir, "model_best.pt"))
     plot_rocs(model, val_loader, tag="best")
+
+
+
+plt.close()
+plt.close()
+import matplotlib.pyplot as plt
+plt.plot(history_frame['loss'], label='Train Loss')
+plt.plot(history_frame['val_loss'], label='Val Loss')
+plt.xlabel('iter')
+plt.ylabel('Loss')
+plt.yscale('log')
+plt.legend()
+plt.savefig(os.path.join(args.log_dir, "history.pdf"))
+plt.close()
