@@ -74,12 +74,21 @@ def parse_input():
         "--name_sufix", type=str, default="A1B2C3D", help="name of train dir"
     )
 
+
+    parser.add_argument(
+        "--fixed_samples",
+        action="store_true",
+        help="fixed samples",
+    )
+
     parser.add_argument("--num_epochs", type=int, default=3, help="Number of epochs")
     parser.add_argument("--batch_size", type=int, default=100, help="Batch size")
     parser.add_argument("--lr", type=float, default=0.001, help="learning rate")
     parser.add_argument(
         "--weight_decay", type=float, default=0.00001, help="weight decay"
     )
+
+
 
     parser.add_argument(
         "--hidden_dim", type=int, default=256, help="Hidden dim of the model"
@@ -111,12 +120,16 @@ def load_data(file):
         print(dat)
     elif file.endswith("h5"):
     
-    
-    
-        #dat = pd.read_hdf(file, key="discretized", stop=args.num_events)
+        if fixed_samples==False:
         
-        start_value=random.randint(0,1000000-args.num_events)
-        dat = pd.read_hdf(file, key="discretized", start=start_value, stop=start_value+args.num_events)
+            start_value=random.randint(0,1000000-args.num_events)
+            dat = pd.read_hdf(file, key="discretized", start=start_value, stop=start_value+args.num_events)
+
+        else:
+    
+            dat = pd.read_hdf(file, key="discretized", stop=args.num_events)
+        
+        
         
         dat = dat.to_numpy(dtype=np.int64)[:, : args.num_const * 3]
         print('dat')
