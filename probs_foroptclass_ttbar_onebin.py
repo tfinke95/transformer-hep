@@ -13,7 +13,7 @@ train_batch_size=100
 num_const_list=[128]
 trunc_list=[5000]
 ###For test samples
-bg=test_dataset
+
 bin_tag='1Mfromeach_403030'
 
 
@@ -32,8 +32,8 @@ for model in models_list:
         
                 test_dataset='/net/data_t2k/transformers-hep/JetClass/OptClass/TTBar_models//TTBar_run_test__part_pt_1Mfromeach_403030_test_2_343QU3V/samples_samples_nsamples'+str(num_samples)+'_trunc_5000.h5'
                 test_dataset_other='/net/data_t2k/transformers-hep/JetClass/OptClass/ZJetsToNuNu_models/ZJetsToNuNu_run_test__part_pt_const128_403030_3_N5LN6TI/samples_samples_nsamples'+str(num_samples)+'_trunc_5000.h5'
-        
-        
+
+                
                 tag_foreval='test_eval_optclass_testset_nsamples'+str(num_samples)+'_numconst_'+str(num_const)
                 tag_foreval_other='test_eval_optclass_testset_other_nsamples'+str(num_samples)+'_numconst_'+str(num_const)
                 tag_forsample='samples_nsamples'+str(num_samples)+'_trunc_'+str(trunc)+'_numconst_'+str(num_const)
