@@ -339,7 +339,11 @@ if __name__ == "__main__":
         mean_val=val_loss
         loss_list_epoch.extend(loss_list_here)
         val_list_epoch.extend(val_loss_here)
-
+    
+    
+    
+    print(len(loss_list_epoch))
+    print(len(val_list_epoch))
     history={'loss':loss_list_epoch,'val_loss':val_list_epoch}
     
     history_frame=pd.DataFrame(history)
