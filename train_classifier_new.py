@@ -120,7 +120,7 @@ def load_data(file):
         print(dat)
     elif file.endswith("h5"):
     
-        if fixed_samples==False:
+        if args.fixed_samples==False:
         
             start_value=random.randint(0,1000000-args.num_events)
             dat = pd.read_hdf(file, key="discretized", start=start_value, stop=start_value+args.num_events)
