@@ -340,10 +340,13 @@ if __name__ == "__main__":
         loss_list_epoch.extend(loss_list_here)
         val_list_epoch.extend(val_loss_here)
 
-    history={'loss':loss_list,'val_loss':val_loss}
+    history={'loss':loss_list_epoch,'val_loss':val_list_epoch}
     
     history_frame=pd.DataFrame(history)
     history_frame.to_csv(os.path.join(args.log_dir, "history.txt"),index=False)
+    
+    
+    
     plot_rocs(model, val_loader, tag="last")
     model = load_model(os.path.join(args.log_dir, "model_best.pt"))
     plot_rocs(model, val_loader, tag="best")
