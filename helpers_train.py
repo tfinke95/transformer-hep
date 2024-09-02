@@ -244,6 +244,8 @@ def load_data(
 ):
     if fixed_samples==False:
         df = pd.read_hdf(path, "discretized", stop=None)
+        print('size samples')
+        print(df.shape)
         df=df.sample(n_events)
     else:
         df = pd.read_hdf(path, "discretized", stop=n_events)
