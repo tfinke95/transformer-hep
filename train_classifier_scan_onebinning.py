@@ -25,17 +25,17 @@ main_dir_discrete='/net/data_t2k/transformers-hep/JetClass/discretized/'
 #list_of_jets=['TTBar','ZJetsToNuNu','HToBB','HToCC','HToGG','HToWW2Q1L','HToWW4Q','TTBarLep','WToQ','ZToQQ']
 sig_list=['TTBar_train___1Mfromeach_403030.h5']
 bg_list=['ZJetsToNuNu_train___1Mfromeach_403030.h5']
-num_epochs_list=[30]
+num_epochs_list=[50]
 dropout_list=[0.0]
 num_heads_list=[4]
 num_layers_list=[8]
 hidden_dim_list=[256]
 batch_size_list=[100]
-num_events_list=[10000]
+num_events_list=[1000,1000,1000,1000,1000]
 num_const_list=[128]
 lr_list=[.001]
 
-tag_of_train='top_vs_qcd_jetclass_classifier_part_pt_onebinning_test_3'
+tag_of_train='top_vs_qcd_jetclass_classifier_part_pt_onebinning_test_randomdata_3'
 log_dir='/net/data_t2k/transformers-hep/JetClass/Classification/classification_topvsqcd_part_pt_one_binning/'+tag_of_train
 
 for sig in sig_list:

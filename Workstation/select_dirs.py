@@ -27,13 +27,14 @@ def extract_value(var,lines):
     return value
 
 
-main_dir='/net/data_t2k/transformers-hep/JetClass/Classification_finetune/'
+main_dir='/net/data_t2k/transformers-hep/JetClass/Classification/classification_topvsqcd_part_pt_one_binning//'
 dirs=os.listdir(main_dir)
 val='epochs'
-new_subdir='/test_dropout1/'
+new_subdir='/test_50epochs/'
+'''
 for dir in dirs:
 
-    if 'optyes_3epochs_test_1' not in dir:
+    if 'test_3' not in dir:
         continue
     
     file_name=main_dir+'/'+dir+'/arguments.txt'
@@ -47,5 +48,26 @@ for dir in dirs:
         continue
     
     
+'''
+main_dir=main_dir+'/'+new_subdir
 
-    
+new_subdir='/test_50epochs/'
+
+os.makedirs(main_dir+'/'+new_subdir,exist_ok=True)
+
+dirs=os.listdir(main_dir)
+for dir in dirs:
+
+        if 'test_3' not in dir:
+            continue
+        
+        files=os.listdir(main_dir+'/'+dir)
+        print(files)
+        for file in files:
+            
+            if 'roc_test' in file:
+                print(dir)
+                os.system('mv '+main_dir+'/'+dir+' '+main_dir+'/'+new_subdir+'/')
+                continue
+
+
