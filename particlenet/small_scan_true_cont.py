@@ -56,7 +56,7 @@ config_file='config_true_jetclass.json'
 sig_file='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/TTBar_train.h5'
 bg_file='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/ZJetsToNuNu_train.h5'
 
-n_events_list=[50,500,5000,50000,500000,1000000]
+n_events_list=[50]
 
 
 for n_events in n_events_list:
