@@ -56,7 +56,7 @@ config_file='config_true_jetclass.json'
 sig_file='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/TTBar_train.h5'
 bg_file='/net/data_t2k/transformers-hep/JetClass/JetClass_pt_part/ZJetsToNuNu_train.h5'
 
-n_events_list=[50]
+n_events_list=[50,500,5000,50000,500000]
 
 
 for n_events in n_events_list:
@@ -65,7 +65,7 @@ for n_events in n_events_list:
 
     
     config_dict=OpenConfig(config_file)
-    out_dir='logs/true_jetclass_test2_'+str(n_events)
+    out_dir='logs/true_jetclass_test3_'+str(n_events)
     UpdateConfig(config_dict,sig_file,bg_file,out_dir,n_events)
     SaveNewConfig(config_dict,config_file)
     train(config_file)
