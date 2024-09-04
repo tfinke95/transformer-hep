@@ -21,7 +21,7 @@ def transform_momenta(momenta, mask):
     
     etas[~mask] = 0
     phis[~mask] = 0
-    pts[~mask] = 0
+    #pts[~mask] = 0
     #logpts = np.log(pts+1e-90)
     #logpt_ptj = np.log(pts / ptj.reshape(-1, 1))
     #print(np.count_nonzero(np.isinf(logpts)))
