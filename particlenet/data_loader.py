@@ -29,8 +29,16 @@ def transform_momenta(momenta, mask):
     #logpts[~mask] = 0
     #logpt_ptj = np.log(pts+1e-90)
     
-    logpts = np.log(pts)
-    logpt_ptj = np.log( pts/ptj.reshape(-1, 1))
+    neg_pts_num=(pts<0).sum()
+    print('neg_pts')
+    print(neg_pts_num)
+    
+    neg_pts=pts[pts<0]
+    
+    print(neg_pts)
+ 
+    logpts = np.log(pts+1e-90)
+    logpt_ptj = np.log( pts/ptj.reshape(-1, 1)+1e-90)
     #print(np.count_nonzero(np.isinf(logpts)))
     #print('inf back')
     logpts[~mask] = 0
