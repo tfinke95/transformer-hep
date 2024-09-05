@@ -141,13 +141,15 @@ def load_data(params, test=False, plot_dists=None,):
         # Load data file
         elif file.endswith("h5"):
             if test:
+                stop_test=100000
+                #stop_test=params["n_jets"]
                 file = file.replace("val", "test")
                 file = file.replace("train", "test")
                 print(f"\nChanged file to {file}")
                 dat = pd.read_hdf(
                     file,
                     key=key,
-                    stop=params["n_jets"],
+                    stop=params["n_jets_test"],
                 )
             else:
                 dat = pd.read_hdf(file, key=key, stop=params["n_jets"])
