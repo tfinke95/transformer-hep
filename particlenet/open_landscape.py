@@ -11,7 +11,7 @@ dat_train = pd.read_hdf(file_path, key='raw')
 print(dat_train)
 
 file_path_val = '/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized//val_qcd_all_bins403030.h5'
-dat_val = pd.read_hdf(file_path, key='raw')
+dat_val = pd.read_hdf(file_path_val, key='raw')
 print(dat_val)
 
 
