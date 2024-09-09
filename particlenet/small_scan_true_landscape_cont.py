@@ -35,7 +35,7 @@ def SaveNewConfig(config_dict,config_file_name):
 
 def train(config_file):
 
-    os.system('python train_val.py '+config_file)
+    os.system('python train.py '+config_file)
 
     return
 
@@ -65,7 +65,7 @@ for n_events in n_events_list:
 
     
     config_dict=OpenConfig(config_file)
-    out_dir='logs/true_landscape_test3_'+str(n_events)
+    out_dir='logs/true_landscape_test3_noval_'+str(n_events)
     UpdateConfig(config_dict,sig_file,bg_file,out_dir,n_events)
     SaveNewConfig(config_dict,config_file)
     train(config_file)
