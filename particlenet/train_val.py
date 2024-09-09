@@ -9,7 +9,7 @@ start = time.time()
 tfk = tf.keras
 
 #gpu = tf.config.list_physical_devices("GPU")
-os.environ["CUDA_VISIBLE_DEVICES"] = "1"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 gpu = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpu[0], True)
 assert len(gpu) > 0, f"No GPU found, abort"
