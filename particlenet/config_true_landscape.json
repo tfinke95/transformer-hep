@@ -36,8 +36,8 @@
             "n_const": 128,
             "bg_key": "raw",
             "sig_key": "raw",
-            "bins_tag_sig": "1Mfromeach_403030",
-            "bins_tag_bg": "1Mfromeach_403030",
+            "bins_tag_sig": "40_30_30_forall",
+            "bins_tag_bg": "40_30_30_forall",
             "seed": 0,
             "bg_noise": false,
             "sig_noise": false
