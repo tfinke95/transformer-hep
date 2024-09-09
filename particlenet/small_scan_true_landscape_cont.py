@@ -53,8 +53,8 @@ config_file='config_true_landscape.json'
 
 
 
-sig_file='/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized/train_top_40_30_30_forall.h5'
-bg_file='/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized/train_qcd_40_30_30_forall.h5'
+sig_file='/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized/all_top_40_30_30_forall.h5'
+bg_file='/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized/all_qcd_40_30_30_forall.h5'
 
 n_events_list=[600]
 
@@ -65,7 +65,7 @@ for n_events in n_events_list:
 
     
     config_dict=OpenConfig(config_file)
-    out_dir='logs/true_landscape_test3_noval_'+str(n_events)
+    out_dir='logs/true_landscape_test4_noval_'+str(n_events)
     UpdateConfig(config_dict,sig_file,bg_file,out_dir,n_events)
     SaveNewConfig(config_dict,config_file)
     train(config_file)
