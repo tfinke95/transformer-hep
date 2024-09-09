@@ -53,8 +53,8 @@ config_file='config_true_landscape.json'
 
 
 
-sig_file='/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/discretized/train_top_40_30_30_forall.h5'
-bg_file='/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/discretized/train_qcd_40_30_30_forall.h5'
+sig_file='/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized/train_top_40_30_30_forall.h5'
+bg_file='/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized/train_qcd_40_30_30_forall.h5'
 
 n_events_list=[600000]
 
