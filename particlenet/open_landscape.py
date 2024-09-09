@@ -3,7 +3,7 @@ import pandas as pd
 import h5py
 
 # Open the HDF5 file in read mode
-file_path = '/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized//train_top_40_30_30_forall.h5'
+file_path = '/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized//train_qcd_40_30_30_forall.h5'
 
 
 
@@ -12,13 +12,13 @@ dat_train_disc = pd.read_hdf(file_path, key='discretized')
 print(dat_train)
 print(dat_train_disc)
 
-file_path_val = '/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized//val_top_40_30_30_forall.h5'
+file_path_val = '/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized//val_qcd_40_30_30_forall.h5'
 dat_val = pd.read_hdf(file_path_val, key='raw')
 dat_val_disc = pd.read_hdf(file_path_val, key='discretized')
 print(dat_val)
 
 
-file_path_all = '/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized//all_top_40_30_30_forall.h5'
+file_path_all = '/home/home3/institut_thp/hreyes/Transformers/transformers_finke/datasets/TopQuarkTag/topquarktagging_data/discretized//all_qcd_40_30_30_forall.h5'
 data_all=pd.concat([dat_train,dat_val],axis=0)
 print(data_all.shape)
 
