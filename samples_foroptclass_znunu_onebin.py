@@ -5,7 +5,7 @@ import os
 
 
 
-mother_dir='/net/data_t2k/transformers-hep/JetClass/OptClass/TTBar_models/TTBar_run_test__part_pt_1Mfromeach_403030_test_2_343QU3V/'
+mother_dir='/net/data_t2k/transformers-hep/JetClass/OptClass/ZJetsToNuNu_models/ZJetsToNuNu_run_test__part_pt_1Mfromeach_403030_test_2_BU2IWA1/'
 model_name='model_best.pt'
 tag_oftrain='1Mfromeach_403030_'
 num_samples_list=[2000000]
@@ -30,7 +30,7 @@ for num_const in num_const_list:
             
                 tag_forsample='samples_nsamples'+str(num_samples)+'_trunc_'+str(trunc)+'_'+str(j)
         
-                command_sample= 'python sample_jets_1.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
+                command_sample= 'python sample_jets_0.py --model_dir '+model_path+' --savetag '+str(tag_forsample)+' --num_samples '+str(num_samples)+' --num_const '+str(num_const)+' --trunc '+str(trunc)+' --batchsize '+str(train_batch_size)+' --model_name '+model_name
                 print(command_sample)
                 os.system(command_sample)
 
