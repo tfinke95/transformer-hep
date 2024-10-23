@@ -2,7 +2,7 @@ import os
 
 
 
-test_dataset=
+test_dataset='Workstation/samples_codebook_1const.h5'
 model_path='/net/data_ttk/hreyes/JetClass/OptClass/TTBar_models/TTBar_run_test__part_pt_1Mfromeach_403030_test_2_343QU3V/'
 model_type='model_best.pt'
 num_const=1
