@@ -55,7 +55,7 @@ def get_probs(model, loader):
             print(probability)
             print('numpy_prob')
             print("%.16f"%probability.cpu().numpy())
-            probs.append(probability.cpu().numpy())
+            probs.append(probability.cpu().numpy()[0])
             exit()
             n_const.append(mask.sum(dim=-1).cpu().numpy() - 1)
 
