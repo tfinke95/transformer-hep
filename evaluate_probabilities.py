@@ -50,14 +50,14 @@ def get_probs(model, loader):
         with torch.no_grad():
             x, mask, bins = x.to(device), mask.to(device), bins.to(device)
             logits = model.forward(x, mask)
-            probability = model.probability(logits, mask, bins, logarithmic=False)
+            probability = model.probability(logits, mask, bins, logarithmic=True)
             
-            print('tensor_prob')
-            print(probability)
-            print('numpy_prob')
-            print("%.16f"%probability.cpu().numpy()[0])
+            #print('tensor_prob')
+            #print(probability)
+            #print('numpy_prob')
+            #print("%.16f"%probability.cpu().numpy()[0])
             probs.append(probability.cpu().numpy())
-            exit()
+          
             n_const.append(mask.sum(dim=-1).cpu().numpy() - 1)
 
     results = {
