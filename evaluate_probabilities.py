@@ -39,7 +39,7 @@ def get_args():
 
 
 def get_probs(model, loader):
-    #model.double()
+    model.double()
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(device)
     model.to(device)
