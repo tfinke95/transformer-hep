@@ -56,7 +56,7 @@ def get_probs(model, loader):
             print('numpy_prob')
             print(probability.cpu().numpy())
             probs.append(probability.cpu().numpy())
-   
+            exit()
             n_const.append(mask.sum(dim=-1).cpu().numpy() - 1)
 
     results = {
