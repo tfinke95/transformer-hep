@@ -52,7 +52,7 @@ def get_probs(model, loader):
             logits = model.forward(x, mask)
             probability = model.probability(logits, mask, bins, logarithmic=True)
             print('tensor_prob')
-            print("%.16f"%probability)
+            print(probability)
             print('numpy_prob')
             print("%.16f"%probability.cpu().numpy())
             probs.append(probability.cpu().numpy())
