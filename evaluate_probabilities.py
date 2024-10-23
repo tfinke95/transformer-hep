@@ -50,7 +50,8 @@ def get_probs(model, loader):
         with torch.no_grad():
             x, mask, bins = x.to(device), mask.to(device), bins.to(device)
             logits = model.forward(x, mask)
-            probability = model.probability(logits, mask, bins, logarithmic=True)
+            probability = model.probability(logits, mask, bins, logarithmic=False)
+            
             print('tensor_prob')
             print(probability)
             print('numpy_prob')
