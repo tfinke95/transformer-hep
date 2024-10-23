@@ -53,9 +53,10 @@ def get_probs(model, loader):
             probability = model.probability(logits, mask, bins, logarithmic=True)
             print('tensor_prob')
             print(probability)
-            probs.append(probability.cpu().numpy())
             print('numpy_prob')
-            print(probs)
+            print(probability.cpu().numpy())
+            probs.append(probability.cpu().numpy())
+   
             n_const.append(mask.sum(dim=-1).cpu().numpy() - 1)
 
     results = {
