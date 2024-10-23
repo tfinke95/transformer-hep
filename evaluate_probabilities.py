@@ -51,7 +51,9 @@ def get_probs(model, loader):
             x, mask, bins = x.to(device), mask.to(device), bins.to(device)
             logits = model.forward(x, mask)
             probability = model.probability(logits, mask, bins, logarithmic=True)
+            print(probability)
             probs.append(probability.cpu().numpy())
+            print(probs)
             n_const.append(mask.sum(dim=-1).cpu().numpy() - 1)
 
     results = {
